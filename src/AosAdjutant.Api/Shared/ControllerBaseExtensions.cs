@@ -15,7 +15,9 @@ public static class ControllerBaseExtensions
             _ => 500
         };
 
-        return controllerBase.StatusCode(statusCode,
-            new ProblemDetails { Title = error.Code.ToString(), Detail = error.Message, Status = statusCode });
+        return controllerBase.StatusCode(
+            statusCode,
+            new ProblemDetails { Title = error.Code.ToString(), Detail = error.Message, Status = statusCode }
+        );
     }
 }

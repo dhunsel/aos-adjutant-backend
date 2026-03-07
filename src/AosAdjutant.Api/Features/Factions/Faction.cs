@@ -1,3 +1,4 @@
+using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.Factions.BattleFormations;
 
 namespace AosAdjutant.Api.Features.Factions;
@@ -9,4 +10,5 @@ public class Faction
     public uint Version { get; set; }
 
     public ICollection<BattleFormation> BattleFormations { get; } = new List<BattleFormation>();
+    public ICollection<Ability> Abilities { get; } = new List<Ability>();
 }
