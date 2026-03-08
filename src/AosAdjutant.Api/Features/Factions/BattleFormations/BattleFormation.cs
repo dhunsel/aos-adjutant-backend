@@ -11,5 +11,5 @@ public class BattleFormation
     public uint Version { get; set; }
 
     public Faction? Faction { get; set; }
-    public Ability? Ability { get; set; }
+    public ICollection<Ability> Abilities { get; } = new List<Ability>();
 }

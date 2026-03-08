@@ -17,6 +17,7 @@ public class AbilityEntityTypeConfiguration : IEntityTypeConfiguration<Ability>
         builder.Property(f => f.Phase).HasColumnName("phase").HasConversion<string>().HasMaxLength(250);
         builder.Property(f => f.Restriction).HasColumnName("restriction").HasConversion<string>().HasMaxLength(250);
         builder.Property(f => f.Turn).HasColumnName("turn").HasConversion<string>().HasMaxLength(250);
+        builder.Property(f => f.IsGeneric).HasColumnName("is_generic");
 
         builder.HasKey(f => f.AbilityId);
 

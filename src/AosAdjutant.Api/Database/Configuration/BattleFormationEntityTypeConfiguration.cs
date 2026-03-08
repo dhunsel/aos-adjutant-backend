@@ -24,7 +24,16 @@ public class BattleFormationEntityTypeConfiguration : IEntityTypeConfiguration<B
             .HasForeignKey(bf => bf.FactionId)
             .IsRequired();
 
-        builder.HasOne(bf => bf.Ability).WithOne().HasForeignKey<BattleFormation>(bf => bf.AbilityId).IsRequired();
+        builder.HasMany(bf => bf.Abilities)
+            .WithMany()
+            .UsingEntity(bfa =>
+                {
+                    bfa.ToTable("battle_formation_ability");
+                    bfa.Property("BattleFormationId").HasColumnName("battle_formation_id");
+                    bfa.Property("AbilitiesAbilityId").HasColumnName("ability_id");
+                    bfa.HasIndex("AbilitiesAbilityId").IsUnique();
+                }
+            );
 
         builder.Property(bf => bf.Version).IsRowVersion();
     }

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using AosAdjutant.Api.Database;
+using AosAdjutant.Api.Features.Abilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,9 @@ builder.Services
     .AddJsonOptions(opts =>
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false))
     );
+
+builder.Services.AddScoped<AbilityService, AbilityService>();
+
 builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpLogging(opts => { });

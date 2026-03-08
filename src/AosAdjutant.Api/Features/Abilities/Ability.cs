@@ -49,5 +49,6 @@ public class Ability
     public TurnPhase Phase { get; set; }
     public ActivationRestriction? Restriction { get; set; }
     public PlayerTurn? Turn { get; set; }
+    public bool IsGeneric { get; set; }
     public uint Version { get; set; }
 }
