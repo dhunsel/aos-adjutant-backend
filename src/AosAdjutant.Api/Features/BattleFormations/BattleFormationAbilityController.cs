@@ -8,10 +8,15 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 
 [Route("api/battle-formations/{battleFormationId}/abilities")]
 [ApiController]
+[Tags("Battle Formations")]
 public class BattleFormationAbilityController(ApplicationDbContext context, AbilityService abilityService)
     : ControllerBase
 {
     [HttpPost]
+    [EndpointSummary("Create an ability for a battle formation")]
+    [ProducesResponseType<AbilityResponseDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AbilityResponseDto>> CreateAbility(
         [FromRoute] int battleFormationId,
         [FromBody] CreateAbilityDto abilityData
@@ -47,6 +52,9 @@ public class BattleFormationAbilityController(ApplicationDbContext context, Abil
     }
 
     [HttpGet]
+    [EndpointSummary("Get all abilities for a battle formation")]
+    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities([FromRoute] int battleFormationId)
     {
         var battleFormation = await context.BattleFormations

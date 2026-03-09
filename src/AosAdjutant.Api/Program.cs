@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpLogging(opts => { });
 
+builder.Services.AddOpenApi();
+
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration["AosAdjutant:DbContextConnectionString"])
 );
@@ -30,6 +33,12 @@ var app = builder.Build();
 app.UseHttpLogging();
 
 app.UseExceptionHandler();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.MapControllers();
 

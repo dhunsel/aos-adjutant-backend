@@ -7,9 +7,13 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 
 [Route("api/battle-formations")]
 [ApiController]
+[Tags("Battle Formations")]
 public class BattleFormationController(ApplicationDbContext context) : ControllerBase
 {
     [HttpGet("{battleFormationId}")]
+    [EndpointSummary("Get a battle formation by ID")]
+    [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BattleFormationResponseDto>> GetBattleFormation([FromRoute] int battleFormationId)
     {
         var battleFormation = await context.BattleFormations
@@ -29,6 +33,10 @@ public class BattleFormationController(ApplicationDbContext context) : Controlle
     }
 
     [HttpPut("{battleFormationId}")]
+    [EndpointSummary("Update a battle formation")]
+    [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<BattleFormationResponseDto>> UpdateBattleFormation(
         [FromRoute] int battleFormationId,
         [FromBody] ChangeBattleFormationDto battleFormationData
@@ -65,6 +73,9 @@ public class BattleFormationController(ApplicationDbContext context) : Controlle
     }
 
     [HttpDelete("{battleFormationId}")]
+    [EndpointSummary("Delete a battle formation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteBattleFormation([FromRoute] int battleFormationId)
     {
         var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);

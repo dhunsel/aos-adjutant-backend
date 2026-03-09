@@ -8,9 +8,13 @@ namespace AosAdjutant.Api.Features.Factions;
 
 [Route("api/factions")]
 [ApiController]
+[Tags("Factions")]
 public class FactionController(ApplicationDbContext context) : ControllerBase
 {
     [HttpPost]
+    [EndpointSummary("Create a faction")]
+    [ProducesResponseType<FactionResponseDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<FactionResponseDto>> CreateFaction([FromBody] CreateFactionDto factionData)
     {
         // First check to catch duplicates. Race conditions could still occur, the call to saveChanges below will
@@ -31,6 +35,8 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     }
 
     [HttpGet]
+    [EndpointSummary("Get all factions")]
+    [ProducesResponseType<List<FactionResponseDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<FactionResponseDto>>> GetFactions()
     {
         var factions = await context.Factions
@@ -41,6 +47,9 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     }
 
     [HttpGet("{factionId}")]
+    [EndpointSummary("Get a faction by ID")]
+    [ProducesResponseType<FactionResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FactionResponseDto>> GetFaction([FromRoute] int factionId)
     {
         var faction = await context.Factions.AsNoTracking().FirstOrDefaultAsync(f => f.FactionId == factionId);
@@ -51,6 +60,10 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     }
 
     [HttpPost("{factionId}/battle-formations")]
+    [EndpointSummary("Create a battle formation under a faction")]
+    [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<BattleFormationResponseDto>> CreateBattleFormation(
         [FromRoute] int factionId,
         [FromBody] CreateBattleFormationDto battleFormationData
@@ -85,6 +98,9 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     }
 
     [HttpGet("{factionId}/battle-formations")]
+    [EndpointSummary("Get all battle formations for a faction")]
+    [ProducesResponseType<List<BattleFormationResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<BattleFormationResponseDto>>> GetBattleFormations([FromRoute] int factionId)
     {
         var factionExists = await context.Factions.AnyAsync(f => f.FactionId == factionId);

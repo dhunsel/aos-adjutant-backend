@@ -8,9 +8,14 @@ namespace AosAdjutant.Api.Features.Factions;
 
 [Route("api/factions/{factionId}/abilities")]
 [ApiController]
+[Tags("Factions")]
 public class FactionAbilityController(ApplicationDbContext context, AbilityService abilityService) : ControllerBase
 {
     [HttpPost]
+    [EndpointSummary("Create an ability for a faction")]
+    [ProducesResponseType<AbilityResponseDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AbilityResponseDto>> CreateAbility(
         [FromRoute] int factionId,
         [FromBody] CreateAbilityDto abilityData
@@ -46,6 +51,9 @@ public class FactionAbilityController(ApplicationDbContext context, AbilityServi
     }
 
     [HttpGet]
+    [EndpointSummary("Get all abilities for a faction")]
+    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities([FromRoute] int factionId)
     {
         var faction = await context.Factions
