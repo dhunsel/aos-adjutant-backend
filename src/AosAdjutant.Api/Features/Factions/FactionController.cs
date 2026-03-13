@@ -60,6 +60,23 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
             : Ok(new FactionResponseDto(faction.FactionId, faction.Name, faction.Version));
     }
 
+    [HttpDelete("{factionId}")]
+    [EndpointSummary("Delete a faction")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteFaction([FromRoute] int factionId)
+    {
+        var faction = await context.Factions.FindAsync(factionId);
+
+        if (faction is null)
+            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Faction not found."));
+
+        context.Factions.Remove(faction);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpPost("{factionId}/battle-formations")]
     [EndpointSummary("Create a battle formation under a faction")]
     [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status201Created)]
