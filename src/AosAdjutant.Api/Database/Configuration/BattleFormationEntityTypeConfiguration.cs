@@ -12,7 +12,6 @@ public class BattleFormationEntityTypeConfiguration : IEntityTypeConfiguration<B
         builder.Property(bf => bf.BattleFormationId).HasColumnName("battle_formation_id");
         builder.Property(bf => bf.Name).HasColumnName("name").HasMaxLength(250);
         builder.Property(bf => bf.FactionId).HasColumnName("faction_id");
-        builder.Property(bf => bf.AbilityId).HasColumnName("ability_id");
 
         builder.HasKey(bf => bf.BattleFormationId);
 
