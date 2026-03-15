@@ -1,5 +1,6 @@
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.AttackProfiles;
+using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -129,8 +130,12 @@ public class UnitController(ApplicationDbContext context) : ControllerBase
             ToWound = attackProfileData.ToWound,
             Rend = attackProfileData.Rend,
             Damage = attackProfileData.Damage,
-            UnitId = unitId
+            UnitId = unitId,
+            WeaponEffects = context.WeaponEffects
+                .Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
+                .ToList()
         };
+
 
         // Because of race conditions this might still fail on UK/FK error
         // Ignore for now (won't occur in practice) but revisit in the future
@@ -150,7 +155,8 @@ public class UnitController(ApplicationDbContext context) : ControllerBase
                 newAttackProfile.Rend,
                 newAttackProfile.Damage,
                 newAttackProfile.UnitId,
-                newAttackProfile.Version
+                newAttackProfile.Version,
+                newAttackProfile.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name)).ToList()
             )
         );
     }
@@ -179,7 +185,8 @@ public class UnitController(ApplicationDbContext context) : ControllerBase
                     ap.Rend,
                     ap.Damage,
                     ap.UnitId,
-                    ap.Version
+                    ap.Version,
+                    ap.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name)).ToList()
                 )
             )
             .ToListAsync();

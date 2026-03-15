@@ -16,5 +16,5 @@ public class AttackProfile
     public required int UnitId { get; set; }
     public uint Version { get; set; }
 
-    public ICollection<WeaponEffect> WeaponEffects { get; } = new List<WeaponEffect>();
+    public ICollection<WeaponEffect> WeaponEffects { init; get; } = new List<WeaponEffect>();
 }

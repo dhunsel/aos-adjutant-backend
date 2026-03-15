@@ -1,4 +1,5 @@
 using AosAdjutant.Api.Database;
+using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public class AttackProfileController(ApplicationDbContext context) : ControllerB
     {
         var attackProfile = await context.AttackProfiles
             .AsNoTracking()
+            .Include(ap => ap.WeaponEffects)
             .FirstOrDefaultAsync(ap => ap.AttackProfileId == attackProfileId);
 
         return attackProfile is null
@@ -34,7 +36,8 @@ public class AttackProfileController(ApplicationDbContext context) : ControllerB
                     attackProfile.Rend,
                     attackProfile.Damage,
                     attackProfile.UnitId,
-                    attackProfile.Version
+                    attackProfile.Version,
+                    attackProfile.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name)).ToList()
                 )
             );
     }
@@ -91,7 +94,8 @@ public class AttackProfileController(ApplicationDbContext context) : ControllerB
                 attackProfile.Rend,
                 attackProfile.Damage,
                 attackProfile.UnitId,
-                attackProfile.Version
+                attackProfile.Version,
+                new List<WeaponEffectResponseDto>()
             )
         );
     }
