@@ -8,7 +8,7 @@ namespace AosAdjutant.Api.Features.Factions;
 
 [Route("api/factions/{factionId}/abilities")]
 [ApiController]
-[Tags("Abilities")]
+[Tags("Factions")]
 public class FactionAbilityController(ApplicationDbContext context, AbilityService abilityService) : ControllerBase
 {
     [HttpPost]
