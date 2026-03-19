@@ -15,23 +15,23 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     public async Task<ActionResult<AbilityResponseDto>> CreateAbility([FromBody] CreateAbilityDto abilityData)
     {
         var newAbilityResult = await abilityService.CreateGenericAbility(abilityData);
-
-        return newAbilityResult.IsSuccess
-            ? Created(
-                $"api/abilities/{newAbilityResult.GetValue.AbilityId}",
+        return newAbilityResult.Match(
+            a => Created(
+                $"api/abilities/{a.AbilityId}",
                 new AbilityResponseDto(
-                    newAbilityResult.GetValue.AbilityId,
-                    newAbilityResult.GetValue.Name,
-                    newAbilityResult.GetValue.Reaction,
-                    newAbilityResult.GetValue.Declaration,
-                    newAbilityResult.GetValue.Effect,
-                    newAbilityResult.GetValue.Phase,
-                    newAbilityResult.GetValue.Restriction,
-                    newAbilityResult.GetValue.Turn,
-                    newAbilityResult.GetValue.Version
+                    a.AbilityId,
+                    a.Name,
+                    a.Reaction,
+                    a.Declaration,
+                    a.Effect,
+                    a.Phase,
+                    a.Restriction,
+                    a.Turn,
+                    a.Version
                 )
-            )
-            : this.ApiProblem(newAbilityResult.GetError);
+            ),
+            this.ApiProblem
+        );
     }
 
     [HttpGet]
@@ -49,7 +49,22 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     public async Task<ActionResult<AbilityResponseDto>> GetAbility([FromRoute] int abilityId)
     {
         var abilityResult = await abilityService.GetAbility(abilityId);
-        return abilityResult.IsSuccess ? Ok(abilityResult.GetValue) : this.ApiProblem(abilityResult.GetError);
+        return abilityResult.Match(
+            a => Ok(
+                new AbilityResponseDto(
+                    a.AbilityId,
+                    a.Name,
+                    a.Reaction,
+                    a.Declaration,
+                    a.Effect,
+                    a.Phase,
+                    a.Restriction,
+                    a.Turn,
+                    a.Version
+                )
+            ),
+            this.ApiProblem
+        );
     }
 
     [HttpPut("{abilityId}")]
@@ -63,7 +78,22 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     )
     {
         var abilityResult = await abilityService.UpdateAbility(abilityId, abilityData);
-        return abilityResult.IsSuccess ? Ok(abilityResult.GetValue) : this.ApiProblem(abilityResult.GetError);
+        return abilityResult.Match(
+            a => Ok(
+                new AbilityResponseDto(
+                    a.AbilityId,
+                    a.Name,
+                    a.Reaction,
+                    a.Declaration,
+                    a.Effect,
+                    a.Phase,
+                    a.Restriction,
+                    a.Turn,
+                    a.Version
+                )
+            ),
+            this.ApiProblem
+        );
     }
 
     [HttpDelete("{abilityId}")]
@@ -73,6 +103,6 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     public async Task<ActionResult> DeleteAbility([FromRoute] int abilityId)
     {
         var deleteResult = await abilityService.DeleteAbility(abilityId);
-        return deleteResult.IsSuccess ? NoContent() : this.ApiProblem(deleteResult.GetError);
+        return deleteResult.Match(NoContent, this.ApiProblem);
     }
 }

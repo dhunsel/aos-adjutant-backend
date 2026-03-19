@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AosAdjutant.Api.Shared;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
@@ -51,4 +52,86 @@ public class Ability
     public PlayerTurn? Turn { get; set; }
     public bool IsGeneric { get; set; }
     public uint Version { get; set; }
+
+    public static Result<Ability> Create(
+        string name,
+        string? reaction,
+        string? declaration,
+        string effect,
+        TurnPhase phase,
+        ActivationRestriction? restriction,
+        PlayerTurn? turn,
+        bool isGeneric
+    )
+    {
+        var validationResult = ValidateAbility(name, reaction, declaration, effect, phase, restriction, turn);
+
+        if (!validationResult.IsSuccess) return Result<Ability>.Failure(validationResult.GetError);
+
+        var ability = new Ability
+        {
+            Name = name,
+            Reaction = reaction,
+            Declaration = declaration,
+            Effect = effect,
+            Phase = phase,
+            Restriction = restriction,
+            Turn = turn,
+            IsGeneric = isGeneric
+        };
+
+        return Result<Ability>.Success(ability);
+    }
+
+    public Result ChangeAbility(
+        string name,
+        string? reaction,
+        string? declaration,
+        string effect,
+        TurnPhase phase,
+        ActivationRestriction? restriction,
+        PlayerTurn? turn
+    )
+    {
+        var validationResult = ValidateAbility(name, reaction, declaration, effect, phase, restriction, turn);
+
+        if (!validationResult.IsSuccess) return Result.Failure(validationResult.GetError);
+
+        Name = name;
+        Reaction = reaction;
+        Declaration = declaration;
+        Effect = effect;
+        Phase = phase;
+        Restriction = restriction;
+        Turn = turn;
+
+        return Result.Success();
+    }
+
+    private static Result ValidateAbility(
+        string name,
+        string? reaction,
+        string? declaration,
+        string effect,
+        TurnPhase phase,
+        ActivationRestriction? restriction,
+        PlayerTurn? turn
+    )
+    {
+        if (phase == TurnPhase.Passive && !(reaction is null && declaration is null &&
+                                            restriction is null && turn is null))
+            return Result.Failure(
+                new AppError(
+                    ErrorCode.ValidationError,
+                    "A passive ability cannot have a reaction/declaration/restriction/turn."
+                )
+            );
+
+        if (phase != TurnPhase.Passive && declaration is null)
+            return Result.Failure(
+                new AppError(ErrorCode.ValidationError, "A non-passive ability must have a declaration.")
+            );
+
+        return Result.Success();
+    }
 }

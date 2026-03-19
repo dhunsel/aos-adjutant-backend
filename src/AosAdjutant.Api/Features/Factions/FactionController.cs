@@ -1,14 +1,12 @@
-using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Factions;
 
 [Route("api/factions")]
 [ApiController]
 [Tags("Factions")]
-public class FactionController(ApplicationDbContext context) : ControllerBase
+public class FactionController(FactionService factionService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a faction")]
@@ -16,20 +14,10 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<FactionResponseDto>> CreateFaction([FromBody] CreateFactionDto factionData)
     {
-        // First check to catch duplicates. Race conditions could still occur, the call to saveChanges below will
-        // throw an exception in that case. Ignore for now (won't occur in practice) but revisit in the future
-        var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name);
-        if (isDuplicate)
-            return this.ApiProblem(new AppError(ErrorCode.UniqueKeyError, "Faction already exists."));
-
-        var newFaction = new Faction { Name = factionData.Name };
-
-        context.Factions.Add(newFaction);
-        await context.SaveChangesAsync();
-
-        return Created(
-            $"api/factions/{newFaction.FactionId}",
-            new FactionResponseDto(newFaction.FactionId, newFaction.Name, newFaction.Version)
+        var factionResult = await factionService.CreateFaction(factionData);
+        return factionResult.Match(
+            f => Created($"api/factions/{f.FactionId}", new FactionResponseDto(f.FactionId, f.Name, f.Version)),
+            this.ApiProblem
         );
     }
 
@@ -38,11 +26,8 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     [ProducesResponseType<List<FactionResponseDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<FactionResponseDto>>> GetFactions()
     {
-        var factions = await context.Factions
-            .AsNoTracking()
-            .Select(f => new FactionResponseDto(f.FactionId, f.Name, f.Version))
-            .ToListAsync();
-        return Ok(factions);
+        var factions = await factionService.GetFactions();
+        return Ok(factions.Select(f => new FactionResponseDto(f.FactionId, f.Name, f.Version)));
     }
 
     [HttpGet("{factionId}")]
@@ -51,11 +36,8 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FactionResponseDto>> GetFaction([FromRoute] int factionId)
     {
-        var faction = await context.Factions.AsNoTracking().FirstOrDefaultAsync(f => f.FactionId == factionId);
-
-        return faction is null
-            ? this.ApiProblem(new AppError(ErrorCode.NotFound, "Faction not found."))
-            : Ok(new FactionResponseDto(faction.FactionId, faction.Name, faction.Version));
+        var factionResult = await factionService.GetFaction(factionId);
+        return factionResult.Match(f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.Version)), this.ApiProblem);
     }
 
     [HttpPut("{factionId}")]
@@ -68,24 +50,8 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
         [FromBody] ChangeFactionDto factionData
     )
     {
-        var faction = await context.Factions.FindAsync(factionId);
-
-        if (faction is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Faction not found."));
-
-        if (faction.Version != factionData.Version)
-            return this.ApiProblem(
-                new AppError(ErrorCode.ConcurrencyError, "Faction was already modified in the background.")
-            );
-
-        var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name && f.FactionId != factionId);
-        if (isDuplicate)
-            return this.ApiProblem(new AppError(ErrorCode.UniqueKeyError, "Faction already exists."));
-
-        faction.Name = factionData.Name;
-        await context.SaveChangesAsync();
-
-        return Ok(new FactionResponseDto(faction.FactionId, faction.Name, faction.Version));
+        var factionResult = await factionService.ChangeFaction(factionId, factionData);
+        return factionResult.Match(f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.Version)), this.ApiProblem);
     }
 
     [HttpDelete("{factionId}")]
@@ -94,15 +60,8 @@ public class FactionController(ApplicationDbContext context) : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteFaction([FromRoute] int factionId)
     {
-        var faction = await context.Factions.FindAsync(factionId);
-
-        if (faction is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Faction not found."));
-
-        context.Factions.Remove(faction);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        var deleteResult = await factionService.DeleteFaction(factionId);
+        return deleteResult.Match(NoContent, this.ApiProblem);
     }
 
     [HttpGet("/throw")]

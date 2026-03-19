@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
+using AosAdjutant.Api.Features.Factions;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -12,6 +13,7 @@ builder.Services
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false))
     );
 
+builder.Services.AddScoped<FactionService, FactionService>();
 builder.Services.AddScoped<AbilityService, AbilityService>();
 
 builder.Services.AddProblemDetails();
