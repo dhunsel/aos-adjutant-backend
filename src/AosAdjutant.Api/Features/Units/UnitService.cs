@@ -1,4 +1,5 @@
 using AosAdjutant.Api.Database;
+using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -95,5 +96,44 @@ public class UnitService(ApplicationDbContext context)
         await context.SaveChangesAsync();
 
         return Result.Success();
+    }
+
+    public async Task<Result<Ability>> CreateUnitAbility(int unitId, CreateAbilityDto abilityData)
+    {
+        var unit = await context.Units.FindAsync(unitId);
+
+        if (unit is null)
+            return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."));
+
+        var newAbilityResult = Ability.Create(
+            abilityData.Name,
+            abilityData.Reaction,
+            abilityData.Declaration,
+            abilityData.Effect,
+            abilityData.Phase,
+            abilityData.Restriction,
+            abilityData.Turn,
+            false
+        );
+
+        if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
+
+        var newAbility = newAbilityResult.GetValue;
+        unit.Abilities.Add(newAbility);
+        await context.SaveChangesAsync();
+
+        return Result<Ability>.Success(newAbility);
+    }
+
+    public async Task<Result<List<Ability>>> GetUnitAbilities(int unitId)
+    {
+        var unit = await context.Units
+            .AsNoTracking()
+            .Include(u => u.Abilities)
+            .FirstOrDefaultAsync(u => u.UnitId == unitId);
+
+        return unit is null
+            ? Result<List<Ability>>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."))
+            : Result<List<Ability>>.Success(unit.Abilities.ToList());
     }
 }

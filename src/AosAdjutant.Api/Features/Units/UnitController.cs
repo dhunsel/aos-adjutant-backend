@@ -10,14 +10,14 @@ public class UnitController(UnitService unitService) : ControllerBase
 {
     [HttpGet("{unitId}")]
     [EndpointSummary("Get a unit by ID")]
-    [ProducesResponseType<UnitResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<UnitResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UnitResponse>> GetUnit([FromRoute] int unitId)
+    public async Task<ActionResult<UnitResponseDto>> GetUnit([FromRoute] int unitId)
     {
         var unitResult = await unitService.GetUnit(unitId);
         return unitResult.Match(
             u => Ok(
-                new UnitResponse(
+                new UnitResponseDto(
                     u.UnitId,
                     u.Name,
                     u.Health,
@@ -35,15 +35,15 @@ public class UnitController(UnitService unitService) : ControllerBase
 
     [HttpPut("{unitId}")]
     [EndpointSummary("Update a unit")]
-    [ProducesResponseType<UnitResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<UnitResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UnitResponse>> UpdateUnit([FromRoute] int unitId, [FromBody] ChangeUnitDto unitData)
+    public async Task<ActionResult<UnitResponseDto>> UpdateUnit([FromRoute] int unitId, [FromBody] ChangeUnitDto unitData)
     {
         var unitResult = await unitService.UpdateUnit(unitId, unitData);
         return unitResult.Match(
             u => Ok(
-                new UnitResponse(
+                new UnitResponseDto(
                     u.UnitId,
                     u.Name,
                     u.Health,

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AosAdjutant.Api.Features.Units;
 
-public record UnitResponse(
+public record UnitResponseDto(
     int UnitId,
     string Name,
     int Health,

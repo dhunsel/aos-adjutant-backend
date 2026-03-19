@@ -11,10 +11,10 @@ public class FactionUnitController(UnitService unitService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a unit under a faction")]
-    [ProducesResponseType<UnitResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<UnitResponseDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UnitResponse>> CreateUnit(
+    public async Task<ActionResult<UnitResponseDto>> CreateUnit(
         [FromRoute] int factionId,
         [FromBody] CreateUnitDto unitData
     )
@@ -23,7 +23,7 @@ public class FactionUnitController(UnitService unitService) : ControllerBase
         return unitResult.Match(
             u => Created(
                 $"api/units/{u.UnitId}",
-                new UnitResponse(
+                new UnitResponseDto(
                     u.UnitId,
                     u.Name,
                     u.Health,
@@ -41,14 +41,14 @@ public class FactionUnitController(UnitService unitService) : ControllerBase
 
     [HttpGet]
     [EndpointSummary("Get all units for a faction")]
-    [ProducesResponseType<List<UnitResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<List<UnitResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<UnitResponse>>> GetUnits([FromRoute] int factionId)
+    public async Task<ActionResult<List<UnitResponseDto>>> GetUnits([FromRoute] int factionId)
     {
         var unitsResult = await unitService.GetFactionUnits(factionId);
         return unitsResult.Match(
             units => Ok(
-                units.Select(u => new UnitResponse(
+                units.Select(u => new UnitResponseDto(
                         u.UnitId,
                         u.Name,
                         u.Health,

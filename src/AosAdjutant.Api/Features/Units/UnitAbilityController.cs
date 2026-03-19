@@ -1,15 +1,13 @@
-using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Units;
 
 [Route("api/units/{unitId}/abilities")]
 [ApiController]
 [Tags("Units")]
-public class UnitAbilityController(ApplicationDbContext context, AbilityService abilityService) : ControllerBase
+public class UnitAbilityController(UnitService unitService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an ability for a unit")]
@@ -21,60 +19,11 @@ public class UnitAbilityController(ApplicationDbContext context, AbilityService 
         [FromBody] CreateAbilityDto abilityData
     )
     {
-        var unit = await context.Units.FindAsync(unitId);
-
-        if (unit is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Unit not found."));
-
-        var newAbilityResult = Ability.Create(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn,
-            false
-        );
-
-        if (!newAbilityResult.IsSuccess) return this.ApiProblem(newAbilityResult.GetError);
-
-        var newAbility = newAbilityResult.GetValue;
-        unit.Abilities.Add(newAbility);
-        await context.SaveChangesAsync();
-
-        return Created(
-            $"api/abilities/{newAbility.AbilityId}",
-            new AbilityResponseDto(
-                newAbility.AbilityId,
-                newAbility.Name,
-                newAbility.Reaction,
-                newAbility.Declaration,
-                newAbility.Effect,
-                newAbility.Phase,
-                newAbility.Restriction,
-                newAbility.Turn,
-                newAbility.Version
-            )
-        );
-    }
-
-    [HttpGet]
-    [EndpointSummary("Get all abilities for a unit")]
-    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities([FromRoute] int unitId)
-    {
-        var unit = await context.Units
-            .AsNoTracking()
-            .Include(u => u.Abilities)
-            .FirstOrDefaultAsync(u => u.UnitId == unitId);
-
-        if (unit is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Unit not found."));
-
-        return Ok(
-            unit.Abilities.Select(a => new AbilityResponseDto(
+        var abilityResult = await unitService.CreateUnitAbility(unitId, abilityData);
+        return abilityResult.Match(
+            a => Created(
+                $"api/abilities/{a.AbilityId}",
+                new AbilityResponseDto(
                     a.AbilityId,
                     a.Name,
                     a.Reaction,
@@ -85,7 +34,34 @@ public class UnitAbilityController(ApplicationDbContext context, AbilityService 
                     a.Turn,
                     a.Version
                 )
-            )
+            ),
+            this.ApiProblem
+        );
+    }
+
+    [HttpGet]
+    [EndpointSummary("Get all abilities for a unit")]
+    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities([FromRoute] int unitId)
+    {
+        var abilitiesResult = await unitService.GetUnitAbilities(unitId);
+        return abilitiesResult.Match(
+            abilities => Ok(
+                abilities.Select(a => new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    )
+                )
+            ),
+            this.ApiProblem
         );
     }
 }
