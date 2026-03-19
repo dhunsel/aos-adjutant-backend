@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Factions;
 
-public class FactionService(ApplicationDbContext context, AbilityService abilityService)
+public class FactionService(ApplicationDbContext context)
 {
     public async Task<Result<Faction>> CreateFaction(CreateFactionDto factionData)
     {
@@ -79,7 +79,16 @@ public class FactionService(ApplicationDbContext context, AbilityService ability
         if (faction is null)
             return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
 
-        var newAbilityResult = abilityService.CreateAbility(abilityData);
+        var newAbilityResult = Ability.Create(
+            abilityData.Name,
+            abilityData.Reaction,
+            abilityData.Declaration,
+            abilityData.Effect,
+            abilityData.Phase,
+            abilityData.Restriction,
+            abilityData.Turn,
+            false
+        );
 
         if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
 

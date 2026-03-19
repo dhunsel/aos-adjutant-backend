@@ -26,7 +26,16 @@ public class UnitAbilityController(ApplicationDbContext context, AbilityService 
         if (unit is null)
             return this.ApiProblem(new AppError(ErrorCode.NotFound, "Unit not found."));
 
-        var newAbilityResult = abilityService.CreateAbility(abilityData);
+        var newAbilityResult = Ability.Create(
+            abilityData.Name,
+            abilityData.Reaction,
+            abilityData.Declaration,
+            abilityData.Effect,
+            abilityData.Phase,
+            abilityData.Restriction,
+            abilityData.Turn,
+            false
+        );
 
         if (!newAbilityResult.IsSuccess) return this.ApiProblem(newAbilityResult.GetError);
 

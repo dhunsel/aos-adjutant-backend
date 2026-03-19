@@ -8,21 +8,20 @@ public class AbilityService(ApplicationDbContext context)
 {
     public async Task<Result<AbilityResponseDto>> CreateGenericAbility(CreateAbilityDto abilityData)
     {
-        var newAbility = new Ability
-        {
-            Name = abilityData.Name,
-            Reaction = abilityData.Reaction,
-            Declaration = abilityData.Declaration,
-            Effect = abilityData.Effect,
-            Phase = abilityData.Phase,
-            Restriction = abilityData.Restriction,
-            Turn = abilityData.Turn,
-            IsGeneric = true
-        };
+        var newAbilityResult = Ability.Create(
+            abilityData.Name,
+            abilityData.Reaction,
+            abilityData.Declaration,
+            abilityData.Effect,
+            abilityData.Phase,
+            abilityData.Restriction,
+            abilityData.Turn,
+            true
+        );
 
-        var validationResult = ValidateAbility(newAbility);
-        if (!validationResult.IsSuccess) return Result<AbilityResponseDto>.Failure(validationResult.GetError);
+        if (!newAbilityResult.IsSuccess) return Result<AbilityResponseDto>.Failure(newAbilityResult.GetError);
 
+        var newAbility = newAbilityResult.GetValue;
         context.Abilities.Add(newAbility);
         await context.SaveChangesAsync();
 
@@ -74,16 +73,17 @@ public class AbilityService(ApplicationDbContext context)
                 new AppError(ErrorCode.ConcurrencyError, "Ability was already modified in the background.")
             );
 
-        ability.Name = abilityData.Name;
-        ability.Reaction = abilityData.Reaction;
-        ability.Declaration = abilityData.Declaration;
-        ability.Effect = abilityData.Effect;
-        ability.Phase = abilityData.Phase;
-        ability.Restriction = abilityData.Restriction;
-        ability.Turn = abilityData.Turn;
+        var changeResult = ability.ChangeAbility(
+            abilityData.Name,
+            abilityData.Reaction,
+            abilityData.Declaration,
+            abilityData.Effect,
+            abilityData.Phase,
+            abilityData.Restriction,
+            abilityData.Turn
+        );
 
-        var validationResult = ValidateAbility(ability);
-        if (!validationResult.IsSuccess) return Result<AbilityResponseDto>.Failure(validationResult.GetError);
+        if (!changeResult.IsSuccess) return Result<AbilityResponseDto>.Failure(changeResult.GetError);
 
         await context.SaveChangesAsync();
 
@@ -111,46 +111,6 @@ public class AbilityService(ApplicationDbContext context)
 
         context.Abilities.Remove(ability);
         await context.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
-    public Result<Ability> CreateAbility(CreateAbilityDto abilityData)
-    {
-        var newAbility = new Ability
-        {
-            Name = abilityData.Name,
-            Reaction = abilityData.Reaction,
-            Declaration = abilityData.Declaration,
-            Effect = abilityData.Effect,
-            Phase = abilityData.Phase,
-            Restriction = abilityData.Restriction,
-            Turn = abilityData.Turn,
-            IsGeneric = false
-        };
-
-        var validationResult = ValidateAbility(newAbility);
-
-        return validationResult.IsSuccess
-            ? Result<Ability>.Success(newAbility)
-            : Result<Ability>.Failure(validationResult.GetError);
-    }
-
-    private Result ValidateAbility(Ability ability)
-    {
-        if (ability.Phase == TurnPhase.Passive && !(ability.Reaction is null && ability.Declaration is null &&
-                                                    ability.Restriction is null && ability.Turn is null))
-            return Result.Failure(
-                new AppError(
-                    ErrorCode.ValidationError,
-                    "A passive ability cannot have a reaction/declaration/restriction/turn."
-                )
-            );
-
-        if (ability.Phase != TurnPhase.Passive && ability.Declaration is null)
-            return Result.Failure(
-                new AppError(ErrorCode.ValidationError, "A non-passive ability must have a declaration.")
-            );
 
         return Result.Success();
     }
