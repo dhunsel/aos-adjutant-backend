@@ -1,14 +1,12 @@
-using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
 
 [Route("api/battle-formations")]
 [ApiController]
 [Tags("Battle Formations")]
-public class BattleFormationController(ApplicationDbContext context) : ControllerBase
+public class BattleFormationController(BattleFormationService battleFormationService) : ControllerBase
 {
     [HttpGet("{battleFormationId}")]
     [EndpointSummary("Get a battle formation by ID")]
@@ -16,20 +14,11 @@ public class BattleFormationController(ApplicationDbContext context) : Controlle
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BattleFormationResponseDto>> GetBattleFormation([FromRoute] int battleFormationId)
     {
-        var battleFormation = await context.BattleFormations
-            .AsNoTracking()
-            .FirstOrDefaultAsync(bf => bf.BattleFormationId == battleFormationId);
-
-        return battleFormation is null
-            ? this.ApiProblem(new AppError(ErrorCode.NotFound, "Battle formation not found."))
-            : Ok(
-                new BattleFormationResponseDto(
-                    battleFormation.BattleFormationId,
-                    battleFormation.Name,
-                    battleFormation.FactionId,
-                    battleFormation.Version
-                )
-            );
+        var battleFormationResult = await battleFormationService.GetBattleFormation(battleFormationId);
+        return battleFormationResult.Match(
+            bf => Ok(new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)),
+            this.ApiProblem
+        );
     }
 
     [HttpPut("{battleFormationId}")]
@@ -42,33 +31,11 @@ public class BattleFormationController(ApplicationDbContext context) : Controlle
         [FromBody] ChangeBattleFormationDto battleFormationData
     )
     {
-        var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
-
-        if (battleFormation is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Battle formation not found."));
-
-        if (battleFormation.Version != battleFormationData.Version)
-            return this.ApiProblem(
-                new AppError(ErrorCode.ConcurrencyError, "Battle formation was already modified in the background.")
-            );
-
-        var isDuplicate = await context.BattleFormations.AnyAsync(bf =>
-            bf.Name == battleFormationData.Name && bf.FactionId == battleFormation.FactionId &&
-            bf.BattleFormationId != battleFormationId
-        );
-        if (isDuplicate)
-            return this.ApiProblem(new AppError(ErrorCode.UniqueKeyError, "Battle formation already exists."));
-
-        battleFormation.Name = battleFormationData.Name;
-        await context.SaveChangesAsync();
-
-        return Ok(
-            new BattleFormationResponseDto(
-                battleFormation.BattleFormationId,
-                battleFormation.Name,
-                battleFormation.FactionId,
-                battleFormation.Version
-            )
+        var battleFormationResult =
+            await battleFormationService.UpdateBattleFormation(battleFormationId, battleFormationData);
+        return battleFormationResult.Match(
+            bf => Ok(new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)),
+            this.ApiProblem
         );
     }
 
@@ -78,14 +45,7 @@ public class BattleFormationController(ApplicationDbContext context) : Controlle
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteBattleFormation([FromRoute] int battleFormationId)
     {
-        var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
-
-        if (battleFormation is null)
-            return this.ApiProblem(new AppError(ErrorCode.NotFound, "Battle formation not found."));
-
-        context.BattleFormations.Remove(battleFormation);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        var deleteResult = await battleFormationService.DeleteBattleFormation(battleFormationId);
+        return deleteResult.Match(NoContent, this.ApiProblem);
     }
 }
