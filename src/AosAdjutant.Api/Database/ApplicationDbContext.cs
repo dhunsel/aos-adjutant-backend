@@ -1,7 +1,7 @@
 using AosAdjutant.Api.Database.Configuration;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.AttackProfiles;
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+using AosAdjutant.Api.Features.WeaponEffects;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.BattleFormations;
 using AosAdjutant.Api.Features.Units;

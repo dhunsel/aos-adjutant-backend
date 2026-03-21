@@ -1,4 +1,4 @@
-namespace AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+namespace AosAdjutant.Api.Features.WeaponEffects;
 
 public class WeaponEffect
 {

@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+using AosAdjutant.Api.Features.WeaponEffects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

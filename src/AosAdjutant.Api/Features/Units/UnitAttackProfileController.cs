@@ -1,5 +1,5 @@
 using AosAdjutant.Api.Features.AttackProfiles;
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+using AosAdjutant.Api.Features.WeaponEffects;
 using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 

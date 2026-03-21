@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+using AosAdjutant.Api.Features.WeaponEffects;
 using AosAdjutant.Api.Shared;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;

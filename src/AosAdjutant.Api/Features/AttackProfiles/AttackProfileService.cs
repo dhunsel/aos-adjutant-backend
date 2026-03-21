@@ -1,5 +1,4 @@
 using AosAdjutant.Api.Database;
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
 using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 

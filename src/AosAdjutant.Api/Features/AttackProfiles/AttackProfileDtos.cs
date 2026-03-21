@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using AosAdjutant.Api.Features.AttackProfiles.WeaponEffects;
+using AosAdjutant.Api.Features.WeaponEffects;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
 
