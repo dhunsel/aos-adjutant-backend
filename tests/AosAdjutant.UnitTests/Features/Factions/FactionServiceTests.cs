@@ -4,7 +4,7 @@ using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace AosAdjutant.Tests.Features.Factions;
+namespace AosAdjutant.UnitTests.Features.Factions;
 
 public class FactionServiceTests
 {
