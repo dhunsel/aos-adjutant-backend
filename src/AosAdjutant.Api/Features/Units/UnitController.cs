@@ -38,7 +38,10 @@ public class UnitController(UnitService unitService) : ControllerBase
     [ProducesResponseType<UnitResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UnitResponseDto>> UpdateUnit([FromRoute] int unitId, [FromBody] ChangeUnitDto unitData)
+    public async Task<ActionResult<UnitResponseDto>> UpdateUnit(
+        [FromRoute] int unitId,
+        [FromBody] ChangeUnitDto unitData
+    )
     {
         var unitResult = await unitService.UpdateUnit(unitId, unitData);
         return unitResult.Match(

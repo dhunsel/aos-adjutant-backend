@@ -2,4 +2,8 @@
     <Folder Name="/src/">
         <Project Path="src/AosAdjutant.Api/AosAdjutant.Api.csproj"/>
     </Folder>
+    <Folder Name="/tests/">
+        <Project Path="tests/AosAdjutant.UnitTests/AosAdjutant.UnitTests.csproj"/>
+        <Project Path="tests/AosAdjutant.IntegrationTests/AosAdjutant.IntegrationTests.csproj"/>
+    </Folder>
 </Solution>
