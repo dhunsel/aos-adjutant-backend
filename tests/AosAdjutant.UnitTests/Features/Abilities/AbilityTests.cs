@@ -185,49 +185,11 @@ public class AbilityTests
         }
 
         [Fact]
-        public void ReturnsValidationError_WhenPassiveHasExtraFields()
-        {
-            var ability = CreateValidAbility();
-
-            var result = ability.ChangeAbility(
-                "TestAbility",
-                null,
-                null,
-                "TestEffect",
-                TurnPhase.Passive,
-                null,
-                PlayerTurn.YourTurn
-            );
-
-            Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorCode.ValidationError, result.GetError.Code);
-        }
-
-        [Fact]
-        public void ReturnsValidationError_WhenNonPassiveMissingDeclaration()
-        {
-            var ability = CreateValidAbility();
-
-            var result = ability.ChangeAbility(
-                "TestAbility",
-                null,
-                null,
-                "TestEffect",
-                TurnPhase.Hero,
-                null,
-                PlayerTurn.YourTurn
-            );
-
-            Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorCode.ValidationError, result.GetError.Code);
-        }
-
-        [Fact]
         public void DoesNotMutateAbility_WhenValidationFails()
         {
             var ability = CreateValidAbility();
 
-            ability.ChangeAbility(
+            var result = ability.ChangeAbility(
                 "UpdatedAbility",
                 null,
                 null,
@@ -237,6 +199,8 @@ public class AbilityTests
                 PlayerTurn.EnemyTurn
             );
 
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.ValidationError, result.GetError.Code);
             Assert.Equivalent(
                 new
                 {

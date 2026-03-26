@@ -87,13 +87,7 @@ public class AbilityServiceTests
             var result = await service.GetAbility(abilityId);
 
             Assert.True(result.IsSuccess);
-            Assert.Equivalent(
-                new
-                {
-                    ability.Name, ability.Declaration, ability.Effect, ability.Phase,
-                },
-                result.GetValue
-            );
+            Assert.Equivalent(ability, result.GetValue);
         }
 
         [Fact]
