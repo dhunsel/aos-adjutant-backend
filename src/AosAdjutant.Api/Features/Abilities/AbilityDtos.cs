@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace AosAdjutant.Api.Features.Abilities;
 
 public record AbilityResponseDto(
@@ -13,20 +15,20 @@ public record AbilityResponseDto(
 );
 
 public record CreateAbilityDto(
-    string Name,
-    string? Reaction,
-    string? Declaration,
-    string Effect,
+    [StringLength(100, MinimumLength = 1)] string Name,
+    [StringLength(100, MinimumLength = 1)] string? Reaction,
+    [StringLength(100, MinimumLength = 1)] string? Declaration,
+    [StringLength(100, MinimumLength = 1)] string Effect,
     TurnPhase Phase,
     ActivationRestriction? Restriction,
     PlayerTurn? Turn
 );
 
 public record ChangeAbilityDto(
-    string Name,
-    string? Reaction,
-    string? Declaration,
-    string Effect,
+    [StringLength(100, MinimumLength = 1)] string Name,
+    [StringLength(100, MinimumLength = 1)] string? Reaction,
+    [StringLength(100, MinimumLength = 1)] string? Declaration,
+    [StringLength(100, MinimumLength = 1)] string Effect,
     TurnPhase Phase,
     ActivationRestriction? Restriction,
     PlayerTurn? Turn,
