@@ -70,11 +70,7 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
     public async Task GetAbilities_Returns200()
     {
         var unit = await CreateUnitAsync();
-        await Client.PostAsJsonAsync(
-            $"/api/units/{unit.UnitId}/abilities",
-            ValidAbilityDto(),
-            JsonOptions
-        );
+        await Client.PostAsJsonAsync($"/api/units/{unit.UnitId}/abilities", ValidAbilityDto(), JsonOptions);
 
         var response = await Client.GetAsync($"/api/units/{unit.UnitId}/abilities");
 

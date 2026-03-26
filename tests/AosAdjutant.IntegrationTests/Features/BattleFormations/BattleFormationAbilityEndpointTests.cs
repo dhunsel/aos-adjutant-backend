@@ -49,16 +49,19 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
         var body = await response.Content.ReadFromJsonAsync<AbilityResponseDto>(JsonOptions);
         Assert.NotNull(body);
         Assert.True(body.AbilityId > 0);
-        Assert.Equivalent(new
-        {
-            createAbilityDto.Name,
-            createAbilityDto.Reaction,
-            createAbilityDto.Declaration,
-            createAbilityDto.Effect,
-            createAbilityDto.Phase,
-            createAbilityDto.Restriction,
-            createAbilityDto.Turn
-        }, body);
+        Assert.Equivalent(
+            new
+            {
+                createAbilityDto.Name,
+                createAbilityDto.Reaction,
+                createAbilityDto.Declaration,
+                createAbilityDto.Effect,
+                createAbilityDto.Phase,
+                createAbilityDto.Restriction,
+                createAbilityDto.Turn
+            },
+            body
+        );
     }
 
     // --- GET /api/battle-formations/{id}/abilities ---
