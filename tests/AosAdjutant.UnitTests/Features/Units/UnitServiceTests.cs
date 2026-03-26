@@ -155,7 +155,7 @@ public class UnitServiceTests
             var result = await service.GetUnit(unitId);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("TestUnit", result.GetValue.Name);
+            Assert.Equivalent(unit, result.GetValue);
         }
 
         [Fact]

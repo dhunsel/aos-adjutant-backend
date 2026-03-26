@@ -235,18 +235,17 @@ public class AttackProfileServiceTests
         public async Task ReturnsAttackProfile_WhenFound()
         {
             await using var context = CreateContext();
-            context.AttackProfiles.Add(
-                new AttackProfile
-                {
-                    Name = "TestProfile",
-                    IsRanged = false,
-                    Attacks = "2",
-                    ToHit = 3,
-                    ToWound = 3,
-                    Damage = "1",
-                    UnitId = 1
-                }
-            );
+            var attackProfile = new AttackProfile
+            {
+                Name = "TestProfile",
+                IsRanged = false,
+                Attacks = "2",
+                ToHit = 3,
+                ToWound = 3,
+                Damage = "1",
+                UnitId = 1
+            };
+            context.AttackProfiles.Add(attackProfile);
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
             var service = new AttackProfileService(context);
@@ -254,7 +253,7 @@ public class AttackProfileServiceTests
             var result = await service.GetAttackProfile(attackProfileId);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("TestProfile", result.GetValue.Name);
+            Assert.Equivalent(attackProfile, result.GetValue);
         }
 
         [Fact]
