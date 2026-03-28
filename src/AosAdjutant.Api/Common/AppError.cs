@@ -1,3 +1,4 @@
+#pragma warning disable MA0048
 namespace AosAdjutant.Api.Common;
 
 public enum ErrorCode
@@ -5,7 +6,7 @@ public enum ErrorCode
     NotFound,
     ValidationError,
     ConcurrencyError,
-    UniqueKeyError
+    UniqueKeyError,
 }
 
 public sealed class AppError(ErrorCode code, string message)

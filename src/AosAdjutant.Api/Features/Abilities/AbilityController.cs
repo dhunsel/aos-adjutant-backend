@@ -40,7 +40,9 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
     [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
     public Task<ActionResult<List<AbilityResponseDto>>> GetAbilities()
     {
+#pragma warning disable MA0025
         throw new NotImplementedException();
+#pragma warning restore MA0025
     }
 
     [HttpGet("{abilityId}")]

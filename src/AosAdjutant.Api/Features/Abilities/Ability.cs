@@ -1,3 +1,4 @@
+#pragma warning disable MA0048
 using System.ComponentModel.DataAnnotations;
 using AosAdjutant.Api.Common;
 
@@ -13,7 +14,7 @@ public enum TurnPhase
     [Display(Name = "Charge Phase")] Charge,
     [Display(Name = "Combat Phase")] Combat,
     [Display(Name = "End Phase")] End,
-    [Display(Name = "Passive")] Passive
+    [Display(Name = "Passive")] Passive,
 }
 
 public enum ActivationRestriction
