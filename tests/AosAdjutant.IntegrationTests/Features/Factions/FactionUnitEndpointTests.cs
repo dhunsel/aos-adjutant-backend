@@ -10,11 +10,18 @@ public class FactionUnitEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
 {
     private async Task<FactionResponseDto> CreateFactionAsync()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
-    private static CreateUnitDto ValidUnitDto() => new("TestUnit", 10, "5", 4, 2, null);
+    private static CreateUnitDto ValidUnitDto() => new()
+    {
+        Name = "TestUnit",
+        Health = 10,
+        Move = "5",
+        Save = 4,
+        Control = 2
+    };
 
     // --- POST /api/factions/{factionId}/units ---
 

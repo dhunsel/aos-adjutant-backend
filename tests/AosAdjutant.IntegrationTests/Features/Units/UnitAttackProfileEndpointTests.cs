@@ -11,27 +11,36 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
 {
     private async Task<UnitResponseDto> CreateUnitAsync()
     {
-        var factionResponse = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var factionResponse = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
-            new CreateUnitDto("TestUnit", 10, "5", 4, 2, null)
+            new CreateUnitDto
+            {
+                Name = "TestUnit",
+                Health = 10,
+                Move = "5",
+                Save = 4,
+                Control = 2
+            }
         );
         return (await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAttackProfileDto ValidAttackProfileDto() => new(
-        "TestAttackProfile",
-        false,
-        null,
-        "2",
-        3,
-        3,
-        null,
-        "1",
-        []
-    );
+    private static CreateAttackProfileDto ValidAttackProfileDto() => new()
+    {
+        Name = "TestAttackProfile",
+        IsRanged = false,
+        Attacks = "2",
+        ToHit = 3,
+        ToWound = 3,
+        Damage = "1",
+        WeaponEffects = []
+    };
 
     // --- POST /api/units/{id}/attack-profiles ---
 

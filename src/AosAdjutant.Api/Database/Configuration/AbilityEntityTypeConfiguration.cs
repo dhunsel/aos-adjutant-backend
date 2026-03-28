@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public class AbilityEntityTypeConfiguration : IEntityTypeConfiguration<Ability>
+public sealed class AbilityEntityTypeConfiguration : IEntityTypeConfiguration<Ability>
 {
     public void Configure(EntityTypeBuilder<Ability> builder)
     {

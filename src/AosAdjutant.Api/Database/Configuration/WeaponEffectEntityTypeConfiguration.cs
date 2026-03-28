@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public class WeaponEffectEntityTypeConfiguration : IEntityTypeConfiguration<WeaponEffect>
+public sealed class WeaponEffectEntityTypeConfiguration : IEntityTypeConfiguration<WeaponEffect>
 {
     public void Configure(EntityTypeBuilder<WeaponEffect> builder)
     {

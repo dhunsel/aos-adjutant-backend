@@ -1,11 +1,12 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Features.Factions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
 
-public class BattleFormationService(ApplicationDbContext context)
+public sealed class BattleFormationService(ApplicationDbContext context)
 {
     public async Task<Result<BattleFormation>> CreateBattleFormation(
         int factionId,
@@ -14,15 +15,13 @@ public class BattleFormationService(ApplicationDbContext context)
     {
         var factionExists = await context.Factions.AnyAsync(f => f.FactionId == factionId);
         if (!factionExists)
-            return Result<BattleFormation>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<BattleFormation>.Failure(FactionErrors.NotFound);
 
         var isDuplicate = await context.BattleFormations.AnyAsync(bf =>
             bf.Name == battleFormationData.Name && bf.FactionId == factionId
         );
         if (isDuplicate)
-            return Result<BattleFormation>.Failure(
-                new AppError(ErrorCode.UniqueKeyError, "Battle formation already exists.")
-            );
+            return Result<BattleFormation>.Failure(BattleFormationErrors.AlreadyExists);
 
         var newBattleFormation = new BattleFormation { Name = battleFormationData.Name, FactionId = factionId, };
 
@@ -38,7 +37,7 @@ public class BattleFormationService(ApplicationDbContext context)
     {
         var factionExists = await context.Factions.AnyAsync(f => f.FactionId == factionId);
         if (!factionExists)
-            return Result<List<BattleFormation>>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<List<BattleFormation>>.Failure(FactionErrors.NotFound);
 
         var battleFormations = await context.BattleFormations
             .AsNoTracking()
@@ -54,7 +53,7 @@ public class BattleFormationService(ApplicationDbContext context)
             .FirstOrDefaultAsync(bf => bf.BattleFormationId == battleFormationId);
 
         return battleFormation is null
-            ? Result<BattleFormation>.Failure(new AppError(ErrorCode.NotFound, "Battle formation not found."))
+            ? Result<BattleFormation>.Failure(BattleFormationErrors.NotFound)
             : Result<BattleFormation>.Success(battleFormation);
     }
 
@@ -66,21 +65,17 @@ public class BattleFormationService(ApplicationDbContext context)
         var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
 
         if (battleFormation is null)
-            return Result<BattleFormation>.Failure(new AppError(ErrorCode.NotFound, "Battle formation not found."));
+            return Result<BattleFormation>.Failure(BattleFormationErrors.NotFound);
 
         if (battleFormation.Version != battleFormationData.Version)
-            return Result<BattleFormation>.Failure(
-                new AppError(ErrorCode.ConcurrencyError, "Battle formation was already modified in the background.")
-            );
+            return Result<BattleFormation>.Failure(BattleFormationErrors.Concurrency);
 
         var isDuplicate = await context.BattleFormations.AnyAsync(bf =>
             bf.Name == battleFormationData.Name && bf.FactionId == battleFormation.FactionId &&
             bf.BattleFormationId != battleFormationId
         );
         if (isDuplicate)
-            return Result<BattleFormation>.Failure(
-                new AppError(ErrorCode.UniqueKeyError, "Battle formation already exists.")
-            );
+            return Result<BattleFormation>.Failure(BattleFormationErrors.AlreadyExists);
 
         battleFormation.Name = battleFormationData.Name;
         await context.SaveChangesAsync();
@@ -93,7 +88,7 @@ public class BattleFormationService(ApplicationDbContext context)
         var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
 
         if (battleFormation is null)
-            return Result.Failure(new AppError(ErrorCode.NotFound, "Battle formation not found."));
+            return Result.Failure(BattleFormationErrors.NotFound);
 
         context.BattleFormations.Remove(battleFormation);
         await context.SaveChangesAsync();
@@ -106,17 +101,20 @@ public class BattleFormationService(ApplicationDbContext context)
         var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
 
         if (battleFormation is null)
-            return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Battle formation not found."));
+            return Result<Ability>.Failure(BattleFormationErrors.NotFound);
 
         var newAbilityResult = Ability.Create(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn,
-            false
+            new AbilityData
+            {
+                Name = abilityData.Name,
+                Reaction = abilityData.Reaction,
+                Declaration = abilityData.Declaration,
+                Effect = abilityData.Effect,
+                Phase = abilityData.Phase,
+                Restriction = abilityData.Restriction,
+                Turn = abilityData.Turn,
+                IsGeneric = false
+            }
         );
 
         if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
@@ -136,7 +134,7 @@ public class BattleFormationService(ApplicationDbContext context)
             .FirstOrDefaultAsync(bf => bf.BattleFormationId == battleFormationId);
 
         return battleFormation is null
-            ? Result<List<Ability>>.Failure(new AppError(ErrorCode.NotFound, "Battle formation not found."))
+            ? Result<List<Ability>>.Failure(BattleFormationErrors.NotFound)
             : Result<List<Ability>>.Success(battleFormation.Abilities.ToList());
     }
 }

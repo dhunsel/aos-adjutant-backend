@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 [Route("api/battle-formations/{battleFormationId}/abilities")]
 [ApiController]
 [Tags("Battle Formations")]
-public class BattleFormationAbilityController(BattleFormationService battleFormationService) : ControllerBase
+public sealed class BattleFormationAbilityController(BattleFormationService battleFormationService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an ability for a battle formation")]
@@ -21,8 +21,10 @@ public class BattleFormationAbilityController(BattleFormationService battleForma
     {
         var abilityResult = await battleFormationService.CreateBattleFormationAbility(battleFormationId, abilityData);
         return abilityResult.Match(
-            a => Created(
-                $"api/abilities/{a.AbilityId}",
+            a => CreatedAtAction(
+                nameof(AbilityController.GetAbility),
+                "Ability",
+                new { abilityId = a.AbilityId },
                 new AbilityResponseDto(
                     a.AbilityId,
                     a.Name,

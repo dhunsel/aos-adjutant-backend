@@ -10,12 +10,15 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
 {
     private async Task<BattleFormationResponseDto> CreateBattleFormationAsync()
     {
-        var factionResponse = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var factionResponse = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/battle-formations",
-            new CreateBattleFormationDto("TestBattleFormation")
+            new CreateBattleFormationDto { Name = "TestBattleFormation" }
         );
         return (await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions))!;
     }
@@ -44,7 +47,7 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
 
         var response = await Client.PutAsJsonAsync(
             $"/api/battle-formations/{created.BattleFormationId}",
-            new ChangeBattleFormationDto("UpdatedBattleFormation", created.Version)
+            new ChangeBattleFormationDto { Name = "UpdatedBattleFormation", Version = created.Version }
         );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -60,7 +63,7 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
 
         var response = await Client.PutAsJsonAsync(
             $"/api/battle-formations/{created.BattleFormationId}",
-            new ChangeBattleFormationDto("", created.Version)
+            new ChangeBattleFormationDto { Name = "", Version = created.Version }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

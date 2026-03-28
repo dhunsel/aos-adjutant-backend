@@ -1,22 +1,25 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
-public class AbilityService(ApplicationDbContext context)
+public sealed class AbilityService(ApplicationDbContext context)
 {
     public async Task<Result<Ability>> CreateGenericAbility(CreateAbilityDto abilityData)
     {
         var newAbilityResult = Ability.Create(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn,
-            true
+            new AbilityData
+            {
+                Name = abilityData.Name,
+                Reaction = abilityData.Reaction,
+                Declaration = abilityData.Declaration,
+                Effect = abilityData.Effect,
+                Phase = abilityData.Phase,
+                Restriction = abilityData.Restriction,
+                Turn = abilityData.Turn,
+                IsGeneric = true
+            }
         );
 
         if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
@@ -32,9 +35,7 @@ public class AbilityService(ApplicationDbContext context)
     {
         var ability = await context.Abilities.AsNoTracking().FirstOrDefaultAsync(a => a.AbilityId == abilityId);
 
-        return ability is null
-            ? Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Ability not found."))
-            : Result<Ability>.Success(ability);
+        return ability is null ? Result<Ability>.Failure(AbilityErrors.NotFound) : Result<Ability>.Success(ability);
     }
 
     public async Task<Result<Ability>> UpdateAbility(int abilityId, ChangeAbilityDto abilityData)
@@ -42,21 +43,23 @@ public class AbilityService(ApplicationDbContext context)
         var ability = await context.Abilities.FindAsync(abilityId);
 
         if (ability is null)
-            return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Ability not found."));
+            return Result<Ability>.Failure(AbilityErrors.NotFound);
 
         if (ability.Version != abilityData.Version)
-            return Result<Ability>.Failure(
-                new AppError(ErrorCode.ConcurrencyError, "Ability was already modified in the background.")
-            );
+            return Result<Ability>.Failure(AbilityErrors.Concurrency);
 
         var changeResult = ability.ChangeAbility(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn
+            new AbilityData
+            {
+                Name = abilityData.Name,
+                Reaction = abilityData.Reaction,
+                Declaration = abilityData.Declaration,
+                Effect = abilityData.Effect,
+                Phase = abilityData.Phase,
+                Restriction = abilityData.Restriction,
+                Turn = abilityData.Turn,
+                IsGeneric = ability.IsGeneric
+            }
         );
 
         if (!changeResult.IsSuccess) return Result<Ability>.Failure(changeResult.GetError);
@@ -71,7 +74,7 @@ public class AbilityService(ApplicationDbContext context)
         var ability = await context.Abilities.FindAsync(abilityId);
 
         if (ability is null)
-            return Result.Failure(new AppError(ErrorCode.NotFound, "Ability not found."));
+            return Result.Failure(AbilityErrors.NotFound);
 
         context.Abilities.Remove(ability);
         await context.SaveChangesAsync();

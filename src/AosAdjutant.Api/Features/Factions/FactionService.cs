@@ -1,11 +1,11 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Factions;
 
-public class FactionService(ApplicationDbContext context)
+public sealed class FactionService(ApplicationDbContext context)
 {
     public async Task<Result<Faction>> CreateFaction(CreateFactionDto factionData)
     {
@@ -13,7 +13,7 @@ public class FactionService(ApplicationDbContext context)
         // throw an exception in that case. Ignore for now (won't occur in practice) but revisit in the future
         var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name);
         if (isDuplicate)
-            return Result<Faction>.Failure(new AppError(ErrorCode.UniqueKeyError, "Faction already exists."));
+            return Result<Faction>.Failure(FactionErrors.AlreadyExists);
 
         var newFaction = new Faction { Name = factionData.Name };
 
@@ -32,9 +32,7 @@ public class FactionService(ApplicationDbContext context)
     {
         var faction = await context.Factions.AsNoTracking().FirstOrDefaultAsync(f => f.FactionId == factionId);
 
-        return faction is null
-            ? Result<Faction>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."))
-            : Result<Faction>.Success(faction);
+        return faction is null ? Result<Faction>.Failure(FactionErrors.NotFound) : Result<Faction>.Success(faction);
     }
 
     public async Task<Result<Faction>> ChangeFaction(int factionId, ChangeFactionDto factionData)
@@ -42,16 +40,14 @@ public class FactionService(ApplicationDbContext context)
         var faction = await context.Factions.FindAsync(factionId);
 
         if (faction is null)
-            return Result<Faction>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<Faction>.Failure(FactionErrors.NotFound);
 
         if (faction.Version != factionData.Version)
-            return Result<Faction>.Failure(
-                new AppError(ErrorCode.ConcurrencyError, "Faction was already modified in the background.")
-            );
+            return Result<Faction>.Failure(FactionErrors.Concurrency);
 
         var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name && f.FactionId != factionId);
         if (isDuplicate)
-            return Result<Faction>.Failure(new AppError(ErrorCode.UniqueKeyError, "Faction already exists."));
+            return Result<Faction>.Failure(FactionErrors.AlreadyExists);
 
         faction.Name = factionData.Name;
         await context.SaveChangesAsync();
@@ -64,7 +60,7 @@ public class FactionService(ApplicationDbContext context)
         var faction = await context.Factions.FindAsync(factionId);
 
         if (faction is null)
-            return Result.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result.Failure(FactionErrors.NotFound);
 
         context.Factions.Remove(faction);
         await context.SaveChangesAsync();
@@ -77,17 +73,20 @@ public class FactionService(ApplicationDbContext context)
         var faction = await context.Factions.FindAsync(factionId);
 
         if (faction is null)
-            return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<Ability>.Failure(FactionErrors.NotFound);
 
         var newAbilityResult = Ability.Create(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn,
-            false
+            new AbilityData
+            {
+                Name = abilityData.Name,
+                Reaction = abilityData.Reaction,
+                Declaration = abilityData.Declaration,
+                Effect = abilityData.Effect,
+                Phase = abilityData.Phase,
+                Restriction = abilityData.Restriction,
+                Turn = abilityData.Turn,
+                IsGeneric = false
+            }
         );
 
         if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
@@ -107,7 +106,7 @@ public class FactionService(ApplicationDbContext context)
             .FirstOrDefaultAsync(f => f.FactionId == factionId);
 
         return faction is null
-            ? Result<List<Ability>>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."))
+            ? Result<List<Ability>>.Failure(FactionErrors.NotFound)
             : Result<List<Ability>>.Success(faction.Abilities.ToList());
     }
 }

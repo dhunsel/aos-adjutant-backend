@@ -32,10 +32,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration["AosAdjutant:DbContextConnectionString"])
 );
 
-//builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-//    opt.UseNpgsql(builder.Configuration.GetConnectionString("aosadjutant"))
-//);
-
 var app = builder.Build();
 
 app.UseHttpLogging();
@@ -50,4 +46,4 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public class UnitEntityTypeConfiguration : IEntityTypeConfiguration<Unit>
+public sealed class UnitEntityTypeConfiguration : IEntityTypeConfiguration<Unit>
 {
     public void Configure(EntityTypeBuilder<Unit> builder)
     {

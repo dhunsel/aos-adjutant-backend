@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.WeaponEffects;
 [Route("api/weapon-effects")]
 [ApiController]
 [Tags("Weapon Effects")]
-public class WeaponEffectController(ApplicationDbContext context) : ControllerBase
+public sealed class WeaponEffectController(ApplicationDbContext context) : ControllerBase
 {
     [HttpGet]
     [EndpointSummary("Get all weapon effects")]

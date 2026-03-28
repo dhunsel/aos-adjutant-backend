@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Factions;
@@ -6,7 +6,7 @@ namespace AosAdjutant.Api.Features.Factions;
 [Route("api/factions")]
 [ApiController]
 [Tags("Factions")]
-public class FactionController(FactionService factionService) : ControllerBase
+public sealed class FactionController(FactionService factionService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a faction")]
@@ -16,7 +16,11 @@ public class FactionController(FactionService factionService) : ControllerBase
     {
         var factionResult = await factionService.CreateFaction(factionData);
         return factionResult.Match(
-            f => Created($"api/factions/{f.FactionId}", new FactionResponseDto(f.FactionId, f.Name, f.Version)),
+            f => CreatedAtAction(
+                nameof(GetFaction),
+                new { factionId = f.FactionId },
+                new FactionResponseDto(f.FactionId, f.Name, f.Version)
+            ),
             this.ApiProblem
         );
     }
@@ -63,7 +67,4 @@ public class FactionController(FactionService factionService) : ControllerBase
         var deleteResult = await factionService.DeleteFaction(factionId);
         return deleteResult.Match(NoContent, this.ApiProblem);
     }
-
-    [HttpGet("/throw")]
-    public ActionResult Throw() => throw new Exception("Exception");
 }

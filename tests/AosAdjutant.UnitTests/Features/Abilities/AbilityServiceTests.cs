@@ -1,6 +1,6 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.UnitTests.Features.Abilities;
@@ -17,15 +17,14 @@ public class AbilityServiceTests
         {
             await using var context = CreateContext();
             var service = new AbilityService(context);
-            var createAbilityDto = new CreateAbilityDto(
-                "TestAbility",
-                null,
-                "TestDeclaration",
-                "TestEffect",
-                TurnPhase.Hero,
-                null,
-                PlayerTurn.YourTurn
-            );
+            var createAbilityDto = new CreateAbilityDto
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Turn = PlayerTurn.YourTurn
+            };
 
             var result = await service.CreateGenericAbility(createAbilityDto);
 
@@ -53,15 +52,13 @@ public class AbilityServiceTests
             var service = new AbilityService(context);
 
             var result = await service.CreateGenericAbility(
-                new CreateAbilityDto(
-                    "TestAbility",
-                    null,
-                    "TestDeclaration",
-                    "TestEffect",
-                    TurnPhase.Passive,
-                    null,
-                    null
-                )
+                new CreateAbilityDto
+                {
+                    Name = "TestAbility",
+                    Declaration = "TestDeclaration",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Passive
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -122,16 +119,15 @@ public class AbilityServiceTests
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
             var service = new AbilityService(context);
-            var changeAbilityDto = new ChangeAbilityDto(
-                "UpdatedAbility",
-                null,
-                "UpdatedDeclaration",
-                "UpdatedEffect",
-                TurnPhase.Combat,
-                null,
-                PlayerTurn.EnemyTurn,
-                0
-            );
+            var changeAbilityDto = new ChangeAbilityDto
+            {
+                Name = "UpdatedAbility",
+                Declaration = "UpdatedDeclaration",
+                Effect = "UpdatedEffect",
+                Phase = TurnPhase.Combat,
+                Turn = PlayerTurn.EnemyTurn,
+                Version = 0
+            };
 
             var result = await service.UpdateAbility(abilityId, changeAbilityDto);
 
@@ -159,16 +155,15 @@ public class AbilityServiceTests
 
             var result = await service.UpdateAbility(
                 999,
-                new ChangeAbilityDto(
-                    "UpdatedAbility",
-                    null,
-                    "UpdatedDeclaration",
-                    "UpdatedEffect",
-                    TurnPhase.Combat,
-                    null,
-                    PlayerTurn.EnemyTurn,
-                    0
-                )
+                new ChangeAbilityDto
+                {
+                    Name = "UpdatedAbility",
+                    Declaration = "UpdatedDeclaration",
+                    Effect = "UpdatedEffect",
+                    Phase = TurnPhase.Combat,
+                    Turn = PlayerTurn.EnemyTurn,
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -195,16 +190,15 @@ public class AbilityServiceTests
 
             var result = await service.UpdateAbility(
                 abilityId,
-                new ChangeAbilityDto(
-                    "UpdatedAbility",
-                    null,
-                    "UpdatedDeclaration",
-                    "UpdatedEffect",
-                    TurnPhase.Combat,
-                    null,
-                    PlayerTurn.EnemyTurn,
-                    3
-                )
+                new ChangeAbilityDto
+                {
+                    Name = "UpdatedAbility",
+                    Declaration = "UpdatedDeclaration",
+                    Effect = "UpdatedEffect",
+                    Phase = TurnPhase.Combat,
+                    Turn = PlayerTurn.EnemyTurn,
+                    Version = 3
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -231,16 +225,14 @@ public class AbilityServiceTests
 
             var result = await service.UpdateAbility(
                 abilityId,
-                new ChangeAbilityDto(
-                    "TestAbility",
-                    null,
-                    null,
-                    "TestEffect",
-                    TurnPhase.Passive,
-                    null,
-                    PlayerTurn.YourTurn,
-                    0
-                )
+                new ChangeAbilityDto
+                {
+                    Name = "TestAbility",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Passive,
+                    Turn = PlayerTurn.YourTurn,
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);

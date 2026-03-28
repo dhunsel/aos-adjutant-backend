@@ -1,4 +1,5 @@
-namespace AosAdjutant.Api.Shared;
+#pragma warning disable CA1000 // Static members on generic types are intentional here for factory method ergonomics
+namespace AosAdjutant.Api.Common;
 
 public class Result
 {
@@ -22,9 +23,9 @@ public class Result
     }
 }
 
-public class Result<T> : Result
+public sealed class Result<T> : Result
 {
-    protected T? Value { get; }
+    private T? Value { get; }
 
     public T GetValue => IsSuccess ? Value! : throw new InvalidOperationException();
 
@@ -38,7 +39,7 @@ public class Result<T> : Result
     }
 
     public static Result<T> Success(T value) => new(value);
-    public new static Result<T> Failure(AppError error) => new(error);
+    public static new Result<T> Failure(AppError error) => new(error);
 
     public TOut Match<TOut>(Func<T, TOut> onSuccess, Func<AppError, TOut> onFailure)
     {

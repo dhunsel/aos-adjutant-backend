@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.Units;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Factions;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.Factions;
 [Route("api/factions/{factionId}/units")]
 [ApiController]
 [Tags("Units")]
-public class FactionUnitController(UnitService unitService) : ControllerBase
+public sealed class FactionUnitController(UnitService unitService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a unit under a faction")]
@@ -21,8 +21,10 @@ public class FactionUnitController(UnitService unitService) : ControllerBase
     {
         var unitResult = await unitService.CreateUnit(factionId, unitData);
         return unitResult.Match(
-            u => Created(
-                $"api/units/{u.UnitId}",
+            u => CreatedAtAction(
+                nameof(UnitController.GetUnit),
+                "Unit",
+                new { unitId = u.UnitId },
                 new UnitResponseDto(
                     u.UnitId,
                     u.Name,

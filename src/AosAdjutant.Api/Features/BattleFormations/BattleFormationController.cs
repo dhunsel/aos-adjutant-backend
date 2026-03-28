@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
@@ -6,7 +6,7 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 [Route("api/battle-formations")]
 [ApiController]
 [Tags("Battle Formations")]
-public class BattleFormationController(BattleFormationService battleFormationService) : ControllerBase
+public sealed class BattleFormationController(BattleFormationService battleFormationService) : ControllerBase
 {
     [HttpGet("{battleFormationId}")]
     [EndpointSummary("Get a battle formation by ID")]

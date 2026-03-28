@@ -1,3 +1,3 @@
 namespace AosAdjutant.Api.Features.WeaponEffects;
 
-public record WeaponEffectResponseDto(string Key, string Name);
+public sealed record WeaponEffectResponseDto(string Key, string Name);

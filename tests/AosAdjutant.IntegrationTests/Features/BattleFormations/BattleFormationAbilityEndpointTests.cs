@@ -11,25 +11,27 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
 {
     private async Task<BattleFormationResponseDto> CreateBattleFormationAsync()
     {
-        var factionResponse = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var factionResponse = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/battle-formations",
-            new CreateBattleFormationDto("TestBattleFormation")
+            new CreateBattleFormationDto { Name = "TestBattleFormation" }
         );
         return (await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAbilityDto ValidAbilityDto() => new(
-        "TestAbility",
-        null,
-        "TestDeclaration",
-        "TestEffect",
-        TurnPhase.Hero,
-        null,
-        PlayerTurn.YourTurn
-    );
+    private static CreateAbilityDto ValidAbilityDto() => new()
+    {
+        Name = "TestAbility",
+        Declaration = "TestDeclaration",
+        Effect = "TestEffect",
+        Phase = TurnPhase.Hero,
+        Turn = PlayerTurn.YourTurn
+    };
 
     // --- POST /api/battle-formations/{id}/abilities ---
 

@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Abilities;
@@ -6,7 +6,7 @@ namespace AosAdjutant.Api.Features.Abilities;
 [Route("api/abilities")]
 [ApiController]
 [Tags("Abilities")]
-public class AbilityController(AbilityService abilityService) : ControllerBase
+public sealed class AbilityController(AbilityService abilityService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a generic ability")]
@@ -16,8 +16,9 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     {
         var newAbilityResult = await abilityService.CreateGenericAbility(abilityData);
         return newAbilityResult.Match(
-            a => Created(
-                $"api/abilities/{a.AbilityId}",
+            a => CreatedAtAction(
+                nameof(GetAbility),
+                new { abilityId = a.AbilityId },
                 new AbilityResponseDto(
                     a.AbilityId,
                     a.Name,
@@ -39,7 +40,9 @@ public class AbilityController(AbilityService abilityService) : ControllerBase
     [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
     public Task<ActionResult<List<AbilityResponseDto>>> GetAbilities()
     {
+#pragma warning disable MA0025
         throw new NotImplementedException();
+#pragma warning restore MA0025
     }
 
     [HttpGet("{abilityId}")]

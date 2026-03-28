@@ -11,18 +11,37 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
 {
     private async Task<AttackProfileResponseDto> CreateAttackProfileAsync()
     {
-        var factionResponse = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var factionResponse = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
 
         var unitResponse = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
-            new CreateUnitDto("TestUnit", 10, "5", 4, 2, null)
+            new CreateUnitDto
+            {
+                Name = "TestUnit",
+                Health = 10,
+                Move = "5",
+                Save = 4,
+                Control = 2
+            }
         );
         var unit = (await unitResponse.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/units/{unit.UnitId}/attack-profiles",
-            new CreateAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", [])
+            new CreateAttackProfileDto
+            {
+                Name = "TestProfile",
+                IsRanged = false,
+                Attacks = "2",
+                ToHit = 3,
+                ToWound = 3,
+                Damage = "1",
+                WeaponEffects = []
+            }
         );
         return (await response.Content.ReadFromJsonAsync<AttackProfileResponseDto>(JsonOptions))!;
     }
@@ -48,18 +67,17 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
     public async Task UpdateAttackProfile_Returns200()
     {
         var created = await CreateAttackProfileAsync();
-        var changeDto = new ChangeAttackProfileDto(
-            "UpdatedProfile",
-            false,
-            null,
-            "3",
-            4,
-            4,
-            null,
-            "2",
-            created.Version,
-            []
-        );
+        var changeDto = new ChangeAttackProfileDto
+        {
+            Name = "UpdatedProfile",
+            IsRanged = false,
+            Attacks = "3",
+            ToHit = 4,
+            ToWound = 4,
+            Damage = "2",
+            WeaponEffects = [],
+            Version = created.Version
+        };
 
         var response = await Client.PutAsJsonAsync($"/api/attack-profiles/{created.AttackProfileId}", changeDto);
 
@@ -89,7 +107,17 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
 
         var response = await Client.PutAsJsonAsync(
             $"/api/attack-profiles/{created.AttackProfileId}",
-            new ChangeAttackProfileDto("", false, null, "3", 4, 4, null, "2", created.Version, [])
+            new ChangeAttackProfileDto
+            {
+                Name = "",
+                IsRanged = false,
+                Attacks = "3",
+                ToHit = 4,
+                ToWound = 4,
+                Damage = "2",
+                WeaponEffects = [],
+                Version = created.Version
+            }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

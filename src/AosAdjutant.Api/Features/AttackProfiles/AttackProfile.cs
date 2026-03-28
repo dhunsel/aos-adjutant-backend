@@ -1,9 +1,23 @@
+#pragma warning disable MA0048
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.WeaponEffects;
-using AosAdjutant.Api.Shared;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
 
-public class AttackProfile
+public sealed record AttackProfileData
+{
+    public required string Name { get; init; }
+    public required bool IsRanged { get; init; }
+    public int? Range { get; init; }
+    public required string Attacks { get; init; }
+    public required int ToHit { get; init; }
+    public required int ToWound { get; init; }
+    public int? Rend { get; init; }
+    public required string Damage { get; init; }
+    public required int UnitId { get; init; }
+}
+
+public sealed class AttackProfile
 {
     public int AttackProfileId { get; set; }
     public required string Name { get; set; }
@@ -19,91 +33,75 @@ public class AttackProfile
 
     public ICollection<WeaponEffect> WeaponEffects { get; } = new List<WeaponEffect>();
 
-    public static Result<AttackProfile> Create(
-        string name,
-        bool isRanged,
-        int? range,
-        string attacks,
-        int toHit,
-        int toWound,
-        int? rend,
-        string damage,
-        int unitId
-    )
+
+    public static Result<AttackProfile> Create(AttackProfileData data)
     {
-        var validationResult = ValidateAttackProfile(name, isRanged, range, attacks, toHit, toWound, rend, damage);
+        var validationResult = ValidateAttackProfile(data);
 
         if (!validationResult.IsSuccess) return Result<AttackProfile>.Failure(validationResult.GetError);
 
         var attackProfile = new AttackProfile
         {
-            Name = name,
-            IsRanged = isRanged,
-            Range = range,
-            Attacks = attacks,
-            ToHit = toHit,
-            ToWound = toWound,
-            Rend = rend,
-            Damage = damage,
-            UnitId = unitId
+            Name = data.Name,
+            IsRanged = data.IsRanged,
+            Range = data.Range,
+            Attacks = data.Attacks,
+            ToHit = data.ToHit,
+            ToWound = data.ToWound,
+            Rend = data.Rend,
+            Damage = data.Damage,
+            UnitId = data.UnitId,
         };
 
         return Result<AttackProfile>.Success(attackProfile);
     }
 
-    public Result Change(
-        string name,
-        bool isRanged,
-        int? range,
-        string attacks,
-        int toHit,
-        int toWound,
-        int? rend,
-        string damage
-    )
+    public Result Change(AttackProfileData data)
     {
-        var validationResult = ValidateAttackProfile(name, isRanged, range, attacks, toHit, toWound, rend, damage);
+        var validationResult = ValidateAttackProfile(data);
 
         if (!validationResult.IsSuccess) return Result.Failure(validationResult.GetError);
 
-        Name = name;
-        IsRanged = isRanged;
-        Range = range;
-        Attacks = attacks;
-        ToHit = toHit;
-        ToWound = toWound;
-        Rend = rend;
-        Damage = damage;
+        Name = data.Name;
+        IsRanged = data.IsRanged;
+        Range = data.Range;
+        Attacks = data.Attacks;
+        ToHit = data.ToHit;
+        ToWound = data.ToWound;
+        Rend = data.Rend;
+        Damage = data.Damage;
 
         return Result.Success();
     }
 
-    private static Result ValidateAttackProfile(
-        string name,
-        bool isRanged,
-        int? range,
-        string attacks,
-        int toHit,
-        int toWound,
-        int? rend,
-        string damage
-    )
+    private static Result ValidateAttackProfile(AttackProfileData data)
     {
-        if (isRanged && range is null)
+        if (data is { IsRanged: true, Range: null })
             return Result.Failure(
                 new AppError(ErrorCode.ValidationError, "A Ranged weapon profile must have a range.")
             );
 
-        if (!isRanged && range is not null)
+        if (data is { IsRanged: false, Range: not null })
             return Result.Failure(
                 new AppError(ErrorCode.ValidationError, "A melee weapon profile cannot have a range.")
             );
 
-        if (toHit < 2 || toHit > 7 || toWound < 2 || toWound > 7)
+        if (data.ToHit < 2 || data.ToHit > 7 || data.ToWound < 2 || data.ToWound > 7)
             return Result.Failure(
                 new AppError(ErrorCode.ValidationError, "To hit and to wound values must be between 2 and 6.")
             );
 
         return Result.Success();
     }
+}
+
+public static class AttackProfileErrors
+{
+    public static readonly AppError NotFound = new(ErrorCode.NotFound, "Attack profile not found.");
+    public static readonly AppError AlreadyExists = new(ErrorCode.UniqueKeyError, "Attack profile already exists.");
+
+    public static readonly AppError Concurrency = new(
+        ErrorCode.ConcurrencyError,
+        "Attack profile was already modified in the background."
+    );
 }

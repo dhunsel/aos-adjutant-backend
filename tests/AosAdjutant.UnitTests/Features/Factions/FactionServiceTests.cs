@@ -1,7 +1,7 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.Factions;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.UnitTests.Features.Factions;
@@ -20,7 +20,7 @@ public class FactionServiceTests
             var service = new FactionService(context);
             const string Name = "TestFaction";
 
-            var result = await service.CreateFaction(new CreateFactionDto(Name));
+            var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
 
             Assert.True(result.IsSuccess);
             Assert.Equal(Name, result.GetValue.Name);
@@ -35,7 +35,7 @@ public class FactionServiceTests
             await context.SaveChangesAsync();
             var service = new FactionService(context);
 
-            var result = await service.CreateFaction(new CreateFactionDto(Name));
+            var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.UniqueKeyError, result.GetError.Code);
@@ -112,7 +112,7 @@ public class FactionServiceTests
             var service = new FactionService(context);
             const string NewName = "TestFactionUpdated";
 
-            var result = await service.ChangeFaction(factionId, new ChangeFactionDto(NewName, 0));
+            var result = await service.ChangeFaction(factionId, new ChangeFactionDto { Name = NewName, Version = 0 });
 
             Assert.True(result.IsSuccess);
             Assert.Equal(NewName, result.GetValue.Name);
@@ -124,7 +124,10 @@ public class FactionServiceTests
             await using var context = CreateContext();
             var service = new FactionService(context);
 
-            var result = await service.ChangeFaction(999, new ChangeFactionDto("TestFactionUpdated", 0));
+            var result = await service.ChangeFaction(
+                999,
+                new ChangeFactionDto { Name = "TestFactionUpdated", Version = 0 }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -139,7 +142,10 @@ public class FactionServiceTests
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context);
 
-            var result = await service.ChangeFaction(factionId, new ChangeFactionDto("TestFactionUpdated", 3));
+            var result = await service.ChangeFaction(
+                factionId,
+                new ChangeFactionDto { Name = "TestFactionUpdated", Version = 3 }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.ConcurrencyError, result.GetError.Code);
@@ -157,7 +163,10 @@ public class FactionServiceTests
             var factionId = context.Factions.First(f => f.Name == "TestFaction1").FactionId;
             var service = new FactionService(context);
 
-            var result = await service.ChangeFaction(factionId, new ChangeFactionDto("TestFaction2", 0));
+            var result = await service.ChangeFaction(
+                factionId,
+                new ChangeFactionDto { Name = "TestFaction2", Version = 0 }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.UniqueKeyError, result.GetError.Code);
@@ -196,15 +205,14 @@ public class FactionServiceTests
 
     public class CreateFactionAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new(
-            "TestAbility",
-            null,
-            "TestDeclaration",
-            "TestEffect",
-            TurnPhase.Hero,
-            null,
-            PlayerTurn.YourTurn
-        );
+        private static CreateAbilityDto ValidAbilityDto() => new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn
+        };
 
         [Fact]
         public async Task ReturnsAbility_WhenFactionExistsAndDataIsValid()
@@ -256,15 +264,13 @@ public class FactionServiceTests
             var service = new FactionService(context);
 
             // Passive ability with a declaration is invalid
-            var invalidDto = new CreateAbilityDto(
-                "TestAbility",
-                null,
-                "TestDeclaration",
-                "TestEffect",
-                TurnPhase.Passive,
-                null,
-                null
-            );
+            var invalidDto = new CreateAbilityDto
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Passive
+            };
 
             var result = await service.CreateFactionAbility(factionId, invalidDto);
 
@@ -286,15 +292,14 @@ public class FactionServiceTests
 
             await service.CreateFactionAbility(
                 factionId,
-                new CreateAbilityDto(
-                    "TestAbility",
-                    null,
-                    "TestDeclaration",
-                    "TestEffect",
-                    TurnPhase.Hero,
-                    null,
-                    PlayerTurn.YourTurn
-                )
+                new CreateAbilityDto
+                {
+                    Name = "TestAbility",
+                    Declaration = "TestDeclaration",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Hero,
+                    Turn = PlayerTurn.YourTurn
+                }
             );
 
             var result = await service.GetFactionAbilities(factionId);

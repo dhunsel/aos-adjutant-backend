@@ -1,21 +1,22 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Features.Factions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Units;
 
-public class UnitService(ApplicationDbContext context)
+public sealed class UnitService(ApplicationDbContext context)
 {
     public async Task<Result<Unit>> CreateUnit(int factionId, CreateUnitDto unitData)
     {
         var factionExists = await context.Factions.AnyAsync(f => f.FactionId == factionId);
         if (!factionExists)
-            return Result<Unit>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<Unit>.Failure(FactionErrors.NotFound);
 
         var isDuplicate = await context.Units.AnyAsync(u => u.Name == unitData.Name && u.FactionId == factionId);
         if (isDuplicate)
-            return Result<Unit>.Failure(new AppError(ErrorCode.UniqueKeyError, "Unit already exists."));
+            return Result<Unit>.Failure(UnitErrors.AlreadyExists);
 
         var newUnit = new Unit
         {
@@ -40,7 +41,7 @@ public class UnitService(ApplicationDbContext context)
     {
         var factionExists = await context.Factions.AnyAsync(f => f.FactionId == factionId);
         if (!factionExists)
-            return Result<List<Unit>>.Failure(new AppError(ErrorCode.NotFound, "Faction not found."));
+            return Result<List<Unit>>.Failure(FactionErrors.NotFound);
 
         var units = await context.Units.AsNoTracking().Where(u => u.FactionId == factionId).ToListAsync();
         return Result<List<Unit>>.Success(units);
@@ -50,9 +51,7 @@ public class UnitService(ApplicationDbContext context)
     {
         var unit = await context.Units.AsNoTracking().FirstOrDefaultAsync(u => u.UnitId == unitId);
 
-        return unit is null
-            ? Result<Unit>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."))
-            : Result<Unit>.Success(unit);
+        return unit is null ? Result<Unit>.Failure(UnitErrors.NotFound) : Result<Unit>.Success(unit);
     }
 
     public async Task<Result<Unit>> UpdateUnit(int unitId, ChangeUnitDto unitData)
@@ -60,18 +59,16 @@ public class UnitService(ApplicationDbContext context)
         var unit = await context.Units.FindAsync(unitId);
 
         if (unit is null)
-            return Result<Unit>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."));
+            return Result<Unit>.Failure(UnitErrors.NotFound);
 
         if (unit.Version != unitData.Version)
-            return Result<Unit>.Failure(
-                new AppError(ErrorCode.ConcurrencyError, "Unit was already modified in the background.")
-            );
+            return Result<Unit>.Failure(UnitErrors.Concurrency);
 
         var isDuplicate = await context.Units.AnyAsync(u =>
             u.Name == unitData.Name && u.FactionId == unit.FactionId && u.UnitId != unitId
         );
         if (isDuplicate)
-            return Result<Unit>.Failure(new AppError(ErrorCode.UniqueKeyError, "Unit already exists."));
+            return Result<Unit>.Failure(UnitErrors.AlreadyExists);
 
         unit.Name = unitData.Name;
         unit.Health = unitData.Health;
@@ -90,7 +87,7 @@ public class UnitService(ApplicationDbContext context)
         var unit = await context.Units.FindAsync(unitId);
 
         if (unit is null)
-            return Result.Failure(new AppError(ErrorCode.NotFound, "Unit not found."));
+            return Result.Failure(UnitErrors.NotFound);
 
         context.Units.Remove(unit);
         await context.SaveChangesAsync();
@@ -103,17 +100,20 @@ public class UnitService(ApplicationDbContext context)
         var unit = await context.Units.FindAsync(unitId);
 
         if (unit is null)
-            return Result<Ability>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."));
+            return Result<Ability>.Failure(UnitErrors.NotFound);
 
         var newAbilityResult = Ability.Create(
-            abilityData.Name,
-            abilityData.Reaction,
-            abilityData.Declaration,
-            abilityData.Effect,
-            abilityData.Phase,
-            abilityData.Restriction,
-            abilityData.Turn,
-            false
+            new AbilityData
+            {
+                Name = abilityData.Name,
+                Reaction = abilityData.Reaction,
+                Declaration = abilityData.Declaration,
+                Effect = abilityData.Effect,
+                Phase = abilityData.Phase,
+                Restriction = abilityData.Restriction,
+                Turn = abilityData.Turn,
+                IsGeneric = false
+            }
         );
 
         if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
@@ -133,7 +133,7 @@ public class UnitService(ApplicationDbContext context)
             .FirstOrDefaultAsync(u => u.UnitId == unitId);
 
         return unit is null
-            ? Result<List<Ability>>.Failure(new AppError(ErrorCode.NotFound, "Unit not found."))
+            ? Result<List<Ability>>.Failure(UnitErrors.NotFound)
             : Result<List<Ability>>.Success(unit.Abilities.ToList());
     }
 }

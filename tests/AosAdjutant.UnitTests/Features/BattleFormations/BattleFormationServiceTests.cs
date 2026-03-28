@@ -1,8 +1,8 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.BattleFormations;
 using AosAdjutant.Api.Features.Factions;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.UnitTests.Features.BattleFormations;
@@ -25,7 +25,7 @@ public class BattleFormationServiceTests
 
             var result = await service.CreateBattleFormation(
                 factionId,
-                new CreateBattleFormationDto("TestBattleFormation")
+                new CreateBattleFormationDto { Name = "TestBattleFormation" }
             );
 
             Assert.True(result.IsSuccess);
@@ -39,7 +39,10 @@ public class BattleFormationServiceTests
             await using var context = CreateContext();
             var service = new BattleFormationService(context);
 
-            var result = await service.CreateBattleFormation(999, new CreateBattleFormationDto("TestBattleFormation"));
+            var result = await service.CreateBattleFormation(
+                999,
+                new CreateBattleFormationDto { Name = "TestBattleFormation" }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -58,7 +61,7 @@ public class BattleFormationServiceTests
 
             var result = await service.CreateBattleFormation(
                 factionId,
-                new CreateBattleFormationDto("TestBattleFormation")
+                new CreateBattleFormationDto { Name = "TestBattleFormation" }
             );
 
             Assert.False(result.IsSuccess);
@@ -144,7 +147,7 @@ public class BattleFormationServiceTests
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
-                new ChangeBattleFormationDto("NewName", 0)
+                new ChangeBattleFormationDto { Name = "NewName", Version = 0 }
             );
 
             Assert.True(result.IsSuccess);
@@ -157,7 +160,10 @@ public class BattleFormationServiceTests
             await using var context = CreateContext();
             var service = new BattleFormationService(context);
 
-            var result = await service.UpdateBattleFormation(999, new ChangeBattleFormationDto("NewName", 0));
+            var result = await service.UpdateBattleFormation(
+                999,
+                new ChangeBattleFormationDto { Name = "NewName", Version = 0 }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -176,7 +182,7 @@ public class BattleFormationServiceTests
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
-                new ChangeBattleFormationDto("NewName", 3)
+                new ChangeBattleFormationDto { Name = "NewName", Version = 3 }
             );
 
             Assert.False(result.IsSuccess);
@@ -198,7 +204,7 @@ public class BattleFormationServiceTests
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
-                new ChangeBattleFormationDto("TestBattleFormation2", 0)
+                new ChangeBattleFormationDto { Name = "TestBattleFormation2", Version = 0 }
             );
 
             Assert.False(result.IsSuccess);
@@ -238,15 +244,14 @@ public class BattleFormationServiceTests
 
     public class CreateBattleFormationAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new(
-            "TestAbility",
-            null,
-            "TestDeclaration",
-            "TestEffect",
-            TurnPhase.Hero,
-            null,
-            PlayerTurn.YourTurn
-        );
+        private static CreateAbilityDto ValidAbilityDto() => new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn
+        };
 
         [Fact]
         public async Task ReturnsAbility_WhenBattleFormationExistsAndDataIsValid()
@@ -298,15 +303,13 @@ public class BattleFormationServiceTests
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
             var service = new BattleFormationService(context);
 
-            var invalidDto = new CreateAbilityDto(
-                "TestAbility",
-                null,
-                "TestDeclaration",
-                "TestEffect",
-                TurnPhase.Passive,
-                null,
-                null
-            );
+            var invalidDto = new CreateAbilityDto
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Passive
+            };
 
             var result = await service.CreateBattleFormationAbility(battleFormationId, invalidDto);
 
@@ -328,15 +331,14 @@ public class BattleFormationServiceTests
 
             await service.CreateBattleFormationAbility(
                 battleFormationId,
-                new CreateAbilityDto(
-                    "TestAbility",
-                    null,
-                    "TestDeclaration",
-                    "TestEffect",
-                    TurnPhase.Hero,
-                    null,
-                    PlayerTurn.YourTurn
-                )
+                new CreateAbilityDto
+                {
+                    Name = "TestAbility",
+                    Declaration = "TestDeclaration",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Hero,
+                    Turn = PlayerTurn.YourTurn
+                }
             );
 
             var result = await service.GetBattleFormationAbilities(battleFormationId);

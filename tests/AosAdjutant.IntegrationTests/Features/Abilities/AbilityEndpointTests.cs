@@ -11,15 +11,14 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     {
         var response = await Client.PostAsJsonAsync(
             "/api/abilities",
-            new CreateAbilityDto(
-                "TestAbility",
-                null,
-                "TestDeclaration",
-                "TestEffect",
-                TurnPhase.Hero,
-                null,
-                PlayerTurn.YourTurn
-            ),
+            new CreateAbilityDto
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Turn = PlayerTurn.YourTurn
+            },
             JsonOptions
         );
         return (await response.Content.ReadFromJsonAsync<AbilityResponseDto>(JsonOptions))!;
@@ -30,15 +29,14 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     [Fact]
     public async Task CreateAbility_Returns201()
     {
-        var createAbilityDto = new CreateAbilityDto(
-            "TestAbility",
-            null,
-            "TestDeclaration",
-            "TestEffect",
-            TurnPhase.Hero,
-            null,
-            PlayerTurn.YourTurn
-        );
+        var createAbilityDto = new CreateAbilityDto
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn
+        };
 
         var response = await Client.PostAsJsonAsync("/api/abilities", createAbilityDto, JsonOptions);
 
@@ -82,16 +80,15 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     public async Task UpdateAbility_Returns200()
     {
         var created = await CreateAbilityAsync();
-        var changeAbilityDto = new ChangeAbilityDto(
-            "UpdatedAbility",
-            null,
-            "UpdatedDeclaration",
-            "UpdatedEffect",
-            TurnPhase.Combat,
-            null,
-            PlayerTurn.EnemyTurn,
-            created.Version
-        );
+        var changeAbilityDto = new ChangeAbilityDto
+        {
+            Name = "UpdatedAbility",
+            Declaration = "UpdatedDeclaration",
+            Effect = "UpdatedEffect",
+            Phase = TurnPhase.Combat,
+            Turn = PlayerTurn.EnemyTurn,
+            Version = created.Version
+        };
 
         var response = await Client.PutAsJsonAsync(
             $"/api/abilities/{created.AbilityId}",
@@ -124,16 +121,15 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
 
         var response = await Client.PutAsJsonAsync(
             $"/api/abilities/{created.AbilityId}",
-            new ChangeAbilityDto(
-                "",
-                null,
-                "UpdatedDeclaration",
-                "UpdatedEffect",
-                TurnPhase.Combat,
-                null,
-                PlayerTurn.EnemyTurn,
-                created.Version
-            ),
+            new ChangeAbilityDto
+            {
+                Name = "",
+                Declaration = "UpdatedDeclaration",
+                Effect = "UpdatedEffect",
+                Phase = TurnPhase.Combat,
+                Turn = PlayerTurn.EnemyTurn,
+                Version = created.Version
+            },
             JsonOptions
         );
 

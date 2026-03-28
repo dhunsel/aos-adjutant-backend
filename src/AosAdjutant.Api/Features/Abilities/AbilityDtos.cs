@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
-public record AbilityResponseDto(
+public sealed record AbilityResponseDto(
     int AbilityId,
     string Name,
     string? Reaction,
@@ -14,23 +14,25 @@ public record AbilityResponseDto(
     uint Version
 );
 
-public record CreateAbilityDto(
-    [StringLength(100, MinimumLength = 1)] string Name,
-    [StringLength(100, MinimumLength = 1)] string? Reaction,
-    [StringLength(100, MinimumLength = 1)] string? Declaration,
-    [StringLength(100, MinimumLength = 1)] string Effect,
-    TurnPhase Phase,
-    ActivationRestriction? Restriction,
-    PlayerTurn? Turn
-);
+public sealed record CreateAbilityDto
+{
+    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
+    [StringLength(100, MinimumLength = 1)] public string? Reaction { get; init; }
+    [StringLength(100, MinimumLength = 1)] public string? Declaration { get; init; }
+    [StringLength(100, MinimumLength = 1)] public required string Effect { get; init; }
+    public required TurnPhase Phase { get; init; }
+    public ActivationRestriction? Restriction { get; init; }
+    public PlayerTurn? Turn { get; init; }
+}
 
-public record ChangeAbilityDto(
-    [StringLength(100, MinimumLength = 1)] string Name,
-    [StringLength(100, MinimumLength = 1)] string? Reaction,
-    [StringLength(100, MinimumLength = 1)] string? Declaration,
-    [StringLength(100, MinimumLength = 1)] string Effect,
-    TurnPhase Phase,
-    ActivationRestriction? Restriction,
-    PlayerTurn? Turn,
-    uint Version
-);
+public sealed record ChangeAbilityDto
+{
+    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
+    [StringLength(100, MinimumLength = 1)] public string? Reaction { get; init; }
+    [StringLength(100, MinimumLength = 1)] public string? Declaration { get; init; }
+    [StringLength(100, MinimumLength = 1)] public required string Effect { get; init; }
+    public required TurnPhase Phase { get; init; }
+    public ActivationRestriction? Restriction { get; init; }
+    public PlayerTurn? Turn { get; init; }
+    public required uint Version { get; init; }
+}

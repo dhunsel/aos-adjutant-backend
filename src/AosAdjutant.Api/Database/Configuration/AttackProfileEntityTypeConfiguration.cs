@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public class AttackProfileEntityTypeConfiguration : IEntityTypeConfiguration<AttackProfile>
+public sealed class AttackProfileEntityTypeConfiguration : IEntityTypeConfiguration<AttackProfile>
 {
     public void Configure(EntityTypeBuilder<AttackProfile> builder)
     {

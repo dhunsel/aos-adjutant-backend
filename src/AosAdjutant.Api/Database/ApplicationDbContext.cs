@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Database;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     public DbSet<Faction> Factions { get; set; }
     public DbSet<BattleFormation> BattleFormations { get; set; }

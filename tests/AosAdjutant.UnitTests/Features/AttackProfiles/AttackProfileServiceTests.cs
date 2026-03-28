@@ -1,7 +1,7 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.AttackProfiles;
 using AosAdjutant.Api.Features.Units;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.UnitTests.Features.AttackProfiles;
@@ -31,7 +31,16 @@ public class AttackProfileServiceTests
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
             var service = new AttackProfileService(context);
-            var createDto = new CreateAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", []);
+            var createDto = new CreateAttackProfileDto
+            {
+                Name = "TestProfile",
+                IsRanged = false,
+                Attacks = "2",
+                ToHit = 3,
+                ToWound = 3,
+                Damage = "1",
+                WeaponEffects = []
+            };
 
             var result = await service.CreateAttackProfile(unitId, createDto);
 
@@ -61,7 +70,16 @@ public class AttackProfileServiceTests
 
             var result = await service.CreateAttackProfile(
                 999,
-                new CreateAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", [])
+                new CreateAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = false,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = []
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -102,7 +120,16 @@ public class AttackProfileServiceTests
 
             var result = await service.CreateAttackProfile(
                 unitId,
-                new CreateAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", [])
+                new CreateAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = false,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = []
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -130,7 +157,16 @@ public class AttackProfileServiceTests
 
             var result = await service.CreateAttackProfile(
                 unitId,
-                new CreateAttackProfileDto("TestProfile", true, null, "2", 3, 3, null, "1", [])
+                new CreateAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = true,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = []
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -158,7 +194,16 @@ public class AttackProfileServiceTests
 
             var result = await service.CreateAttackProfile(
                 unitId,
-                new CreateAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", ["invalid_key"])
+                new CreateAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = false,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = ["invalid_key"]
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -291,7 +336,17 @@ public class AttackProfileServiceTests
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
             var service = new AttackProfileService(context);
-            var changeDto = new ChangeAttackProfileDto("UpdatedProfile", false, null, "3", 4, 4, null, "2", 0, []);
+            var changeDto = new ChangeAttackProfileDto
+            {
+                Name = "UpdatedProfile",
+                IsRanged = false,
+                Attacks = "3",
+                ToHit = 4,
+                ToWound = 4,
+                Damage = "2",
+                WeaponEffects = [],
+                Version = 0
+            };
 
             var result = await service.UpdateAttackProfile(attackProfileId, changeDto);
 
@@ -320,7 +375,17 @@ public class AttackProfileServiceTests
 
             var result = await service.UpdateAttackProfile(
                 999,
-                new ChangeAttackProfileDto("UpdatedProfile", false, null, "3", 4, 4, null, "2", 0, [])
+                new ChangeAttackProfileDto
+                {
+                    Name = "UpdatedProfile",
+                    IsRanged = false,
+                    Attacks = "3",
+                    ToHit = 4,
+                    ToWound = 4,
+                    Damage = "2",
+                    WeaponEffects = [],
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -350,7 +415,17 @@ public class AttackProfileServiceTests
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
-                new ChangeAttackProfileDto("UpdatedProfile", false, null, "3", 4, 4, null, "2", 3, [])
+                new ChangeAttackProfileDto
+                {
+                    Name = "UpdatedProfile",
+                    IsRanged = false,
+                    Attacks = "3",
+                    ToHit = 4,
+                    ToWound = 4,
+                    Damage = "2",
+                    WeaponEffects = [],
+                    Version = 3
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -391,7 +466,17 @@ public class AttackProfileServiceTests
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
-                new ChangeAttackProfileDto("TestProfile2", false, null, "2", 3, 3, null, "1", 0, [])
+                new ChangeAttackProfileDto
+                {
+                    Name = "TestProfile2",
+                    IsRanged = false,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = [],
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -421,7 +506,17 @@ public class AttackProfileServiceTests
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
-                new ChangeAttackProfileDto("TestProfile", true, null, "2", 3, 3, null, "1", 0, [])
+                new ChangeAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = true,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = [],
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -451,7 +546,17 @@ public class AttackProfileServiceTests
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
-                new ChangeAttackProfileDto("TestProfile", false, null, "2", 3, 3, null, "1", 0, ["invalid_key"])
+                new ChangeAttackProfileDto
+                {
+                    Name = "TestProfile",
+                    IsRanged = false,
+                    Attacks = "2",
+                    ToHit = 3,
+                    ToWound = 3,
+                    Damage = "1",
+                    WeaponEffects = ["invalid_key"],
+                    Version = 0
+                }
             );
 
             Assert.False(result.IsSuccess);

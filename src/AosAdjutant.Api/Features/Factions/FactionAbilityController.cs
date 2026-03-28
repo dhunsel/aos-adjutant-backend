@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Factions;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.Factions;
 [Route("api/factions/{factionId}/abilities")]
 [ApiController]
 [Tags("Factions")]
-public class FactionAbilityController(FactionService factionService) : ControllerBase
+public sealed class FactionAbilityController(FactionService factionService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an ability for a faction")]
@@ -21,8 +21,10 @@ public class FactionAbilityController(FactionService factionService) : Controlle
     {
         var abilityResult = await factionService.CreateFactionAbility(factionId, abilityData);
         return abilityResult.Match(
-            a => Created(
-                $"api/abilities/{a.AbilityId}",
+            a => CreatedAtAction(
+                nameof(AbilityController.GetAbility),
+                "Ability",
+                new { abilityId = a.AbilityId },
                 new AbilityResponseDto(
                     a.AbilityId,
                     a.Name,

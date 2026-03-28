@@ -10,19 +10,18 @@ public class FactionAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase
 {
     private async Task<FactionResponseDto> CreateFactionAsync()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAbilityDto ValidAbilityDto() => new(
-        "TestAbility",
-        null,
-        "TestDeclaration",
-        "TestEffect",
-        TurnPhase.Hero,
-        null,
-        PlayerTurn.YourTurn
-    );
+    private static CreateAbilityDto ValidAbilityDto() => new()
+    {
+        Name = "TestAbility",
+        Declaration = "TestDeclaration",
+        Effect = "TestEffect",
+        Phase = TurnPhase.Hero,
+        Turn = PlayerTurn.YourTurn
+    };
 
     // --- POST /api/factions/{factionId}/abilities ---
 

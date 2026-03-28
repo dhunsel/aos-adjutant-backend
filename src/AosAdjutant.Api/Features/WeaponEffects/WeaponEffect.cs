@@ -1,6 +1,6 @@
 namespace AosAdjutant.Api.Features.WeaponEffects;
 
-public class WeaponEffect
+public sealed class WeaponEffect
 {
     public int WeaponEffectId { get; set; }
     public required string Key { get; set; }

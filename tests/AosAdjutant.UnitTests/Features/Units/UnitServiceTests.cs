@@ -1,8 +1,8 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
-using AosAdjutant.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.UnitTests.Features.Units;
@@ -22,7 +22,14 @@ public class UnitServiceTests
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new UnitService(context);
-            var createUnitDto = new CreateUnitDto("TestUnit", 10, "5", 4, 2, null);
+            var createUnitDto = new CreateUnitDto
+            {
+                Name = "TestUnit",
+                Health = 10,
+                Move = "5",
+                Save = 4,
+                Control = 2
+            };
 
             var result = await service.CreateUnit(factionId, createUnitDto);
 
@@ -48,7 +55,17 @@ public class UnitServiceTests
             await using var context = CreateContext();
             var service = new UnitService(context);
 
-            var result = await service.CreateUnit(999, new CreateUnitDto("TestUnit", 10, "5", 4, 2, null));
+            var result = await service.CreateUnit(
+                999,
+                new CreateUnitDto
+                {
+                    Name = "TestUnit",
+                    Health = 10,
+                    Move = "5",
+                    Save = 4,
+                    Control = 2
+                }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -74,7 +91,17 @@ public class UnitServiceTests
             await context.SaveChangesAsync();
             var service = new UnitService(context);
 
-            var result = await service.CreateUnit(factionId, new CreateUnitDto("TestUnit", 10, "5", 4, 2, null));
+            var result = await service.CreateUnit(
+                factionId,
+                new CreateUnitDto
+                {
+                    Name = "TestUnit",
+                    Health = 10,
+                    Move = "5",
+                    Save = 4,
+                    Control = 2
+                }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.UniqueKeyError, result.GetError.Code);
@@ -190,7 +217,16 @@ public class UnitServiceTests
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
             var service = new UnitService(context);
-            var changeUnitDto = new ChangeUnitDto("UpdatedUnit", 20, "6", 3, 1, 5, 0);
+            var changeUnitDto = new ChangeUnitDto
+            {
+                Name = "UpdatedUnit",
+                Health = 20,
+                Move = "6",
+                Save = 3,
+                Control = 1,
+                WardSave = 5,
+                Version = 0
+            };
 
             var result = await service.UpdateUnit(unitId, changeUnitDto);
 
@@ -215,7 +251,18 @@ public class UnitServiceTests
             await using var context = CreateContext();
             var service = new UnitService(context);
 
-            var result = await service.UpdateUnit(999, new ChangeUnitDto("UpdatedUnit", 20, "6", 3, 1, null, 0));
+            var result = await service.UpdateUnit(
+                999,
+                new ChangeUnitDto
+                {
+                    Name = "UpdatedUnit",
+                    Health = 20,
+                    Move = "6",
+                    Save = 3,
+                    Control = 1,
+                    Version = 0
+                }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -241,7 +288,18 @@ public class UnitServiceTests
             var unitId = context.Units.Single().UnitId;
             var service = new UnitService(context);
 
-            var result = await service.UpdateUnit(unitId, new ChangeUnitDto("UpdatedUnit", 20, "6", 3, 1, null, 3));
+            var result = await service.UpdateUnit(
+                unitId,
+                new ChangeUnitDto
+                {
+                    Name = "UpdatedUnit",
+                    Health = 20,
+                    Move = "6",
+                    Save = 3,
+                    Control = 1,
+                    Version = 3
+                }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.ConcurrencyError, result.GetError.Code);
@@ -277,7 +335,18 @@ public class UnitServiceTests
             var unitId = context.Units.First(u => u.Name == "TestUnit1").UnitId;
             var service = new UnitService(context);
 
-            var result = await service.UpdateUnit(unitId, new ChangeUnitDto("TestUnit2", 10, "5", 4, 2, null, 0));
+            var result = await service.UpdateUnit(
+                unitId,
+                new ChangeUnitDto
+                {
+                    Name = "TestUnit2",
+                    Health = 10,
+                    Move = "5",
+                    Save = 4,
+                    Control = 2,
+                    Version = 0
+                }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.UniqueKeyError, result.GetError.Code);
@@ -325,15 +394,14 @@ public class UnitServiceTests
 
     public class CreateUnitAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new(
-            "TestAbility",
-            null,
-            "TestDeclaration",
-            "TestEffect",
-            TurnPhase.Hero,
-            null,
-            PlayerTurn.YourTurn
-        );
+        private static CreateAbilityDto ValidAbilityDto() => new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn
+        };
 
         [Fact]
         public async Task ReturnsAbility_WhenUnitExistsAndDataIsValid()
@@ -403,15 +471,13 @@ public class UnitServiceTests
             var unitId = context.Units.Single().UnitId;
             var service = new UnitService(context);
 
-            var invalidDto = new CreateAbilityDto(
-                "TestAbility",
-                null,
-                "TestDeclaration",
-                "TestEffect",
-                TurnPhase.Passive,
-                null,
-                null
-            );
+            var invalidDto = new CreateAbilityDto
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Passive
+            };
 
             var result = await service.CreateUnitAbility(unitId, invalidDto);
 
@@ -442,15 +508,14 @@ public class UnitServiceTests
 
             await service.CreateUnitAbility(
                 unitId,
-                new CreateAbilityDto(
-                    "TestAbility",
-                    null,
-                    "TestDeclaration",
-                    "TestEffect",
-                    TurnPhase.Hero,
-                    null,
-                    PlayerTurn.YourTurn
-                )
+                new CreateAbilityDto
+                {
+                    Name = "TestAbility",
+                    Declaration = "TestDeclaration",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Hero,
+                    Turn = PlayerTurn.YourTurn
+                }
             );
 
             var result = await service.GetUnitAbilities(unitId);

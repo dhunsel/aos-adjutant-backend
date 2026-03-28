@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.WeaponEffects;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.AttackProfiles;
 [Route("api/attack-profiles")]
 [ApiController]
 [Tags("Attack Profiles")]
-public class AttackProfileController(AttackProfileService attackProfileService) : ControllerBase
+public sealed class AttackProfileController(AttackProfileService attackProfileService) : ControllerBase
 {
     [HttpGet("{attackProfileId}")]
     [EndpointSummary("Get an attack profile by ID")]

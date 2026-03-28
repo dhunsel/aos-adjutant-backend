@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.Abilities;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Units;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.Units;
 [Route("api/units/{unitId}/abilities")]
 [ApiController]
 [Tags("Units")]
-public class UnitAbilityController(UnitService unitService) : ControllerBase
+public sealed class UnitAbilityController(UnitService unitService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an ability for a unit")]
@@ -21,8 +21,10 @@ public class UnitAbilityController(UnitService unitService) : ControllerBase
     {
         var abilityResult = await unitService.CreateUnitAbility(unitId, abilityData);
         return abilityResult.Match(
-            a => Created(
-                $"api/abilities/{a.AbilityId}",
+            a => CreatedAtAction(
+                nameof(AbilityController.GetAbility),
+                "Ability",
+                new { abilityId = a.AbilityId },
                 new AbilityResponseDto(
                     a.AbilityId,
                     a.Name,

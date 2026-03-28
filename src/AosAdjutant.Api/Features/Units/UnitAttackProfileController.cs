@@ -1,6 +1,6 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.AttackProfiles;
 using AosAdjutant.Api.Features.WeaponEffects;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Units;
@@ -8,7 +8,7 @@ namespace AosAdjutant.Api.Features.Units;
 [Route("api/units/{unitId}/attack-profiles")]
 [ApiController]
 [Tags("Attack Profiles")]
-public class UnitAttackProfileController(AttackProfileService attackProfileService) : ControllerBase
+public sealed class UnitAttackProfileController(AttackProfileService attackProfileService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an attack profile under a unit")]
@@ -22,8 +22,10 @@ public class UnitAttackProfileController(AttackProfileService attackProfileServi
     {
         var attackProfileResult = await attackProfileService.CreateAttackProfile(unitId, attackProfileData);
         return attackProfileResult.Match(
-            ap => Created(
-                $"api/attack-profiles/{ap.AttackProfileId}",
+            ap => CreatedAtAction(
+                nameof(AttackProfileController.GetAttackProfile),
+                "AttackProfile",
+                new { attackProfileId = ap.AttackProfileId },
                 new AttackProfileResponseDto(
                     ap.AttackProfileId,
                     ap.Name,

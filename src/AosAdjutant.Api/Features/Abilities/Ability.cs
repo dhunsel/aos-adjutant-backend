@@ -1,5 +1,6 @@
+#pragma warning disable MA0048
 using System.ComponentModel.DataAnnotations;
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Common;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
@@ -13,7 +14,7 @@ public enum TurnPhase
     [Display(Name = "Charge Phase")] Charge,
     [Display(Name = "Combat Phase")] Combat,
     [Display(Name = "End Phase")] End,
-    [Display(Name = "Passive")] Passive
+    [Display(Name = "Passive")] Passive,
 }
 
 public enum ActivationRestriction
@@ -40,7 +41,19 @@ public enum PlayerTurn
     [Display(Name = "Any")] AnyTurn
 }
 
-public class Ability
+public sealed record AbilityData
+{
+    public required string Name { get; init; }
+    public string? Reaction { get; init; }
+    public string? Declaration { get; init; }
+    public required string Effect { get; init; }
+    public required TurnPhase Phase { get; init; }
+    public ActivationRestriction? Restriction { get; init; }
+    public PlayerTurn? Turn { get; init; }
+    public required bool IsGeneric { get; init; }
+}
+
+public sealed class Ability
 {
     public int AbilityId { get; set; }
     public required string Name { get; set; }
@@ -53,73 +66,48 @@ public class Ability
     public bool IsGeneric { get; set; }
     public uint Version { get; set; }
 
-    public static Result<Ability> Create(
-        string name,
-        string? reaction,
-        string? declaration,
-        string effect,
-        TurnPhase phase,
-        ActivationRestriction? restriction,
-        PlayerTurn? turn,
-        bool isGeneric
-    )
+    public static Result<Ability> Create(AbilityData data)
     {
-        var validationResult = ValidateAbility(name, reaction, declaration, effect, phase, restriction, turn);
+        var validationResult = ValidateAbility(data);
 
         if (!validationResult.IsSuccess) return Result<Ability>.Failure(validationResult.GetError);
 
         var ability = new Ability
         {
-            Name = name,
-            Reaction = reaction,
-            Declaration = declaration,
-            Effect = effect,
-            Phase = phase,
-            Restriction = restriction,
-            Turn = turn,
-            IsGeneric = isGeneric
+            Name = data.Name,
+            Reaction = data.Reaction,
+            Declaration = data.Declaration,
+            Effect = data.Effect,
+            Phase = data.Phase,
+            Restriction = data.Restriction,
+            Turn = data.Turn,
+            IsGeneric = data.IsGeneric,
         };
 
         return Result<Ability>.Success(ability);
     }
 
-    public Result ChangeAbility(
-        string name,
-        string? reaction,
-        string? declaration,
-        string effect,
-        TurnPhase phase,
-        ActivationRestriction? restriction,
-        PlayerTurn? turn
-    )
+    public Result ChangeAbility(AbilityData data)
     {
-        var validationResult = ValidateAbility(name, reaction, declaration, effect, phase, restriction, turn);
+        var validationResult = ValidateAbility(data);
 
         if (!validationResult.IsSuccess) return Result.Failure(validationResult.GetError);
 
-        Name = name;
-        Reaction = reaction;
-        Declaration = declaration;
-        Effect = effect;
-        Phase = phase;
-        Restriction = restriction;
-        Turn = turn;
+        Name = data.Name;
+        Reaction = data.Reaction;
+        Declaration = data.Declaration;
+        Effect = data.Effect;
+        Phase = data.Phase;
+        Restriction = data.Restriction;
+        Turn = data.Turn;
 
         return Result.Success();
     }
 
-    private static Result ValidateAbility(
-        string name,
-        string? reaction,
-        string? declaration,
-        string effect,
-        TurnPhase phase,
-        ActivationRestriction? restriction,
-        PlayerTurn? turn
-    )
+    private static Result ValidateAbility(AbilityData data)
     {
-        if (phase == TurnPhase.Passive && !(reaction is null && declaration is null &&
-                                            restriction is null && turn is null))
+        if (data.Phase == TurnPhase.Passive && !(data.Reaction is null && data.Declaration is null &&
+                                                 data.Restriction is null && data.Turn is null))
             return Result.Failure(
                 new AppError(
                     ErrorCode.ValidationError,
@@ -127,11 +115,21 @@ public class Ability
                 )
             );
 
-        if (phase != TurnPhase.Passive && declaration is null)
+        if (data.Phase != TurnPhase.Passive && data.Declaration is null)
             return Result.Failure(
                 new AppError(ErrorCode.ValidationError, "A non-passive ability must have a declaration.")
             );
 
         return Result.Success();
     }
+}
+
+public static class AbilityErrors
+{
+    public static readonly AppError NotFound = new(ErrorCode.NotFound, "Ability not found.");
+
+    public static readonly AppError Concurrency = new(
+        ErrorCode.ConcurrencyError,
+        "Ability was already modified in the background."
+    );
 }

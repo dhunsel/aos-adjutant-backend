@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public class BattleFormationEntityTypeConfiguration : IEntityTypeConfiguration<BattleFormation>
+public sealed class BattleFormationEntityTypeConfiguration : IEntityTypeConfiguration<BattleFormation>
 {
     public void Configure(EntityTypeBuilder<BattleFormation> builder)
     {

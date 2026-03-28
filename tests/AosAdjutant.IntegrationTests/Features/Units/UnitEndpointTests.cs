@@ -10,12 +10,22 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
 {
     private async Task<UnitResponseDto> CreateUnitAsync()
     {
-        var factionResponse = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto("TestFaction"));
+        var factionResponse = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
-            new CreateUnitDto("TestUnit", 10, "5", 4, 2, null)
+            new CreateUnitDto
+            {
+                Name = "TestUnit",
+                Health = 10,
+                Move = "5",
+                Save = 4,
+                Control = 2
+            }
         );
         return (await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
     }
@@ -41,7 +51,15 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
     public async Task UpdateUnit_Returns200()
     {
         var created = await CreateUnitAsync();
-        var changeUnitDto = new ChangeUnitDto("UpdatedUnit", 20, "6", 3, 1, null, created.Version);
+        var changeUnitDto = new ChangeUnitDto
+        {
+            Name = "UpdatedUnit",
+            Health = 20,
+            Move = "6",
+            Save = 3,
+            Control = 1,
+            Version = created.Version
+        };
 
         var response = await Client.PutAsJsonAsync($"/api/units/{created.UnitId}", changeUnitDto);
 
@@ -70,7 +88,15 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
 
         var response = await Client.PutAsJsonAsync(
             $"/api/units/{created.UnitId}",
-            new ChangeUnitDto("", 20, "6", 3, 1, null, created.Version)
+            new ChangeUnitDto
+            {
+                Name = "",
+                Health = 20,
+                Move = "6",
+                Save = 3,
+                Control = 1,
+                Version = created.Version
+            }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

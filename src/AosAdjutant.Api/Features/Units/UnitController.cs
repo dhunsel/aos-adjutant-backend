@@ -1,4 +1,4 @@
-using AosAdjutant.Api.Shared;
+using AosAdjutant.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Units;
@@ -6,7 +6,7 @@ namespace AosAdjutant.Api.Features.Units;
 [Route("api/units")]
 [ApiController]
 [Tags("Units")]
-public class UnitController(UnitService unitService) : ControllerBase
+public sealed class UnitController(UnitService unitService) : ControllerBase
 {
     [HttpGet("{unitId}")]
     [EndpointSummary("Get a unit by ID")]

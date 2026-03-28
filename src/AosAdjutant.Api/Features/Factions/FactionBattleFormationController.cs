@@ -1,5 +1,5 @@
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.BattleFormations;
-using AosAdjutant.Api.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Factions;
@@ -7,7 +7,7 @@ namespace AosAdjutant.Api.Features.Factions;
 [Route("api/factions/{factionId}/battle-formations")]
 [ApiController]
 [Tags("Battle Formations")]
-public class FactionBattleFormationController(BattleFormationService battleFormationService) : ControllerBase
+public sealed class FactionBattleFormationController(BattleFormationService battleFormationService) : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a battle formation under a faction")]
@@ -21,8 +21,10 @@ public class FactionBattleFormationController(BattleFormationService battleForma
     {
         var battleFormationResult = await battleFormationService.CreateBattleFormation(factionId, battleFormationData);
         return battleFormationResult.Match(
-            bf => Created(
-                $"api/battle-formations/{bf.BattleFormationId}",
+            bf => CreatedAtAction(
+                nameof(BattleFormationController.GetBattleFormation),
+                "BattleFormation",
+                new { battleFormationId = bf.BattleFormationId },
                 new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)
             ),
             this.ApiProblem

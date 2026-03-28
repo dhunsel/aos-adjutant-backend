@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace AosAdjutant.Api.Shared;
+namespace AosAdjutant.Api.Common;
 
 public static class ControllerBaseExtensions
 {
