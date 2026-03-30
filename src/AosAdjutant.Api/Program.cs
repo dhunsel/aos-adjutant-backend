@@ -40,6 +40,7 @@ try
     builder.Services.AddScoped<AbilityService, AbilityService>();
 
     builder.Services.AddProblemDetails();
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
     builder.Services.AddOpenApi();
 
