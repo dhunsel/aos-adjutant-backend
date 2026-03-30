@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
-public sealed class AbilityService(ApplicationDbContext context)
+public sealed class AbilityService(ApplicationDbContext context, ILogger<AbilityService> logger)
 {
     public async Task<Result<Ability>> CreateGenericAbility(CreateAbilityDto abilityData)
     {
@@ -18,7 +18,7 @@ public sealed class AbilityService(ApplicationDbContext context)
                 Phase = abilityData.Phase,
                 Restriction = abilityData.Restriction,
                 Turn = abilityData.Turn,
-                IsGeneric = true
+                IsGeneric = true,
             }
         );
 
@@ -27,6 +27,8 @@ public sealed class AbilityService(ApplicationDbContext context)
         var newAbility = newAbilityResult.GetValue;
         context.Abilities.Add(newAbility);
         await context.SaveChangesAsync();
+
+        logger.Log_GenericAbilityCreated(newAbility.AbilityId);
 
         return Result<Ability>.Success(newAbility);
     }
@@ -46,7 +48,10 @@ public sealed class AbilityService(ApplicationDbContext context)
             return Result<Ability>.Failure(AbilityErrors.NotFound);
 
         if (ability.Version != abilityData.Version)
+        {
+            logger.Log_AbilityConcurrencyError(abilityId, abilityData.Version);
             return Result<Ability>.Failure(AbilityErrors.Concurrency);
+        }
 
         var changeResult = ability.ChangeAbility(
             new AbilityData
@@ -58,13 +63,15 @@ public sealed class AbilityService(ApplicationDbContext context)
                 Phase = abilityData.Phase,
                 Restriction = abilityData.Restriction,
                 Turn = abilityData.Turn,
-                IsGeneric = ability.IsGeneric
+                IsGeneric = ability.IsGeneric,
             }
         );
 
         if (!changeResult.IsSuccess) return Result<Ability>.Failure(changeResult.GetError);
 
         await context.SaveChangesAsync();
+
+        logger.Log_AbilityUpdated(abilityId);
 
         return Result<Ability>.Success(ability);
     }
@@ -78,6 +85,8 @@ public sealed class AbilityService(ApplicationDbContext context)
 
         context.Abilities.Remove(ability);
         await context.SaveChangesAsync();
+
+        logger.Log_AbilityDeleted(abilityId);
 
         return Result.Success();
     }

@@ -197,7 +197,7 @@ resharper_wrap_after_declaration_lpar = true
 resharper_wrap_before_declaration_rpar = true
 resharper_wrap_after_invocation_lpar = true
 resharper_wrap_before_invocation_rpar = true
-resharper_wrap_after_property_in_chained_method_calls = true
+resharper_wrap_after_property_in_chained_method_calls = false
 resharper_keep_existing_linebreaks = false
 
 #### Naming conventions ####

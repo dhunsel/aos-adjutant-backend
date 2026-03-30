@@ -2,6 +2,7 @@ using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AosAdjutant.UnitTests.Features.Abilities;
 
@@ -16,7 +17,7 @@ public class AbilityServiceTests
         public async Task ReturnsAbility_WhenDataIsValid()
         {
             await using var context = CreateContext();
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
             var createAbilityDto = new CreateAbilityDto
             {
                 Name = "TestAbility",
@@ -49,7 +50,7 @@ public class AbilityServiceTests
         public async Task ReturnsValidationError_WhenAbilityDataIsInvalid()
         {
             await using var context = CreateContext();
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.CreateGenericAbility(
                 new CreateAbilityDto
@@ -79,7 +80,7 @@ public class AbilityServiceTests
             context.Abilities.Add(ability);
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.GetAbility(abilityId);
 
@@ -91,7 +92,7 @@ public class AbilityServiceTests
         public async Task ReturnsNotFound_WhenAbilityDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.GetAbility(999);
 
@@ -118,7 +119,7 @@ public class AbilityServiceTests
             );
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
             var changeAbilityDto = new ChangeAbilityDto
             {
                 Name = "UpdatedAbility",
@@ -151,7 +152,7 @@ public class AbilityServiceTests
         public async Task ReturnsNotFound_WhenAbilityDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.UpdateAbility(
                 999,
@@ -186,7 +187,7 @@ public class AbilityServiceTests
             );
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.UpdateAbility(
                 abilityId,
@@ -221,7 +222,7 @@ public class AbilityServiceTests
             );
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.UpdateAbility(
                 abilityId,
@@ -257,7 +258,7 @@ public class AbilityServiceTests
             );
             await context.SaveChangesAsync();
             var abilityId = context.Abilities.Single().AbilityId;
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.DeleteAbility(abilityId);
 
@@ -269,7 +270,7 @@ public class AbilityServiceTests
         public async Task ReturnsNotFound_WhenAbilityDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AbilityService(context);
+            var service = new AbilityService(context, NullLogger<AbilityService>.Instance);
 
             var result = await service.DeleteAbility(999);
 

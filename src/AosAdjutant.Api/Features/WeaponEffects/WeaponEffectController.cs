@@ -14,8 +14,7 @@ public sealed class WeaponEffectController(ApplicationDbContext context) : Contr
     [ProducesResponseType<List<WeaponEffectResponseDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<WeaponEffectResponseDto>>> GetWeaponEffects()
     {
-        var weaponEffects = await context.WeaponEffects
-            .AsNoTracking()
+        var weaponEffects = await context.WeaponEffects.AsNoTracking()
             .Select(we => new WeaponEffectResponseDto(we.Key, we.Name))
             .ToListAsync();
         return Ok(weaponEffects);

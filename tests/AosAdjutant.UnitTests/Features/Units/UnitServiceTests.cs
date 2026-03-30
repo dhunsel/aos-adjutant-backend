@@ -4,6 +4,7 @@ using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AosAdjutant.UnitTests.Features.Units;
 
@@ -21,7 +22,7 @@ public class UnitServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
             var createUnitDto = new CreateUnitDto
             {
                 Name = "TestUnit",
@@ -53,7 +54,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.CreateUnit(
                 999,
@@ -89,7 +90,7 @@ public class UnitServiceTests
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.CreateUnit(
                 factionId,
@@ -138,7 +139,7 @@ public class UnitServiceTests
                 }
             );
             await context.SaveChangesAsync();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.GetFactionUnits(factionId);
 
@@ -150,7 +151,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.GetFactionUnits(999);
 
@@ -177,7 +178,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.GetUnit(unitId);
 
@@ -189,7 +190,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.GetUnit(999);
 
@@ -216,7 +217,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
             var changeUnitDto = new ChangeUnitDto
             {
                 Name = "UpdatedUnit",
@@ -249,7 +250,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.UpdateUnit(
                 999,
@@ -286,7 +287,7 @@ public class UnitServiceTests
             );
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.UpdateUnit(
                 unitId,
@@ -333,7 +334,7 @@ public class UnitServiceTests
             );
             await context.SaveChangesAsync();
             var unitId = context.Units.First(u => u.Name == "TestUnit1").UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.UpdateUnit(
                 unitId,
@@ -371,7 +372,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.DeleteUnit(unitId);
 
@@ -383,7 +384,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.DeleteUnit(999);
 
@@ -419,7 +420,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
             var createAbilityDto = ValidAbilityDto();
 
             var result = await service.CreateUnitAbility(unitId, createAbilityDto);
@@ -445,7 +446,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.CreateUnitAbility(999, ValidAbilityDto());
 
@@ -469,7 +470,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var invalidDto = new CreateAbilityDto
             {
@@ -504,7 +505,7 @@ public class UnitServiceTests
             context.Units.Add(unit);
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             await service.CreateUnitAbility(
                 unitId,
@@ -528,7 +529,7 @@ public class UnitServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new UnitService(context);
+            var service = new UnitService(context, NullLogger<UnitService>.Instance);
 
             var result = await service.GetUnitAbilities(999);
 

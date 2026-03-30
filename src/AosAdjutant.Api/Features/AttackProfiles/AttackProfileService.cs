@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
 
-public sealed class AttackProfileService(ApplicationDbContext context)
+public sealed class AttackProfileService(ApplicationDbContext context, ILogger<AttackProfileService> logger)
 {
     public async Task<Result<AttackProfile>> CreateAttackProfile(int unitId, CreateAttackProfileDto attackProfileData)
     {
@@ -29,7 +29,7 @@ public sealed class AttackProfileService(ApplicationDbContext context)
                 ToWound = attackProfileData.ToWound,
                 Rend = attackProfileData.Rend,
                 Damage = attackProfileData.Damage,
-                UnitId = unitId
+                UnitId = unitId,
             }
         );
 
@@ -37,8 +37,7 @@ public sealed class AttackProfileService(ApplicationDbContext context)
 
         var newAttackProfile = newAttackProfileResult.GetValue;
 
-        var weaponEffects = await context.WeaponEffects
-            .Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
+        var weaponEffects = await context.WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
             .ToListAsync();
 
         if (weaponEffects.Count != attackProfileData.WeaponEffects.Count)
@@ -53,6 +52,8 @@ public sealed class AttackProfileService(ApplicationDbContext context)
         // Ignore for now (won't occur in practice) but revisit in the future
         context.AttackProfiles.Add(newAttackProfile);
         await context.SaveChangesAsync();
+
+        logger.Log_AttackProfileCreated(newAttackProfile.AttackProfileId, unitId);
 
         return Result<AttackProfile>.Success(newAttackProfile);
     }
@@ -69,8 +70,7 @@ public sealed class AttackProfileService(ApplicationDbContext context)
 
     public async Task<Result<AttackProfile>> GetAttackProfile(int attackProfileId)
     {
-        var attackProfile = await context.AttackProfiles
-            .AsNoTracking()
+        var attackProfile = await context.AttackProfiles.AsNoTracking()
             .Include(ap => ap.WeaponEffects)
             .FirstOrDefaultAsync(ap => ap.AttackProfileId == attackProfileId);
 
@@ -84,15 +84,17 @@ public sealed class AttackProfileService(ApplicationDbContext context)
         ChangeAttackProfileDto attackProfileData
     )
     {
-        var attackProfile = await context.AttackProfiles
-            .Include(ap => ap.WeaponEffects)
+        var attackProfile = await context.AttackProfiles.Include(ap => ap.WeaponEffects)
             .FirstOrDefaultAsync(ap => ap.AttackProfileId == attackProfileId);
 
         if (attackProfile is null)
             return Result<AttackProfile>.Failure(AttackProfileErrors.NotFound);
 
         if (attackProfile.Version != attackProfileData.Version)
+        {
+            logger.Log_AttackProfileConcurrencyError(attackProfileId, attackProfileData.Version);
             return Result<AttackProfile>.Failure(AttackProfileErrors.Concurrency);
+        }
 
         var isDuplicate = await context.AttackProfiles.AnyAsync(ap =>
             ap.Name == attackProfileData.Name && ap.UnitId == attackProfile.UnitId &&
@@ -112,14 +114,13 @@ public sealed class AttackProfileService(ApplicationDbContext context)
                 ToWound = attackProfileData.ToWound,
                 Rend = attackProfileData.Rend,
                 Damage = attackProfileData.Damage,
-                UnitId = attackProfile.UnitId
+                UnitId = attackProfile.UnitId,
             }
         );
 
         if (!changeResult.IsSuccess) return Result<AttackProfile>.Failure(changeResult.GetError);
 
-        var weaponEffects = await context.WeaponEffects
-            .Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
+        var weaponEffects = await context.WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
             .ToListAsync();
 
         if (weaponEffects.Count != attackProfileData.WeaponEffects.Count)
@@ -131,6 +132,8 @@ public sealed class AttackProfileService(ApplicationDbContext context)
             attackProfile.WeaponEffects.Add(weaponEffect);
 
         await context.SaveChangesAsync();
+
+        logger.Log_AttackProfileUpdated(attackProfileId, attackProfile.UnitId);
 
         return Result<AttackProfile>.Success(attackProfile);
     }
@@ -144,6 +147,8 @@ public sealed class AttackProfileService(ApplicationDbContext context)
 
         context.AttackProfiles.Remove(attackProfile);
         await context.SaveChangesAsync();
+
+        logger.Log_AttackProfileDeleted(attackProfileId);
 
         return Result.Success();
     }

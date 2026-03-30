@@ -3,6 +3,7 @@ using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.Factions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AosAdjutant.UnitTests.Features.Factions;
 
@@ -17,7 +18,7 @@ public class FactionServiceTests
         public async Task ReturnsCreatedFaction_WhenNameIsUnique()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
             const string Name = "TestFaction";
 
             var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
@@ -33,7 +34,7 @@ public class FactionServiceTests
             const string Name = "TestFaction";
             context.Factions.Add(new Faction { Name = Name });
             await context.SaveChangesAsync();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
 
@@ -50,7 +51,7 @@ public class FactionServiceTests
             await using var context = CreateContext();
             context.Factions.AddRange(new Faction { Name = "TestFaction1" }, new Faction { Name = "TestFaction2" });
             await context.SaveChangesAsync();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFactions();
 
@@ -61,7 +62,7 @@ public class FactionServiceTests
         public async Task ReturnsEmptyList_WhenNoFactionsExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFactions();
 
@@ -79,7 +80,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = Name });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFaction(factionId);
 
@@ -91,7 +92,7 @@ public class FactionServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFaction(999);
 
@@ -109,7 +110,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction", Version = 0 });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
             const string NewName = "TestFactionUpdated";
 
             var result = await service.ChangeFaction(factionId, new ChangeFactionDto { Name = NewName, Version = 0 });
@@ -122,7 +123,7 @@ public class FactionServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.ChangeFaction(
                 999,
@@ -140,7 +141,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction", Version = 5 });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.ChangeFaction(
                 factionId,
@@ -161,7 +162,7 @@ public class FactionServiceTests
             );
             await context.SaveChangesAsync();
             var factionId = context.Factions.First(f => f.Name == "TestFaction1").FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.ChangeFaction(
                 factionId,
@@ -182,7 +183,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.DeleteFaction(factionId);
 
@@ -194,7 +195,7 @@ public class FactionServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.DeleteFaction(999);
 
@@ -221,7 +222,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.CreateFactionAbility(factionId, ValidAbilityDto());
 
@@ -246,7 +247,7 @@ public class FactionServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.CreateFactionAbility(999, ValidAbilityDto());
 
@@ -261,7 +262,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             // Passive ability with a declaration is invalid
             var invalidDto = new CreateAbilityDto
@@ -288,7 +289,7 @@ public class FactionServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             await service.CreateFactionAbility(
                 factionId,
@@ -312,7 +313,7 @@ public class FactionServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new FactionService(context);
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFactionAbilities(999);
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Factions;
 
-public sealed class FactionService(ApplicationDbContext context)
+public sealed class FactionService(ApplicationDbContext context, ILogger<FactionService> logger)
 {
     public async Task<Result<Faction>> CreateFaction(CreateFactionDto factionData)
     {
@@ -19,6 +19,8 @@ public sealed class FactionService(ApplicationDbContext context)
 
         context.Factions.Add(newFaction);
         await context.SaveChangesAsync();
+
+        logger.Log_FactionCreated(newFaction.FactionId);
 
         return Result<Faction>.Success(newFaction);
     }
@@ -43,7 +45,10 @@ public sealed class FactionService(ApplicationDbContext context)
             return Result<Faction>.Failure(FactionErrors.NotFound);
 
         if (faction.Version != factionData.Version)
+        {
+            logger.Log_FactionConcurrencyError(factionId, factionData.Version);
             return Result<Faction>.Failure(FactionErrors.Concurrency);
+        }
 
         var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name && f.FactionId != factionId);
         if (isDuplicate)
@@ -51,6 +56,8 @@ public sealed class FactionService(ApplicationDbContext context)
 
         faction.Name = factionData.Name;
         await context.SaveChangesAsync();
+
+        logger.Log_FactionUpdated(factionId);
 
         return Result<Faction>.Success(faction);
     }
@@ -64,6 +71,8 @@ public sealed class FactionService(ApplicationDbContext context)
 
         context.Factions.Remove(faction);
         await context.SaveChangesAsync();
+
+        logger.Log_FactionDeleted(factionId);
 
         return Result.Success();
     }
@@ -85,7 +94,7 @@ public sealed class FactionService(ApplicationDbContext context)
                 Phase = abilityData.Phase,
                 Restriction = abilityData.Restriction,
                 Turn = abilityData.Turn,
-                IsGeneric = false
+                IsGeneric = false,
             }
         );
 
@@ -95,13 +104,14 @@ public sealed class FactionService(ApplicationDbContext context)
         faction.Abilities.Add(newAbility);
         await context.SaveChangesAsync();
 
+        logger.Log_ScopedAbilityCreated(newAbility.AbilityId, nameof(Faction), factionId);
+
         return Result<Ability>.Success(newAbility);
     }
 
     public async Task<Result<List<Ability>>> GetFactionAbilities(int factionId)
     {
-        var faction = await context.Factions
-            .AsNoTracking()
+        var faction = await context.Factions.AsNoTracking()
             .Include(f => f.Abilities)
             .FirstOrDefaultAsync(f => f.FactionId == factionId);
 

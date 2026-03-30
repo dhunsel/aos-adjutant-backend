@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Units;
 
-public sealed class UnitService(ApplicationDbContext context)
+public sealed class UnitService(ApplicationDbContext context, ILogger<UnitService> logger)
 {
     public async Task<Result<Unit>> CreateUnit(int factionId, CreateUnitDto unitData)
     {
@@ -33,6 +33,8 @@ public sealed class UnitService(ApplicationDbContext context)
         // Ignore for now (won't occur in practice) but revisit in the future
         context.Units.Add(newUnit);
         await context.SaveChangesAsync();
+
+        logger.Log_UnitCreated(newUnit.UnitId, factionId);
 
         return Result<Unit>.Success(newUnit);
     }
@@ -62,7 +64,10 @@ public sealed class UnitService(ApplicationDbContext context)
             return Result<Unit>.Failure(UnitErrors.NotFound);
 
         if (unit.Version != unitData.Version)
+        {
+            logger.Log_UnitConcurrencyError(unitId, unitData.Version);
             return Result<Unit>.Failure(UnitErrors.Concurrency);
+        }
 
         var isDuplicate = await context.Units.AnyAsync(u =>
             u.Name == unitData.Name && u.FactionId == unit.FactionId && u.UnitId != unitId
@@ -79,6 +84,8 @@ public sealed class UnitService(ApplicationDbContext context)
 
         await context.SaveChangesAsync();
 
+        logger.Log_UnitUpdated(unitId, unit.FactionId);
+
         return Result<Unit>.Success(unit);
     }
 
@@ -91,6 +98,8 @@ public sealed class UnitService(ApplicationDbContext context)
 
         context.Units.Remove(unit);
         await context.SaveChangesAsync();
+
+        logger.Log_UnitDeleted(unitId);
 
         return Result.Success();
     }
@@ -112,7 +121,7 @@ public sealed class UnitService(ApplicationDbContext context)
                 Phase = abilityData.Phase,
                 Restriction = abilityData.Restriction,
                 Turn = abilityData.Turn,
-                IsGeneric = false
+                IsGeneric = false,
             }
         );
 
@@ -122,13 +131,14 @@ public sealed class UnitService(ApplicationDbContext context)
         unit.Abilities.Add(newAbility);
         await context.SaveChangesAsync();
 
+        logger.Log_ScopedAbilityCreated(newAbility.AbilityId, nameof(Unit), unitId);
+
         return Result<Ability>.Success(newAbility);
     }
 
     public async Task<Result<List<Ability>>> GetUnitAbilities(int unitId)
     {
-        var unit = await context.Units
-            .AsNoTracking()
+        var unit = await context.Units.AsNoTracking()
             .Include(u => u.Abilities)
             .FirstOrDefaultAsync(u => u.UnitId == unitId);
 
