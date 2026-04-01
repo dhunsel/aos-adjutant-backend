@@ -8,6 +8,9 @@ using AosAdjutant.Api.Features.BattleFormations;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -27,6 +30,25 @@ try
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
     );
+
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService(serviceName: "AosAdjutantApi", serviceVersion: "0.0.1"))
+        .WithTracing(tracing => tracing.AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddSource("AosAdjutantApi.FactionService")
+            .AddOtlpExporter(opts =>
+                {
+                    opts.Endpoint = new Uri(builder.Configuration["OTLP:Endpoint"]!);
+                }
+            )
+        )
+        .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
+            .AddOtlpExporter(opts =>
+                {
+                    opts.Endpoint = new Uri(builder.Configuration["Metrics:Endpoint"]!);
+                }
+            )
+        );
 
     builder.Services.AddControllers()
         .AddJsonOptions(opts =>
