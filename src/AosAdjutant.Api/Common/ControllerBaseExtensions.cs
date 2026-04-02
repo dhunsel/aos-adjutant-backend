@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Common;
@@ -15,9 +16,15 @@ public static class ControllerBaseExtensions
             _ => 500
         };
 
-        return controllerBase.StatusCode(
-            statusCode,
-            new ProblemDetails { Title = error.Code.ToString(), Detail = error.Message, Status = statusCode }
-        );
+        var problemDetails = new ProblemDetails
+        {
+            Title = error.Code.ToString(), Detail = error.Message, Status = statusCode
+        };
+
+        var traceId = Activity.Current?.Id;
+        if (traceId is not null)
+            problemDetails.Extensions["traceId"] = traceId;
+
+        return controllerBase.StatusCode(statusCode, problemDetails);
     }
 }

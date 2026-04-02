@@ -8,6 +8,10 @@ using AosAdjutant.Api.Features.BattleFormations;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -27,6 +31,28 @@ try
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
     );
+
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService(serviceName: "AosAdjutantApi", serviceVersion: "0.0.1"))
+        .WithTracing(tracing => tracing.AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddOtlpExporter(opts =>
+                {
+                    opts.Endpoint = new Uri(builder.Configuration["OTLP:Endpoint"]!);
+                }
+            )
+        )
+        .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
+            .SetExemplarFilter(ExemplarFilterType.TraceBased)
+            .AddOtlpExporter((exporterOptions, metricReaderOptions) =>
+                {
+                    exporterOptions.Endpoint = new Uri(builder.Configuration["Metrics:Endpoint"]!);
+                    exporterOptions.Protocol = OtlpExportProtocol.HttpProtobuf;
+                    metricReaderOptions.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds =
+                        builder.Configuration.GetValue<int>("Metrics:ExportIntervalMilliseconds");
+                }
+            )
+        );
 
     builder.Services.AddControllers()
         .AddJsonOptions(opts =>

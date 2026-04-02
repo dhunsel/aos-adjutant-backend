@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:18.1
-    env_file: .env
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_USER: ${DATABASE_USER}
@@ -11,20 +10,56 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "pg_ready", "-U", "{DATABSE_USER}"]
+      test: ["CMD", "pg_ready", "-U", "${DATABASE_USER}"]
       interval: 5s
       timeout: 5s
 
-  seq:
-    image: datalust/seq:latest
-    environment:
-      ACCEPT_EULA: Y
-      SEQ_PASSWORD: ${SEQ_PASSWORD}
+  loki:
+    image: grafana/loki:3
+    command: -config.file=/etc/loki/loki-config.yaml
     ports:
-      - 5341:80
+      - 3100:3100
     volumes:
-      - seq-data:/data
+      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki-data:/loki
+
+  prometheus:
+    image: prom/prometheus:v3
+    command:
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    volumes:
+      - ./observability/prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+
+  tempo:
+    image: grafana/tempo:2.4.0
+    command: "-config.file=/etc/tempo.yaml"
+    volumes:
+      - ./observability/tempo/tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/var/tempo
+    ports:
+      - 3200:3200
+      - 4317:4317
+      - 4318:4318
+
+  grafana:
+    image: grafana/grafana:12.4
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/provisioning/:/etc/grafana/provisioning/
 
 volumes:
   postgres-data:
-  seq-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:
+  tempo-data:
