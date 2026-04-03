@@ -1,0 +1,19 @@
+coverage:
+  status:
+    project:
+      default:
+        # Fail if overall project coverage drops by more than 1% compared to parent commit
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        # New code introduced in a PR should be at least 80% covered
+        target: 80%
+
+ignore:
+  - "src/AosAdjutant.Api/Migrations/**"
+
+comment:
+  layout: "condensed_header,condensed_files,condensed_footer"
+  hide_project_coverage: true
+  behavior: default

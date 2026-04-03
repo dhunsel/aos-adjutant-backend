@@ -9,16 +9,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.x'
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.slnx') }}
@@ -37,9 +40,9 @@ jobs:
       - name: Integration Tests
         run: dotnet test tests/AosAdjutant.IntegrationTests --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory coverage/integration
 
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
         with:
-          name: coverage-reports
-          path: coverage/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/**/coverage.cobertura.xml
+          fail_ci_if_error: true
