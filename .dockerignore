@@ -1,7 +1,6 @@
 **/.git
 **/.gitignore
 **/.env*
-!**/.env.example
 
 # Build output
 **/bin
@@ -18,5 +17,8 @@ docker-compose.yml
 .idea/
 .vscode/
 
-# Docs
+# Docs & repo config
 README.md
+LICENSE
+codecov.yml
+.github/
