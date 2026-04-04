@@ -1,0 +1,24 @@
+**/.git
+**/.gitignore
+**/.env*
+
+# Build output
+**/bin
+**/obj
+
+# Tests
+tests/
+
+# Observability stack config (runtime concern, not part of the image)
+observability/
+docker-compose.yml
+
+# IDE
+.idea/
+.vscode/
+
+# Docs & repo config
+README.md
+LICENSE
+codecov.yml
+.github/
