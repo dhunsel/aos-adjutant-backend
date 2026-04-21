@@ -16,8 +16,14 @@ public sealed class BattleFormation
 
 public static class BattleFormationErrors
 {
-    public static readonly AppError NotFound = new(ErrorCode.NotFound, "Battle formation not found.");
-    public static readonly AppError AlreadyExists = new(ErrorCode.UniqueKeyError, "Battle formation already exists.");
+    public static readonly AppError NotFound = new(
+        ErrorCode.NotFound,
+        "Battle formation not found."
+    );
+    public static readonly AppError AlreadyExists = new(
+        ErrorCode.UniqueKeyError,
+        "Battle formation already exists."
+    );
 
     public static readonly AppError Concurrency = new(
         ErrorCode.ConcurrencyError,

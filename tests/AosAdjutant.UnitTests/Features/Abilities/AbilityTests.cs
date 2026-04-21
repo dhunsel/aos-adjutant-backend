@@ -18,7 +18,7 @@ public class AbilityTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Turn = PlayerTurn.YourTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -33,7 +33,7 @@ public class AbilityTests
                     Phase = TurnPhase.Hero,
                     Restriction = (ActivationRestriction?)null,
                     Turn = (PlayerTurn?)PlayerTurn.YourTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 },
                 result.GetValue
             );
@@ -45,7 +45,10 @@ public class AbilityTests
             var result = Ability.Create(
                 new AbilityData
                 {
-                    Name = "TestAbility", Effect = "TestEffect", Phase = TurnPhase.Passive, IsGeneric = false
+                    Name = "TestAbility",
+                    Effect = "TestEffect",
+                    Phase = TurnPhase.Passive,
+                    IsGeneric = false,
                 }
             );
 
@@ -63,7 +66,7 @@ public class AbilityTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Turn = PlayerTurn.YourTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -81,7 +84,7 @@ public class AbilityTests
                     Reaction = "TestReaction",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Passive,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -99,7 +102,7 @@ public class AbilityTests
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Passive,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -117,7 +120,7 @@ public class AbilityTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Passive,
                     Restriction = ActivationRestriction.OnceBattle,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -135,7 +138,7 @@ public class AbilityTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Passive,
                     Turn = PlayerTurn.YourTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -147,7 +150,8 @@ public class AbilityTests
     public class ChangeAbility
     {
         private static Ability CreateValidAbility() =>
-            Ability.Create(
+            Ability
+                .Create(
                     new AbilityData
                     {
                         Name = "TestAbility",
@@ -155,7 +159,7 @@ public class AbilityTests
                         Effect = "TestEffect",
                         Phase = TurnPhase.Hero,
                         Turn = PlayerTurn.YourTurn,
-                        IsGeneric = false
+                        IsGeneric = false,
                     }
                 )
                 .GetValue;
@@ -173,7 +177,7 @@ public class AbilityTests
                     Effect = "UpdatedEffect",
                     Phase = TurnPhase.Combat,
                     Turn = PlayerTurn.EnemyTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -187,7 +191,7 @@ public class AbilityTests
                     Effect = "UpdatedEffect",
                     Phase = TurnPhase.Combat,
                     Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.EnemyTurn
+                    Turn = (PlayerTurn?)PlayerTurn.EnemyTurn,
                 },
                 ability
             );
@@ -205,7 +209,7 @@ public class AbilityTests
                     Effect = "UpdatedEffect",
                     Phase = TurnPhase.Hero,
                     Turn = PlayerTurn.EnemyTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 }
             );
 
@@ -220,7 +224,7 @@ public class AbilityTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.YourTurn
+                    Turn = (PlayerTurn?)PlayerTurn.YourTurn,
                 },
                 ability
             );

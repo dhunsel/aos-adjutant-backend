@@ -15,7 +15,9 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/battle-formations",
@@ -24,14 +26,15 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
         return (await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAbilityDto ValidAbilityDto() => new()
-    {
-        Name = "TestAbility",
-        Declaration = "TestDeclaration",
-        Effect = "TestEffect",
-        Phase = TurnPhase.Hero,
-        Turn = PlayerTurn.YourTurn
-    };
+    private static CreateAbilityDto ValidAbilityDto() =>
+        new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn,
+        };
 
     // --- POST /api/battle-formations/{id}/abilities ---
 
@@ -60,7 +63,7 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
                 createAbilityDto.Effect,
                 createAbilityDto.Phase,
                 createAbilityDto.Restriction,
-                createAbilityDto.Turn
+                createAbilityDto.Turn,
             },
             body
         );
@@ -78,7 +81,9 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
             JsonOptions
         );
 
-        var response = await Client.GetAsync($"/api/battle-formations/{battleFormation.BattleFormationId}/abilities");
+        var response = await Client.GetAsync(
+            $"/api/battle-formations/{battleFormation.BattleFormationId}/abilities"
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<List<AbilityResponseDto>>(JsonOptions);

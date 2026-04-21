@@ -10,23 +10,28 @@ namespace AosAdjutant.IntegrationTests.Fixture;
 
 public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder().WithImage("postgres:18.1").Build();
+    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder()
+        .WithImage("postgres:18.1")
+        .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
-            {
-                services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
-                services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(_db.GetConnectionString()));
-            }
-        );
+        {
+            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            services.AddDbContext<ApplicationDbContext>(opt =>
+                opt.UseNpgsql(_db.GetConnectionString())
+            );
+        });
     }
 
     async Task IAsyncLifetime.InitializeAsync()
     {
         await _db.StartAsync();
         using var scope = Services.CreateScope();
-        await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreatedAsync();
+        await scope
+            .ServiceProvider.GetRequiredService<ApplicationDbContext>()
+            .Database.EnsureCreatedAsync();
     }
 
     async Task IAsyncLifetime.DisposeAsync()

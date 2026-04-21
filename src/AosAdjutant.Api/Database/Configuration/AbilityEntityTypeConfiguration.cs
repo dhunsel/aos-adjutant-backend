@@ -14,9 +14,21 @@ public sealed class AbilityEntityTypeConfiguration : IEntityTypeConfiguration<Ab
         builder.Property(f => f.Reaction).HasColumnName("reaction").HasMaxLength(250);
         builder.Property(f => f.Declaration).HasColumnName("declaration").HasMaxLength(250);
         builder.Property(f => f.Effect).HasColumnName("effect").HasMaxLength(250);
-        builder.Property(f => f.Phase).HasColumnName("phase").HasConversion<string>().HasMaxLength(250);
-        builder.Property(f => f.Restriction).HasColumnName("restriction").HasConversion<string>().HasMaxLength(250);
-        builder.Property(f => f.Turn).HasColumnName("turn").HasConversion<string>().HasMaxLength(250);
+        builder
+            .Property(f => f.Phase)
+            .HasColumnName("phase")
+            .HasConversion<string>()
+            .HasMaxLength(250);
+        builder
+            .Property(f => f.Restriction)
+            .HasColumnName("restriction")
+            .HasConversion<string>()
+            .HasMaxLength(250);
+        builder
+            .Property(f => f.Turn)
+            .HasColumnName("turn")
+            .HasConversion<string>()
+            .HasMaxLength(250);
         builder.Property(f => f.IsGeneric).HasColumnName("is_generic");
 
         builder.HasKey(f => f.AbilityId);

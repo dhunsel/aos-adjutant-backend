@@ -5,7 +5,10 @@ public static partial class AbilityServiceLoggerExtensions
     [LoggerMessage(Level = LogLevel.Information, Message = "Generic ability {AbilityId} created")]
     public static partial void Log_GenericAbilityCreated(this ILogger logger, int abilityId);
 
-    [LoggerMessage(Level = LogLevel.Information, Message = "Ability {AbilityId} created for {ParentType} {ParentId}")]
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Ability {AbilityId} created for {ParentType} {ParentId}"
+    )]
     public static partial void Log_ScopedAbilityCreated(
         this ILogger logger,
         int abilityId,
@@ -23,5 +26,9 @@ public static partial class AbilityServiceLoggerExtensions
         Level = LogLevel.Warning,
         Message = "Update for ability {AbilityId} with version {Version} failed because of version mismatch"
     )]
-    public static partial void Log_AbilityConcurrencyError(this ILogger logger, int abilityId, uint version);
+    public static partial void Log_AbilityConcurrencyError(
+        this ILogger logger,
+        int abilityId,
+        uint version
+    );
 }

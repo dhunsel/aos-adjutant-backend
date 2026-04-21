@@ -13,6 +13,7 @@ public class Result
     }
 
     public static Result Success() => new(true, null);
+
     public static Result Failure(AppError error) => new(false, error);
 
     public AppError GetError => IsSuccess ? throw new InvalidOperationException() : Error!;
@@ -29,16 +30,17 @@ public sealed class Result<T> : Result
 
     public T GetValue => IsSuccess ? Value! : throw new InvalidOperationException();
 
-    private Result(T value) : base(true, null)
+    private Result(T value)
+        : base(true, null)
     {
         Value = value;
     }
 
-    private Result(AppError error) : base(false, error)
-    {
-    }
+    private Result(AppError error)
+        : base(false, error) { }
 
     public static Result<T> Success(T value) => new(value);
+
     public static new Result<T> Failure(AppError error) => new(error);
 
     public TOut Match<TOut>(Func<T, TOut> onSuccess, Func<AppError, TOut> onFailure)

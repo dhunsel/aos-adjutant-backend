@@ -15,7 +15,9 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
@@ -25,22 +27,23 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
                 Health = 10,
                 Move = "5",
                 Save = 4,
-                Control = 2
+                Control = 2,
             }
         );
         return (await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAttackProfileDto ValidAttackProfileDto() => new()
-    {
-        Name = "TestAttackProfile",
-        IsRanged = false,
-        Attacks = "2",
-        ToHit = 3,
-        ToWound = 3,
-        Damage = "1",
-        WeaponEffects = []
-    };
+    private static CreateAttackProfileDto ValidAttackProfileDto() =>
+        new()
+        {
+            Name = "TestAttackProfile",
+            IsRanged = false,
+            Attacks = "2",
+            ToHit = 3,
+            ToWound = 3,
+            Damage = "1",
+            WeaponEffects = [],
+        };
 
     // --- POST /api/units/{id}/attack-profiles ---
 
@@ -70,7 +73,7 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
                 createAttackProfileDto.ToWound,
                 createAttackProfileDto.Rend,
                 createAttackProfileDto.Damage,
-                unit.UnitId
+                unit.UnitId,
             },
             body
         );
@@ -80,7 +83,10 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
     public async Task CreateAttackProfile_Returns201_WithWeaponEffects()
     {
         var unit = await CreateUnitAsync();
-        var createAttackProfileDto = ValidAttackProfileDto() with { WeaponEffects = ["crit_mortal", "companion"] };
+        var createAttackProfileDto = ValidAttackProfileDto() with
+        {
+            WeaponEffects = ["crit_mortal", "companion"],
+        };
 
         var response = await Client.PostAsJsonAsync(
             $"/api/units/{unit.UnitId}/attack-profiles",
@@ -100,7 +106,10 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
 
         var response = await Client.PostAsJsonAsync(
             $"/api/units/{unit.UnitId}/attack-profiles",
-            ValidAttackProfileDto() with { Name = "" }
+            ValidAttackProfileDto() with
+            {
+                Name = "",
+            }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -112,12 +121,17 @@ public class UnitAttackProfileEndpointTests(ApiFactory factory) : EndpointTestsB
     public async Task GetAttackProfiles_Returns200()
     {
         var unit = await CreateUnitAsync();
-        await Client.PostAsJsonAsync($"/api/units/{unit.UnitId}/attack-profiles", ValidAttackProfileDto());
+        await Client.PostAsJsonAsync(
+            $"/api/units/{unit.UnitId}/attack-profiles",
+            ValidAttackProfileDto()
+        );
 
         var response = await Client.GetAsync($"/api/units/{unit.UnitId}/attack-profiles");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<List<AttackProfileResponseDto>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<List<AttackProfileResponseDto>>(
+            JsonOptions
+        );
         Assert.NotNull(body);
         Assert.Single(body);
     }

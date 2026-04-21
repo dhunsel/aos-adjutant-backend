@@ -14,7 +14,9 @@ public sealed class UnitService(ApplicationDbContext context, ILogger<UnitServic
         if (!factionExists)
             return Result<Unit>.Failure(FactionErrors.NotFound);
 
-        var isDuplicate = await context.Units.AnyAsync(u => u.Name == unitData.Name && u.FactionId == factionId);
+        var isDuplicate = await context.Units.AnyAsync(u =>
+            u.Name == unitData.Name && u.FactionId == factionId
+        );
         if (isDuplicate)
             return Result<Unit>.Failure(UnitErrors.AlreadyExists);
 
@@ -45,7 +47,10 @@ public sealed class UnitService(ApplicationDbContext context, ILogger<UnitServic
         if (!factionExists)
             return Result<List<Unit>>.Failure(FactionErrors.NotFound);
 
-        var units = await context.Units.AsNoTracking().Where(u => u.FactionId == factionId).ToListAsync();
+        var units = await context
+            .Units.AsNoTracking()
+            .Where(u => u.FactionId == factionId)
+            .ToListAsync();
         return Result<List<Unit>>.Success(units);
     }
 
@@ -53,7 +58,9 @@ public sealed class UnitService(ApplicationDbContext context, ILogger<UnitServic
     {
         var unit = await context.Units.AsNoTracking().FirstOrDefaultAsync(u => u.UnitId == unitId);
 
-        return unit is null ? Result<Unit>.Failure(UnitErrors.NotFound) : Result<Unit>.Success(unit);
+        return unit is null
+            ? Result<Unit>.Failure(UnitErrors.NotFound)
+            : Result<Unit>.Success(unit);
     }
 
     public async Task<Result<Unit>> UpdateUnit(int unitId, ChangeUnitDto unitData)
@@ -125,7 +132,8 @@ public sealed class UnitService(ApplicationDbContext context, ILogger<UnitServic
             }
         );
 
-        if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
+        if (!newAbilityResult.IsSuccess)
+            return Result<Ability>.Failure(newAbilityResult.GetError);
 
         var newAbility = newAbilityResult.GetValue;
         unit.Abilities.Add(newAbility);
@@ -138,7 +146,8 @@ public sealed class UnitService(ApplicationDbContext context, ILogger<UnitServic
 
     public async Task<Result<List<Ability>>> GetUnitAbilities(int unitId)
     {
-        var unit = await context.Units.AsNoTracking()
+        var unit = await context
+            .Units.AsNoTracking()
             .Include(u => u.Abilities)
             .FirstOrDefaultAsync(u => u.UnitId == unitId);
 

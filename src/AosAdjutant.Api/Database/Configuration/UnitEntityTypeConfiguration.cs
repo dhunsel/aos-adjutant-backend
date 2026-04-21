@@ -22,18 +22,22 @@ public sealed class UnitEntityTypeConfiguration : IEntityTypeConfiguration<Unit>
 
         builder.HasIndex(u => new { u.FactionId, u.Name }).IsUnique();
 
-        builder.HasMany(u => u.AttackProfiles).WithOne().HasForeignKey(ap => ap.UnitId).IsRequired();
+        builder
+            .HasMany(u => u.AttackProfiles)
+            .WithOne()
+            .HasForeignKey(ap => ap.UnitId)
+            .IsRequired();
 
-        builder.HasMany(u => u.Abilities)
+        builder
+            .HasMany(u => u.Abilities)
             .WithMany()
             .UsingEntity(ua =>
-                {
-                    ua.ToTable("unit_ability");
-                    ua.Property("UnitId").HasColumnName("unit_id");
-                    ua.Property("AbilitiesAbilityId").HasColumnName("ability_id");
-                    ua.HasIndex("AbilitiesAbilityId").IsUnique();
-                }
-            );
+            {
+                ua.ToTable("unit_ability");
+                ua.Property("UnitId").HasColumnName("unit_id");
+                ua.Property("AbilitiesAbilityId").HasColumnName("ability_id");
+                ua.HasIndex("AbilitiesAbilityId").IsUnique();
+            });
 
         builder.Property(u => u.Version).IsRowVersion();
     }

@@ -15,7 +15,9 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var unitResponse = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
@@ -25,7 +27,7 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
                 Health = 10,
                 Move = "5",
                 Save = 4,
-                Control = 2
+                Control = 2,
             }
         );
         var unit = (await unitResponse.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
@@ -40,7 +42,7 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
                 ToHit = 3,
                 ToWound = 3,
                 Damage = "1",
-                WeaponEffects = []
+                WeaponEffects = [],
             }
         );
         return (await response.Content.ReadFromJsonAsync<AttackProfileResponseDto>(JsonOptions))!;
@@ -76,10 +78,13 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
             ToWound = 4,
             Damage = "2",
             WeaponEffects = [],
-            Version = created.Version
+            Version = created.Version,
         };
 
-        var response = await Client.PutAsJsonAsync($"/api/attack-profiles/{created.AttackProfileId}", changeDto);
+        var response = await Client.PutAsJsonAsync(
+            $"/api/attack-profiles/{created.AttackProfileId}",
+            changeDto
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<AttackProfileResponseDto>(JsonOptions);
@@ -94,7 +99,7 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
                 changeDto.ToHit,
                 changeDto.ToWound,
                 changeDto.Rend,
-                changeDto.Damage
+                changeDto.Damage,
             },
             body
         );
@@ -116,7 +121,7 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
                 ToWound = 4,
                 Damage = "2",
                 WeaponEffects = [],
-                Version = created.Version
+                Version = created.Version,
             }
         );
 

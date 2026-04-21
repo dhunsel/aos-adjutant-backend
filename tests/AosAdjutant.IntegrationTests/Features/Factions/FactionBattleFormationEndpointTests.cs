@@ -10,7 +10,10 @@ public class FactionBattleFormationEndpointTests(ApiFactory factory) : EndpointT
 {
     private async Task<FactionResponseDto> CreateFactionAsync()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
@@ -27,10 +30,15 @@ public class FactionBattleFormationEndpointTests(ApiFactory factory) : EndpointT
         );
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(
+            JsonOptions
+        );
         Assert.NotNull(body);
         Assert.True(body.BattleFormationId > 0);
-        Assert.Equivalent(new { Name = "TestBattleFormation", FactionId = faction.FactionId }, body);
+        Assert.Equivalent(
+            new { Name = "TestBattleFormation", FactionId = faction.FactionId },
+            body
+        );
     }
 
     [Fact]
@@ -57,10 +65,14 @@ public class FactionBattleFormationEndpointTests(ApiFactory factory) : EndpointT
             new CreateBattleFormationDto { Name = "TestBattleFormation" }
         );
 
-        var response = await Client.GetAsync($"/api/factions/{faction.FactionId}/battle-formations");
+        var response = await Client.GetAsync(
+            $"/api/factions/{faction.FactionId}/battle-formations"
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<List<BattleFormationResponseDto>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<List<BattleFormationResponseDto>>(
+            JsonOptions
+        );
         Assert.NotNull(body);
         Assert.Single(body);
     }

@@ -16,10 +16,17 @@ public sealed record AbilityResponseDto(
 
 public sealed record CreateAbilityDto
 {
-    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
-    [StringLength(100, MinimumLength = 1)] public string? Reaction { get; init; }
-    [StringLength(100, MinimumLength = 1)] public string? Declaration { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Effect { get; init; }
+    [StringLength(100, MinimumLength = 1)]
+    public required string Name { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public string? Reaction { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public string? Declaration { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Effect { get; init; }
     public required TurnPhase Phase { get; init; }
     public ActivationRestriction? Restriction { get; init; }
     public PlayerTurn? Turn { get; init; }
@@ -27,10 +34,17 @@ public sealed record CreateAbilityDto
 
 public sealed record ChangeAbilityDto
 {
-    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
-    [StringLength(100, MinimumLength = 1)] public string? Reaction { get; init; }
-    [StringLength(100, MinimumLength = 1)] public string? Declaration { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Effect { get; init; }
+    [StringLength(100, MinimumLength = 1)]
+    public required string Name { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public string? Reaction { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public string? Declaration { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Effect { get; init; }
     public required TurnPhase Phase { get; init; }
     public ActivationRestriction? Restriction { get; init; }
     public PlayerTurn? Turn { get; init; }

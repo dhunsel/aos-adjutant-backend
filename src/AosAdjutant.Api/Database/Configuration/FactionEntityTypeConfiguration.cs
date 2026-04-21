@@ -16,19 +16,23 @@ public sealed class FactionEntityTypeConfiguration : IEntityTypeConfiguration<Fa
 
         builder.HasIndex(f => f.Name).IsUnique();
 
-        builder.HasMany(f => f.BattleFormations).WithOne().HasForeignKey(bf => bf.FactionId).IsRequired();
+        builder
+            .HasMany(f => f.BattleFormations)
+            .WithOne()
+            .HasForeignKey(bf => bf.FactionId)
+            .IsRequired();
         builder.HasMany(f => f.Units).WithOne().HasForeignKey(u => u.FactionId).IsRequired();
 
-        builder.HasMany(f => f.Abilities)
+        builder
+            .HasMany(f => f.Abilities)
             .WithMany()
             .UsingEntity(fa =>
-                {
-                    fa.ToTable("faction_ability");
-                    fa.Property("FactionId").HasColumnName("faction_id");
-                    fa.Property("AbilitiesAbilityId").HasColumnName("ability_id");
-                    fa.HasIndex("AbilitiesAbilityId").IsUnique();
-                }
-            );
+            {
+                fa.ToTable("faction_ability");
+                fa.Property("FactionId").HasColumnName("faction_id");
+                fa.Property("AbilitiesAbilityId").HasColumnName("ability_id");
+                fa.HasIndex("AbilitiesAbilityId").IsUnique();
+            });
 
         builder.Property(f => f.Version).IsRowVersion();
     }

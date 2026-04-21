@@ -22,7 +22,8 @@ public sealed class AbilityService(ApplicationDbContext context, ILogger<Ability
             }
         );
 
-        if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
+        if (!newAbilityResult.IsSuccess)
+            return Result<Ability>.Failure(newAbilityResult.GetError);
 
         var newAbility = newAbilityResult.GetValue;
         context.Abilities.Add(newAbility);
@@ -35,9 +36,13 @@ public sealed class AbilityService(ApplicationDbContext context, ILogger<Ability
 
     public async Task<Result<Ability>> GetAbility(int abilityId)
     {
-        var ability = await context.Abilities.AsNoTracking().FirstOrDefaultAsync(a => a.AbilityId == abilityId);
+        var ability = await context
+            .Abilities.AsNoTracking()
+            .FirstOrDefaultAsync(a => a.AbilityId == abilityId);
 
-        return ability is null ? Result<Ability>.Failure(AbilityErrors.NotFound) : Result<Ability>.Success(ability);
+        return ability is null
+            ? Result<Ability>.Failure(AbilityErrors.NotFound)
+            : Result<Ability>.Success(ability);
     }
 
     public async Task<Result<Ability>> UpdateAbility(int abilityId, ChangeAbilityDto abilityData)
@@ -67,7 +72,8 @@ public sealed class AbilityService(ApplicationDbContext context, ILogger<Ability
             }
         );
 
-        if (!changeResult.IsSuccess) return Result<Ability>.Failure(changeResult.GetError);
+        if (!changeResult.IsSuccess)
+            return Result<Ability>.Failure(changeResult.GetError);
 
         await context.SaveChangesAsync();
 

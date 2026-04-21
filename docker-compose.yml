@@ -1,3 +1,4 @@
+name: aosadjutant
 services:
   postgres:
     image: postgres:18.1
@@ -10,7 +11,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "pg_ready", "-U", "${DATABASE_USER}"]
+      test: [ "CMD", "pg_ready", "-U", "${DATABASE_USER}" ]
       interval: 5s
       timeout: 5s
 

@@ -12,25 +12,28 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
     [EndpointSummary("Create a generic ability")]
     [ProducesResponseType<AbilityResponseDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<AbilityResponseDto>> CreateAbility([FromBody] CreateAbilityDto abilityData)
+    public async Task<ActionResult<AbilityResponseDto>> CreateAbility(
+        [FromBody] CreateAbilityDto abilityData
+    )
     {
         var newAbilityResult = await abilityService.CreateGenericAbility(abilityData);
         return newAbilityResult.Match(
-            a => CreatedAtAction(
-                nameof(GetAbility),
-                new { abilityId = a.AbilityId },
-                new AbilityResponseDto(
-                    a.AbilityId,
-                    a.Name,
-                    a.Reaction,
-                    a.Declaration,
-                    a.Effect,
-                    a.Phase,
-                    a.Restriction,
-                    a.Turn,
-                    a.Version
-                )
-            ),
+            a =>
+                CreatedAtAction(
+                    nameof(GetAbility),
+                    new { abilityId = a.AbilityId },
+                    new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -53,19 +56,20 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
     {
         var abilityResult = await abilityService.GetAbility(abilityId);
         return abilityResult.Match(
-            a => Ok(
-                new AbilityResponseDto(
-                    a.AbilityId,
-                    a.Name,
-                    a.Reaction,
-                    a.Declaration,
-                    a.Effect,
-                    a.Phase,
-                    a.Restriction,
-                    a.Turn,
-                    a.Version
-                )
-            ),
+            a =>
+                Ok(
+                    new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -82,19 +86,20 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
     {
         var abilityResult = await abilityService.UpdateAbility(abilityId, abilityData);
         return abilityResult.Match(
-            a => Ok(
-                new AbilityResponseDto(
-                    a.AbilityId,
-                    a.Name,
-                    a.Reaction,
-                    a.Declaration,
-                    a.Effect,
-                    a.Phase,
-                    a.Restriction,
-                    a.Turn,
-                    a.Version
-                )
-            ),
+            a =>
+                Ok(
+                    new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    )
+                ),
             this.ApiProblem
         );
     }

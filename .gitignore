@@ -3,6 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# temp ignore
+SPEC.md
+CLAUDE.md
+
 # dotenv files
 .env
 

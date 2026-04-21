@@ -6,15 +6,32 @@ namespace AosAdjutant.Api.Features.Abilities;
 
 public enum TurnPhase
 {
-    [Display(Name = "Deployment Phase")] Deployment,
-    [Display(Name = "Start Phase")] Start,
-    [Display(Name = "Hero Phase")] Hero,
-    [Display(Name = "Movement Phase")] Movement,
-    [Display(Name = "Shooting Phase")] Shooting,
-    [Display(Name = "Charge Phase")] Charge,
-    [Display(Name = "Combat Phase")] Combat,
-    [Display(Name = "End Phase")] End,
-    [Display(Name = "Passive")] Passive,
+    [Display(Name = "Deployment Phase")]
+    Deployment,
+
+    [Display(Name = "Start Phase")]
+    Start,
+
+    [Display(Name = "Hero Phase")]
+    Hero,
+
+    [Display(Name = "Movement Phase")]
+    Movement,
+
+    [Display(Name = "Shooting Phase")]
+    Shooting,
+
+    [Display(Name = "Charge Phase")]
+    Charge,
+
+    [Display(Name = "Combat Phase")]
+    Combat,
+
+    [Display(Name = "End Phase")]
+    End,
+
+    [Display(Name = "Passive")]
+    Passive,
 }
 
 public enum ActivationRestriction
@@ -31,14 +48,20 @@ public enum ActivationRestriction
     [Display(Name = "Once per battle round")]
     OnceRound,
 
-    [Display(Name = "Once per battle")] OnceBattle
+    [Display(Name = "Once per battle")]
+    OnceBattle,
 }
 
 public enum PlayerTurn
 {
-    [Display(Name = "Your")] YourTurn,
-    [Display(Name = "Enemy")] EnemyTurn,
-    [Display(Name = "Any")] AnyTurn
+    [Display(Name = "Your")]
+    YourTurn,
+
+    [Display(Name = "Enemy")]
+    EnemyTurn,
+
+    [Display(Name = "Any")]
+    AnyTurn,
 }
 
 public sealed record AbilityData
@@ -70,7 +93,8 @@ public sealed class Ability
     {
         var validationResult = ValidateAbility(data);
 
-        if (!validationResult.IsSuccess) return Result<Ability>.Failure(validationResult.GetError);
+        if (!validationResult.IsSuccess)
+            return Result<Ability>.Failure(validationResult.GetError);
 
         var ability = new Ability
         {
@@ -91,7 +115,8 @@ public sealed class Ability
     {
         var validationResult = ValidateAbility(data);
 
-        if (!validationResult.IsSuccess) return Result.Failure(validationResult.GetError);
+        if (!validationResult.IsSuccess)
+            return Result.Failure(validationResult.GetError);
 
         Name = data.Name;
         Reaction = data.Reaction;
@@ -106,8 +131,15 @@ public sealed class Ability
 
     private static Result ValidateAbility(AbilityData data)
     {
-        if (data.Phase == TurnPhase.Passive && !(data.Reaction is null && data.Declaration is null &&
-                                                 data.Restriction is null && data.Turn is null))
+        if (
+            data.Phase == TurnPhase.Passive
+            && !(
+                data.Reaction is null
+                && data.Declaration is null
+                && data.Restriction is null
+                && data.Turn is null
+            )
+        )
             return Result.Failure(
                 new AppError(
                     ErrorCode.ValidationError,
@@ -117,7 +149,10 @@ public sealed class Ability
 
         if (data.Phase != TurnPhase.Passive && data.Declaration is null)
             return Result.Failure(
-                new AppError(ErrorCode.ValidationError, "A non-passive ability must have a declaration.")
+                new AppError(
+                    ErrorCode.ValidationError,
+                    "A non-passive ability must have a declaration."
+                )
             );
 
         return Result.Success();

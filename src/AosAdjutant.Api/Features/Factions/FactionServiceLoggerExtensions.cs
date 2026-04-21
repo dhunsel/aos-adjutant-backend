@@ -15,5 +15,9 @@ public static partial class FactionServiceLoggerExtensions
         Level = LogLevel.Warning,
         Message = "Update for faction {FactionId} with version {Version} failed because of version mismatch"
     )]
-    public static partial void Log_FactionConcurrencyError(this ILogger logger, int factionId, uint version);
+    public static partial void Log_FactionConcurrencyError(
+        this ILogger logger,
+        int factionId,
+        uint version
+    );
 }

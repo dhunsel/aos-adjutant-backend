@@ -21,22 +21,23 @@ public sealed class FactionUnitController(UnitService unitService) : ControllerB
     {
         var unitResult = await unitService.CreateUnit(factionId, unitData);
         return unitResult.Match(
-            u => CreatedAtAction(
-                nameof(UnitController.GetUnit),
-                "Unit",
-                new { unitId = u.UnitId },
-                new UnitResponseDto(
-                    u.UnitId,
-                    u.Name,
-                    u.Health,
-                    u.Move,
-                    u.Save,
-                    u.Control,
-                    u.WardSave,
-                    u.FactionId,
-                    u.Version
-                )
-            ),
+            u =>
+                CreatedAtAction(
+                    nameof(UnitController.GetUnit),
+                    "Unit",
+                    new { unitId = u.UnitId },
+                    new UnitResponseDto(
+                        u.UnitId,
+                        u.Name,
+                        u.Health,
+                        u.Move,
+                        u.Save,
+                        u.Control,
+                        u.WardSave,
+                        u.FactionId,
+                        u.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -49,8 +50,9 @@ public sealed class FactionUnitController(UnitService unitService) : ControllerB
     {
         var unitsResult = await unitService.GetFactionUnits(factionId);
         return unitsResult.Match(
-            units => Ok(
-                units.Select(u => new UnitResponseDto(
+            units =>
+                Ok(
+                    units.Select(u => new UnitResponseDto(
                         u.UnitId,
                         u.Name,
                         u.Health,
@@ -60,9 +62,8 @@ public sealed class FactionUnitController(UnitService unitService) : ControllerB
                         u.WardSave,
                         u.FactionId,
                         u.Version
-                    )
-                )
-            ),
+                    ))
+                ),
             this.ApiProblem
         );
     }

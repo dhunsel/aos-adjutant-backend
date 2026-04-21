@@ -10,18 +10,22 @@ public class FactionAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase
 {
     private async Task<FactionResponseDto> CreateFactionAsync()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAbilityDto ValidAbilityDto() => new()
-    {
-        Name = "TestAbility",
-        Declaration = "TestDeclaration",
-        Effect = "TestEffect",
-        Phase = TurnPhase.Hero,
-        Turn = PlayerTurn.YourTurn
-    };
+    private static CreateAbilityDto ValidAbilityDto() =>
+        new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn,
+        };
 
     // --- POST /api/factions/{factionId}/abilities ---
 
@@ -50,7 +54,7 @@ public class FactionAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase
                 createAbilityDto.Effect,
                 createAbilityDto.Phase,
                 createAbilityDto.Restriction,
-                createAbilityDto.Turn
+                createAbilityDto.Turn,
             },
             body
         );
@@ -62,7 +66,11 @@ public class FactionAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase
     public async Task GetAbilities_Returns200()
     {
         var faction = await CreateFactionAsync();
-        await Client.PostAsJsonAsync($"/api/factions/{faction.FactionId}/abilities", ValidAbilityDto(), JsonOptions);
+        await Client.PostAsJsonAsync(
+            $"/api/factions/{faction.FactionId}/abilities",
+            ValidAbilityDto(),
+            JsonOptions
+        );
 
         var response = await Client.GetAsync($"/api/factions/{faction.FactionId}/abilities");
 
