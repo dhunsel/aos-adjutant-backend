@@ -11,7 +11,11 @@ namespace AosAdjutant.UnitTests.Features.BattleFormations;
 public class BattleFormationServiceTests
 {
     private static ApplicationDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options
+        );
 
     public class CreateBattleFormation
     {
@@ -22,7 +26,10 @@ public class BattleFormationServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.CreateBattleFormation(
                 factionId,
@@ -38,7 +45,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.CreateBattleFormation(
                 999,
@@ -56,9 +66,14 @@ public class BattleFormationServiceTests
             context.Factions.Add(new Faction { Name = "TestFaction" });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = factionId });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = factionId }
+            );
             await context.SaveChangesAsync();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.CreateBattleFormation(
                 factionId,
@@ -84,7 +99,10 @@ public class BattleFormationServiceTests
                 new BattleFormation { Name = "TestBattleFormation2", FactionId = factionId }
             );
             await context.SaveChangesAsync();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.GetFactionBattleFormations(factionId);
 
@@ -96,7 +114,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenFactionDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.GetFactionBattleFormations(999);
 
@@ -111,10 +132,15 @@ public class BattleFormationServiceTests
         public async Task ReturnsBattleFormation_WhenFound()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = 1 });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = 1 }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.GetBattleFormation(battleFormationId);
 
@@ -126,7 +152,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenBattleFormationDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.GetBattleFormation(999);
 
@@ -141,10 +170,20 @@ public class BattleFormationServiceTests
         public async Task ReturnsBattleFormation_WhenUpdateSucceeds()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "OldName", FactionId = 1, Version = 0 });
+            context.BattleFormations.Add(
+                new BattleFormation
+                {
+                    Name = "OldName",
+                    FactionId = 1,
+                    Version = 0,
+                }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
@@ -159,7 +198,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenBattleFormationDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.UpdateBattleFormation(
                 999,
@@ -175,11 +217,19 @@ public class BattleFormationServiceTests
         {
             await using var context = CreateContext();
             context.BattleFormations.Add(
-                new BattleFormation { Name = "TestBattleFormation", FactionId = 1, Version = 5 }
+                new BattleFormation
+                {
+                    Name = "TestBattleFormation",
+                    FactionId = 1,
+                    Version = 5,
+                }
             );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
@@ -195,13 +245,27 @@ public class BattleFormationServiceTests
         {
             await using var context = CreateContext();
             context.BattleFormations.AddRange(
-                new BattleFormation { Name = "TestBattleFormation1", FactionId = 1, Version = 0 },
-                new BattleFormation { Name = "TestBattleFormation2", FactionId = 1, Version = 0 }
+                new BattleFormation
+                {
+                    Name = "TestBattleFormation1",
+                    FactionId = 1,
+                    Version = 0,
+                },
+                new BattleFormation
+                {
+                    Name = "TestBattleFormation2",
+                    FactionId = 1,
+                    Version = 0,
+                }
             );
             await context.SaveChangesAsync();
-            var battleFormationId = context.BattleFormations.First(bf => bf.Name == "TestBattleFormation1")
+            var battleFormationId = context
+                .BattleFormations.First(bf => bf.Name == "TestBattleFormation1")
                 .BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.UpdateBattleFormation(
                 battleFormationId,
@@ -219,10 +283,15 @@ public class BattleFormationServiceTests
         public async Task ReturnsSuccess_WhenBattleFormationExists()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = 1 });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = 1 }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.DeleteBattleFormation(battleFormationId);
 
@@ -234,7 +303,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenBattleFormationDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.DeleteBattleFormation(999);
 
@@ -245,26 +317,35 @@ public class BattleFormationServiceTests
 
     public class CreateBattleFormationAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new()
-        {
-            Name = "TestAbility",
-            Declaration = "TestDeclaration",
-            Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn
-        };
+        private static CreateAbilityDto ValidAbilityDto() =>
+            new()
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Turn = PlayerTurn.YourTurn,
+            };
 
         [Fact]
         public async Task ReturnsAbility_WhenBattleFormationExistsAndDataIsValid()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = 1 });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = 1 }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
             var createAbilityDto = ValidAbilityDto();
 
-            var result = await service.CreateBattleFormationAbility(battleFormationId, createAbilityDto);
+            var result = await service.CreateBattleFormationAbility(
+                battleFormationId,
+                createAbilityDto
+            );
 
             Assert.True(result.IsSuccess);
             Assert.Equivalent(
@@ -277,7 +358,7 @@ public class BattleFormationServiceTests
                     createAbilityDto.Phase,
                     createAbilityDto.Restriction,
                     createAbilityDto.Turn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 },
                 result.GetValue
             );
@@ -287,7 +368,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenBattleFormationDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.CreateBattleFormationAbility(999, ValidAbilityDto());
 
@@ -299,17 +383,22 @@ public class BattleFormationServiceTests
         public async Task ReturnsValidationError_WhenAbilityDataIsInvalid()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = 1 });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = 1 }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var invalidDto = new CreateAbilityDto
             {
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Passive
+                Phase = TurnPhase.Passive,
             };
 
             var result = await service.CreateBattleFormationAbility(battleFormationId, invalidDto);
@@ -325,10 +414,15 @@ public class BattleFormationServiceTests
         public async Task ReturnsAbilities_WhenBattleFormationExists()
         {
             await using var context = CreateContext();
-            context.BattleFormations.Add(new BattleFormation { Name = "TestBattleFormation", FactionId = 1 });
+            context.BattleFormations.Add(
+                new BattleFormation { Name = "TestBattleFormation", FactionId = 1 }
+            );
             await context.SaveChangesAsync();
             var battleFormationId = context.BattleFormations.Single().BattleFormationId;
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             await service.CreateBattleFormationAbility(
                 battleFormationId,
@@ -338,7 +432,7 @@ public class BattleFormationServiceTests
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn
+                    Turn = PlayerTurn.YourTurn,
                 }
             );
 
@@ -352,7 +446,10 @@ public class BattleFormationServiceTests
         public async Task ReturnsNotFound_WhenBattleFormationDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new BattleFormationService(context, NullLogger<BattleFormationService>.Instance);
+            var service = new BattleFormationService(
+                context,
+                NullLogger<BattleFormationService>.Instance
+            );
 
             var result = await service.GetBattleFormationAbilities(999);
 

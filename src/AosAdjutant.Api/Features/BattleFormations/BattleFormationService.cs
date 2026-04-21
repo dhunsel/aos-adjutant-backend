@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
 
-public sealed class BattleFormationService(ApplicationDbContext context, ILogger<BattleFormationService> logger)
+public sealed class BattleFormationService(
+    ApplicationDbContext context,
+    ILogger<BattleFormationService> logger
+)
 {
     public async Task<Result<BattleFormation>> CreateBattleFormation(
         int factionId,
@@ -23,7 +26,11 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
         if (isDuplicate)
             return Result<BattleFormation>.Failure(BattleFormationErrors.AlreadyExists);
 
-        var newBattleFormation = new BattleFormation { Name = battleFormationData.Name, FactionId = factionId, };
+        var newBattleFormation = new BattleFormation
+        {
+            Name = battleFormationData.Name,
+            FactionId = factionId,
+        };
 
         // Because of race conditions this might still fail on UK/FK error
         // Ignore for now (won't occur in practice) but revisit in the future
@@ -41,7 +48,8 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
         if (!factionExists)
             return Result<List<BattleFormation>>.Failure(FactionErrors.NotFound);
 
-        var battleFormations = await context.BattleFormations.AsNoTracking()
+        var battleFormations = await context
+            .BattleFormations.AsNoTracking()
             .Where(bf => bf.FactionId == factionId)
             .ToListAsync();
         return Result<List<BattleFormation>>.Success(battleFormations);
@@ -49,7 +57,8 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
 
     public async Task<Result<BattleFormation>> GetBattleFormation(int battleFormationId)
     {
-        var battleFormation = await context.BattleFormations.AsNoTracking()
+        var battleFormation = await context
+            .BattleFormations.AsNoTracking()
             .FirstOrDefaultAsync(bf => bf.BattleFormationId == battleFormationId);
 
         return battleFormation is null
@@ -69,13 +78,17 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
 
         if (battleFormation.Version != battleFormationData.Version)
         {
-            logger.Log_BattleFormationConcurrencyError(battleFormationId, battleFormationData.Version);
+            logger.Log_BattleFormationConcurrencyError(
+                battleFormationId,
+                battleFormationData.Version
+            );
             return Result<BattleFormation>.Failure(BattleFormationErrors.Concurrency);
         }
 
         var isDuplicate = await context.BattleFormations.AnyAsync(bf =>
-            bf.Name == battleFormationData.Name && bf.FactionId == battleFormation.FactionId &&
-            bf.BattleFormationId != battleFormationId
+            bf.Name == battleFormationData.Name
+            && bf.FactionId == battleFormation.FactionId
+            && bf.BattleFormationId != battleFormationId
         );
         if (isDuplicate)
             return Result<BattleFormation>.Failure(BattleFormationErrors.AlreadyExists);
@@ -103,7 +116,10 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
         return Result.Success();
     }
 
-    public async Task<Result<Ability>> CreateBattleFormationAbility(int battleFormationId, CreateAbilityDto abilityData)
+    public async Task<Result<Ability>> CreateBattleFormationAbility(
+        int battleFormationId,
+        CreateAbilityDto abilityData
+    )
     {
         var battleFormation = await context.BattleFormations.FindAsync(battleFormationId);
 
@@ -124,20 +140,26 @@ public sealed class BattleFormationService(ApplicationDbContext context, ILogger
             }
         );
 
-        if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
+        if (!newAbilityResult.IsSuccess)
+            return Result<Ability>.Failure(newAbilityResult.GetError);
 
         var newAbility = newAbilityResult.GetValue;
         battleFormation.Abilities.Add(newAbility);
         await context.SaveChangesAsync();
 
-        logger.Log_ScopedAbilityCreated(newAbility.AbilityId, nameof(BattleFormation), battleFormationId);
+        logger.Log_ScopedAbilityCreated(
+            newAbility.AbilityId,
+            nameof(BattleFormation),
+            battleFormationId
+        );
 
         return Result<Ability>.Success(newAbility);
     }
 
     public async Task<Result<List<Ability>>> GetBattleFormationAbilities(int battleFormationId)
     {
-        var battleFormation = await context.BattleFormations.AsNoTracking()
+        var battleFormation = await context
+            .BattleFormations.AsNoTracking()
             .Include(bf => bf.Abilities)
             .FirstOrDefaultAsync(bf => bf.BattleFormationId == battleFormationId);
 

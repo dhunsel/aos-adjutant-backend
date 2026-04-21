@@ -8,7 +8,8 @@ namespace AosAdjutant.Api.Features.Units;
 [Route("api/units/{unitId}/attack-profiles")]
 [ApiController]
 [Tags("Attack Profiles")]
-public sealed class UnitAttackProfileController(AttackProfileService attackProfileService) : ControllerBase
+public sealed class UnitAttackProfileController(AttackProfileService attackProfileService)
+    : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create an attack profile under a unit")]
@@ -20,41 +21,17 @@ public sealed class UnitAttackProfileController(AttackProfileService attackProfi
         [FromBody] CreateAttackProfileDto attackProfileData
     )
     {
-        var attackProfileResult = await attackProfileService.CreateAttackProfile(unitId, attackProfileData);
-        return attackProfileResult.Match(
-            ap => CreatedAtAction(
-                nameof(AttackProfileController.GetAttackProfile),
-                "AttackProfile",
-                new { attackProfileId = ap.AttackProfileId },
-                new AttackProfileResponseDto(
-                    ap.AttackProfileId,
-                    ap.Name,
-                    ap.IsRanged,
-                    ap.Range,
-                    ap.Attacks,
-                    ap.ToHit,
-                    ap.ToWound,
-                    ap.Rend,
-                    ap.Damage,
-                    ap.UnitId,
-                    ap.Version,
-                    ap.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name)).ToList()
-                )
-            ),
-            this.ApiProblem
+        var attackProfileResult = await attackProfileService.CreateAttackProfile(
+            unitId,
+            attackProfileData
         );
-    }
-
-    [HttpGet]
-    [EndpointSummary("Get all attack profiles for a unit")]
-    [ProducesResponseType<List<AttackProfileResponseDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<AttackProfileResponseDto>>> GetAttackProfiles([FromRoute] int unitId)
-    {
-        var attackProfilesResult = await attackProfileService.GetUnitAttackProfiles(unitId);
-        return attackProfilesResult.Match(
-            attackProfiles => Ok(
-                attackProfiles.Select(ap => new AttackProfileResponseDto(
+        return attackProfileResult.Match(
+            ap =>
+                CreatedAtAction(
+                    nameof(AttackProfileController.GetAttackProfile),
+                    "AttackProfile",
+                    new { attackProfileId = ap.AttackProfileId },
+                    new AttackProfileResponseDto(
                         ap.AttackProfileId,
                         ap.Name,
                         ap.IsRanged,
@@ -66,10 +43,42 @@ public sealed class UnitAttackProfileController(AttackProfileService attackProfi
                         ap.Damage,
                         ap.UnitId,
                         ap.Version,
-                        ap.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name)).ToList()
+                        ap.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name))
+                            .ToList()
                     )
-                )
-            ),
+                ),
+            this.ApiProblem
+        );
+    }
+
+    [HttpGet]
+    [EndpointSummary("Get all attack profiles for a unit")]
+    [ProducesResponseType<List<AttackProfileResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<AttackProfileResponseDto>>> GetAttackProfiles(
+        [FromRoute] int unitId
+    )
+    {
+        var attackProfilesResult = await attackProfileService.GetUnitAttackProfiles(unitId);
+        return attackProfilesResult.Match(
+            attackProfiles =>
+                Ok(
+                    attackProfiles.Select(ap => new AttackProfileResponseDto(
+                        ap.AttackProfileId,
+                        ap.Name,
+                        ap.IsRanged,
+                        ap.Range,
+                        ap.Attacks,
+                        ap.ToHit,
+                        ap.ToWound,
+                        ap.Rend,
+                        ap.Damage,
+                        ap.UnitId,
+                        ap.Version,
+                        ap.WeaponEffects.Select(wp => new WeaponEffectResponseDto(wp.Key, wp.Name))
+                            .ToList()
+                    ))
+                ),
             this.ApiProblem
         );
     }

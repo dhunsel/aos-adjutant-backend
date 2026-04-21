@@ -24,7 +24,10 @@ public sealed class Unit
 public static class UnitErrors
 {
     public static readonly AppError NotFound = new(ErrorCode.NotFound, "Unit not found.");
-    public static readonly AppError AlreadyExists = new(ErrorCode.UniqueKeyError, "Unit already exists.");
+    public static readonly AppError AlreadyExists = new(
+        ErrorCode.UniqueKeyError,
+        "Unit already exists."
+    );
 
     public static readonly AppError Concurrency = new(
         ErrorCode.ConcurrencyError,

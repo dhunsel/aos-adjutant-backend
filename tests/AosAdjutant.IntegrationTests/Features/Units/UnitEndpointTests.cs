@@ -14,7 +14,9 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
@@ -24,7 +26,7 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
                 Health = 10,
                 Move = "5",
                 Save = 4,
-                Control = 2
+                Control = 2,
             }
         );
         return (await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
@@ -58,7 +60,7 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
             Move = "6",
             Save = 3,
             Control = 1,
-            Version = created.Version
+            Version = created.Version,
         };
 
         var response = await Client.PutAsJsonAsync($"/api/units/{created.UnitId}", changeUnitDto);
@@ -75,7 +77,7 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
                 changeUnitDto.Save,
                 changeUnitDto.Control,
                 changeUnitDto.WardSave,
-                created.FactionId
+                created.FactionId,
             },
             body
         );
@@ -95,7 +97,7 @@ public class UnitEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
                 Move = "6",
                 Save = 3,
                 Control = 1,
-                Version = created.Version
+                Version = created.Version,
             }
         );
 

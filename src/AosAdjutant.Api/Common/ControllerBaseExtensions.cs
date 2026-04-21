@@ -13,12 +13,14 @@ public static class ControllerBaseExtensions
             ErrorCode.ConcurrencyError => 409,
             ErrorCode.ValidationError => 400,
             ErrorCode.UniqueKeyError => 409,
-            _ => 500
+            _ => 500,
         };
 
         var problemDetails = new ProblemDetails
         {
-            Title = error.Code.ToString(), Detail = error.Message, Status = statusCode
+            Title = error.Code.ToString(),
+            Detail = error.Message,
+            Status = statusCode,
         };
 
         var traceId = Activity.Current?.Id;

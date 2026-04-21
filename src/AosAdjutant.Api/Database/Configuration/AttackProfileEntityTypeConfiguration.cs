@@ -24,15 +24,15 @@ public sealed class AttackProfileEntityTypeConfiguration : IEntityTypeConfigurat
 
         builder.HasIndex(ap => new { ap.Name, ap.UnitId }).IsUnique();
 
-        builder.HasMany(ap => ap.WeaponEffects)
+        builder
+            .HasMany(ap => ap.WeaponEffects)
             .WithMany()
             .UsingEntity(apwe =>
-                {
-                    apwe.ToTable("attack_profile_weapon_effect");
-                    apwe.Property("AttackProfileId").HasColumnName("attack_profile_id");
-                    apwe.Property("WeaponEffectsWeaponEffectId").HasColumnName("weapon_effect_id");
-                }
-            );
+            {
+                apwe.ToTable("attack_profile_weapon_effect");
+                apwe.Property("AttackProfileId").HasColumnName("attack_profile_id");
+                apwe.Property("WeaponEffectsWeaponEffectId").HasColumnName("weapon_effect_id");
+            });
 
         builder.Property(ap => ap.Version).IsRowVersion();
     }

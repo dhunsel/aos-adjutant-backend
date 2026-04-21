@@ -10,18 +10,22 @@ public class FactionUnitEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
 {
     private async Task<FactionResponseDto> CreateFactionAsync()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
-    private static CreateUnitDto ValidUnitDto() => new()
-    {
-        Name = "TestUnit",
-        Health = 10,
-        Move = "5",
-        Save = 4,
-        Control = 2
-    };
+    private static CreateUnitDto ValidUnitDto() =>
+        new()
+        {
+            Name = "TestUnit",
+            Health = 10,
+            Move = "5",
+            Save = 4,
+            Control = 2,
+        };
 
     // --- POST /api/factions/{factionId}/units ---
 
@@ -31,7 +35,10 @@ public class FactionUnitEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
         var faction = await CreateFactionAsync();
         var createUnitDto = ValidUnitDto();
 
-        var response = await Client.PostAsJsonAsync($"/api/factions/{faction.FactionId}/units", createUnitDto);
+        var response = await Client.PostAsJsonAsync(
+            $"/api/factions/{faction.FactionId}/units",
+            createUnitDto
+        );
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions);
@@ -46,7 +53,7 @@ public class FactionUnitEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
                 createUnitDto.Save,
                 createUnitDto.Control,
                 createUnitDto.WardSave,
-                faction.FactionId
+                faction.FactionId,
             },
             body
         );
@@ -59,7 +66,10 @@ public class FactionUnitEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
-            ValidUnitDto() with { Name = "" }
+            ValidUnitDto() with
+            {
+                Name = "",
+            }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

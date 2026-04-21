@@ -1,15 +1,16 @@
 using AosAdjutant.Api.Database.Configuration;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.AttackProfiles;
-using AosAdjutant.Api.Features.WeaponEffects;
-using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.BattleFormations;
+using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
+using AosAdjutant.Api.Features.WeaponEffects;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Database;
 
-public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : DbContext(options)
 {
     public DbSet<Faction> Factions { get; set; }
     public DbSet<BattleFormation> BattleFormations { get; set; }
@@ -21,7 +22,9 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         new FactionEntityTypeConfiguration().Configure(modelBuilder.Entity<Faction>());
-        new BattleFormationEntityTypeConfiguration().Configure(modelBuilder.Entity<BattleFormation>());
+        new BattleFormationEntityTypeConfiguration().Configure(
+            modelBuilder.Entity<BattleFormation>()
+        );
         new AbilityEntityTypeConfiguration().Configure(modelBuilder.Entity<Ability>());
         new UnitEntityTypeConfiguration().Configure(modelBuilder.Entity<Unit>());
         new AttackProfileEntityTypeConfiguration().Configure(modelBuilder.Entity<AttackProfile>());

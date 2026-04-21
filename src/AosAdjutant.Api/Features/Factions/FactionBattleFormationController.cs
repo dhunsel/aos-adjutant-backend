@@ -7,7 +7,8 @@ namespace AosAdjutant.Api.Features.Factions;
 [Route("api/factions/{factionId}/battle-formations")]
 [ApiController]
 [Tags("Battle Formations")]
-public sealed class FactionBattleFormationController(BattleFormationService battleFormationService) : ControllerBase
+public sealed class FactionBattleFormationController(BattleFormationService battleFormationService)
+    : ControllerBase
 {
     [HttpPost]
     [EndpointSummary("Create a battle formation under a faction")]
@@ -19,14 +20,23 @@ public sealed class FactionBattleFormationController(BattleFormationService batt
         [FromBody] CreateBattleFormationDto battleFormationData
     )
     {
-        var battleFormationResult = await battleFormationService.CreateBattleFormation(factionId, battleFormationData);
+        var battleFormationResult = await battleFormationService.CreateBattleFormation(
+            factionId,
+            battleFormationData
+        );
         return battleFormationResult.Match(
-            bf => CreatedAtAction(
-                nameof(BattleFormationController.GetBattleFormation),
-                "BattleFormation",
-                new { battleFormationId = bf.BattleFormationId },
-                new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)
-            ),
+            bf =>
+                CreatedAtAction(
+                    nameof(BattleFormationController.GetBattleFormation),
+                    "BattleFormation",
+                    new { battleFormationId = bf.BattleFormationId },
+                    new BattleFormationResponseDto(
+                        bf.BattleFormationId,
+                        bf.Name,
+                        bf.FactionId,
+                        bf.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -35,19 +45,23 @@ public sealed class FactionBattleFormationController(BattleFormationService batt
     [EndpointSummary("Get all battle formations for a faction")]
     [ProducesResponseType<List<BattleFormationResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<BattleFormationResponseDto>>> GetBattleFormations([FromRoute] int factionId)
+    public async Task<ActionResult<List<BattleFormationResponseDto>>> GetBattleFormations(
+        [FromRoute] int factionId
+    )
     {
-        var battleFormationsResult = await battleFormationService.GetFactionBattleFormations(factionId);
+        var battleFormationsResult = await battleFormationService.GetFactionBattleFormations(
+            factionId
+        );
         return battleFormationsResult.Match(
-            battleFormations => Ok(
-                battleFormations.Select(bf => new BattleFormationResponseDto(
+            battleFormations =>
+                Ok(
+                    battleFormations.Select(bf => new BattleFormationResponseDto(
                         bf.BattleFormationId,
                         bf.Name,
                         bf.FactionId,
                         bf.Version
-                    )
-                )
-            ),
+                    ))
+                ),
             this.ApiProblem
         );
     }

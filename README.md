@@ -3,26 +3,30 @@
 [![pipeline](https://github.com/dhunsel/aos-adjutant-backend/actions/workflows/pipeline.yml/badge.svg)](https://github.com/dhunsel/aos-adjutant-backend/actions/workflows/pipeline.yml)
 [![codecov](https://codecov.io/github/dhunsel/aos-adjutant-backend/graph/badge.svg?token=Y9Y5NO8O1Z)](https://codecov.io/github/dhunsel/aos-adjutant-backend)
 
-A REST API for managing Age of Sigmar army data. Allows clients to browse and manage factions, units, attack profiles, weapon effects, abilities, and battle formations.
-Currently incomplete and very basic CRUD. Further completion of the features is necessary and afterwards a list builder + play mode are planned.
+A REST API for managing Age of Sigmar army data. Allows clients to browse and manage factions, units, attack profiles,
+weapon effects, abilities, and battle formations.
+Currently incomplete and very basic CRUD. Further completion of the features is necessary and afterwards a list
+builder + play mode are planned.
 
 ## Tech Stack
 
-| Concern | Technology |
-|---|---|
-| Runtime | .NET 10 / ASP.NET Core |
-| Database | PostgreSQL 18 + Entity Framework Core |
-| Logging | Serilog → Grafana Loki |
-| Tracing | OpenTelemetry → Grafana Tempo |
-| Metrics | OpenTelemetry → Prometheus |
-| Dashboards | Grafana |
-| API docs | Scalar (OpenAPI) |
-| Static analysis | Meziantou.Analyzer, SonarAnalyzer |
-| Testing | xUnit, Testcontainers |
+| Concern         | Technology                            |
+|-----------------|---------------------------------------|
+| Runtime         | .NET 10 / ASP.NET Core                |
+| Database        | PostgreSQL 18 + Entity Framework Core |
+| Logging         | Serilog → Grafana Loki                |
+| Tracing         | OpenTelemetry → Grafana Tempo         |
+| Metrics         | OpenTelemetry → Prometheus            |
+| Dashboards      | Grafana                               |
+| API docs        | Scalar (OpenAPI)                      |
+| Static analysis | Meziantou.Analyzer, SonarAnalyzer     |
+| Testing         | xUnit, Testcontainers                 |
 
 ## Architecture
 
-The API currently uses a very simple feature based structure. Each feature has its own controller, service, DTOs. Controllers talk to Services, which talk to EFCore's DbContext. Cross-cutting concerns (error handling, correlation IDs, result types) live in `Common/`.
+The API currently uses a very simple feature based structure. Each feature has its own controller, service, DTOs.
+Controllers talk to Services, which talk to EFCore's DbContext. Cross-cutting concerns (error handling, correlation IDs,
+result types) live in `Common/`.
 
 ```
 src/AosAdjutant.Api/
@@ -57,7 +61,8 @@ src/AosAdjutant.Api/
    docker compose up -d
    ```
 
-3. Set the database connection string via [User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets):
+3. Set the database connection string
+   via [User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets):
    ```bash
    dotnet user-secrets set "AosAdjutant:DbContextConnectionString" "Host=localhost;Port=5432;Database=aos_adjutant;Username=<user>;Password=<password>" --project src/AosAdjutant.Api
    ```
@@ -72,16 +77,17 @@ src/AosAdjutant.Api/
    dotnet run --project src/AosAdjutant.Api
    ```
 
-The API will be available at `http://localhost:5280`. The interactive API reference (Scalar) is at `http://localhost:5280/scalar`.
+The API will be available at `http://localhost:5280`. The interactive API reference (Scalar) is at
+`http://localhost:5280/scalar`.
 
 ### Observability
 
-| Service | URL |
-|---|---|
-| Grafana | http://localhost:3000 |
+| Service    | URL                   |
+|------------|-----------------------|
+| Grafana    | http://localhost:3000 |
 | Prometheus | http://localhost:9090 |
-| Loki | http://localhost:3100 |
-| Tempo | http://localhost:3200 |
+| Loki       | http://localhost:3100 |
+| Tempo      | http://localhost:3200 |
 
 ## Running Tests
 

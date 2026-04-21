@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AosAdjutant.Api.Database.Configuration;
 
-public sealed class BattleFormationEntityTypeConfiguration : IEntityTypeConfiguration<BattleFormation>
+public sealed class BattleFormationEntityTypeConfiguration
+    : IEntityTypeConfiguration<BattleFormation>
 {
     public void Configure(EntityTypeBuilder<BattleFormation> builder)
     {
@@ -17,16 +18,16 @@ public sealed class BattleFormationEntityTypeConfiguration : IEntityTypeConfigur
 
         builder.HasIndex(bf => new { bf.FactionId, bf.Name }).IsUnique();
 
-        builder.HasMany(bf => bf.Abilities)
+        builder
+            .HasMany(bf => bf.Abilities)
             .WithMany()
             .UsingEntity(bfa =>
-                {
-                    bfa.ToTable("battle_formation_ability");
-                    bfa.Property("BattleFormationId").HasColumnName("battle_formation_id");
-                    bfa.Property("AbilitiesAbilityId").HasColumnName("ability_id");
-                    bfa.HasIndex("AbilitiesAbilityId").IsUnique();
-                }
-            );
+            {
+                bfa.ToTable("battle_formation_ability");
+                bfa.Property("BattleFormationId").HasColumnName("battle_formation_id");
+                bfa.Property("AbilitiesAbilityId").HasColumnName("ability_id");
+                bfa.HasIndex("AbilitiesAbilityId").IsUnique();
+            });
 
         builder.Property(bf => bf.Version).IsRowVersion();
     }

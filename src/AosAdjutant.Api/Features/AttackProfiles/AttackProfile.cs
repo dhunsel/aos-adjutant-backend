@@ -33,12 +33,12 @@ public sealed class AttackProfile
 
     public ICollection<WeaponEffect> WeaponEffects { get; } = new List<WeaponEffect>();
 
-
     public static Result<AttackProfile> Create(AttackProfileData data)
     {
         var validationResult = ValidateAttackProfile(data);
 
-        if (!validationResult.IsSuccess) return Result<AttackProfile>.Failure(validationResult.GetError);
+        if (!validationResult.IsSuccess)
+            return Result<AttackProfile>.Failure(validationResult.GetError);
 
         var attackProfile = new AttackProfile
         {
@@ -60,7 +60,8 @@ public sealed class AttackProfile
     {
         var validationResult = ValidateAttackProfile(data);
 
-        if (!validationResult.IsSuccess) return Result.Failure(validationResult.GetError);
+        if (!validationResult.IsSuccess)
+            return Result.Failure(validationResult.GetError);
 
         Name = data.Name;
         IsRanged = data.IsRanged;
@@ -78,17 +79,26 @@ public sealed class AttackProfile
     {
         if (data is { IsRanged: true, Range: null })
             return Result.Failure(
-                new AppError(ErrorCode.ValidationError, "A Ranged weapon profile must have a range.")
+                new AppError(
+                    ErrorCode.ValidationError,
+                    "A Ranged weapon profile must have a range."
+                )
             );
 
         if (data is { IsRanged: false, Range: not null })
             return Result.Failure(
-                new AppError(ErrorCode.ValidationError, "A melee weapon profile cannot have a range.")
+                new AppError(
+                    ErrorCode.ValidationError,
+                    "A melee weapon profile cannot have a range."
+                )
             );
 
         if (data.ToHit < 2 || data.ToHit > 7 || data.ToWound < 2 || data.ToWound > 7)
             return Result.Failure(
-                new AppError(ErrorCode.ValidationError, "To hit and to wound values must be between 2 and 6.")
+                new AppError(
+                    ErrorCode.ValidationError,
+                    "To hit and to wound values must be between 2 and 6."
+                )
             );
 
         return Result.Success();
@@ -98,7 +108,10 @@ public sealed class AttackProfile
 public static class AttackProfileErrors
 {
     public static readonly AppError NotFound = new(ErrorCode.NotFound, "Attack profile not found.");
-    public static readonly AppError AlreadyExists = new(ErrorCode.UniqueKeyError, "Attack profile already exists.");
+    public static readonly AppError AlreadyExists = new(
+        ErrorCode.UniqueKeyError,
+        "Attack profile already exists."
+    );
 
     public static readonly AppError Concurrency = new(
         ErrorCode.ConcurrencyError,

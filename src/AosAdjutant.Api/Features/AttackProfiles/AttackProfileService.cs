@@ -5,16 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
 
-public sealed class AttackProfileService(ApplicationDbContext context, ILogger<AttackProfileService> logger)
+public sealed class AttackProfileService(
+    ApplicationDbContext context,
+    ILogger<AttackProfileService> logger
+)
 {
-    public async Task<Result<AttackProfile>> CreateAttackProfile(int unitId, CreateAttackProfileDto attackProfileData)
+    public async Task<Result<AttackProfile>> CreateAttackProfile(
+        int unitId,
+        CreateAttackProfileDto attackProfileData
+    )
     {
         var unitExists = await context.Units.AnyAsync(u => u.UnitId == unitId);
         if (!unitExists)
             return Result<AttackProfile>.Failure(UnitErrors.NotFound);
 
-        var isDuplicate =
-            await context.AttackProfiles.AnyAsync(ap => ap.Name == attackProfileData.Name && ap.UnitId == unitId);
+        var isDuplicate = await context.AttackProfiles.AnyAsync(ap =>
+            ap.Name == attackProfileData.Name && ap.UnitId == unitId
+        );
         if (isDuplicate)
             return Result<AttackProfile>.Failure(AttackProfileErrors.AlreadyExists);
 
@@ -33,11 +40,13 @@ public sealed class AttackProfileService(ApplicationDbContext context, ILogger<A
             }
         );
 
-        if (!newAttackProfileResult.IsSuccess) return newAttackProfileResult;
+        if (!newAttackProfileResult.IsSuccess)
+            return newAttackProfileResult;
 
         var newAttackProfile = newAttackProfileResult.GetValue;
 
-        var weaponEffects = await context.WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
+        var weaponEffects = await context
+            .WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
             .ToListAsync();
 
         if (weaponEffects.Count != attackProfileData.WeaponEffects.Count)
@@ -64,13 +73,17 @@ public sealed class AttackProfileService(ApplicationDbContext context, ILogger<A
         if (!unitExists)
             return Result<List<AttackProfile>>.Failure(UnitErrors.NotFound);
 
-        var attackProfiles = await context.AttackProfiles.AsNoTracking().Where(ap => ap.UnitId == unitId).ToListAsync();
+        var attackProfiles = await context
+            .AttackProfiles.AsNoTracking()
+            .Where(ap => ap.UnitId == unitId)
+            .ToListAsync();
         return Result<List<AttackProfile>>.Success(attackProfiles);
     }
 
     public async Task<Result<AttackProfile>> GetAttackProfile(int attackProfileId)
     {
-        var attackProfile = await context.AttackProfiles.AsNoTracking()
+        var attackProfile = await context
+            .AttackProfiles.AsNoTracking()
             .Include(ap => ap.WeaponEffects)
             .FirstOrDefaultAsync(ap => ap.AttackProfileId == attackProfileId);
 
@@ -84,7 +97,8 @@ public sealed class AttackProfileService(ApplicationDbContext context, ILogger<A
         ChangeAttackProfileDto attackProfileData
     )
     {
-        var attackProfile = await context.AttackProfiles.Include(ap => ap.WeaponEffects)
+        var attackProfile = await context
+            .AttackProfiles.Include(ap => ap.WeaponEffects)
             .FirstOrDefaultAsync(ap => ap.AttackProfileId == attackProfileId);
 
         if (attackProfile is null)
@@ -97,8 +111,9 @@ public sealed class AttackProfileService(ApplicationDbContext context, ILogger<A
         }
 
         var isDuplicate = await context.AttackProfiles.AnyAsync(ap =>
-            ap.Name == attackProfileData.Name && ap.UnitId == attackProfile.UnitId &&
-            ap.AttackProfileId != attackProfileId
+            ap.Name == attackProfileData.Name
+            && ap.UnitId == attackProfile.UnitId
+            && ap.AttackProfileId != attackProfileId
         );
         if (isDuplicate)
             return Result<AttackProfile>.Failure(AttackProfileErrors.AlreadyExists);
@@ -118,9 +133,11 @@ public sealed class AttackProfileService(ApplicationDbContext context, ILogger<A
             }
         );
 
-        if (!changeResult.IsSuccess) return Result<AttackProfile>.Failure(changeResult.GetError);
+        if (!changeResult.IsSuccess)
+            return Result<AttackProfile>.Failure(changeResult.GetError);
 
-        var weaponEffects = await context.WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
+        var weaponEffects = await context
+            .WeaponEffects.Where(we => attackProfileData.WeaponEffects.Contains(we.Key))
             .ToListAsync();
 
         if (weaponEffects.Count != attackProfileData.WeaponEffects.Count)

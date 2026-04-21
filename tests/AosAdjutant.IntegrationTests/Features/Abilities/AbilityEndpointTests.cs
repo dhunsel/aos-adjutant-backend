@@ -17,7 +17,7 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
                 Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn
+                Turn = PlayerTurn.YourTurn,
             },
             JsonOptions
         );
@@ -35,10 +35,14 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
             Declaration = "TestDeclaration",
             Effect = "TestEffect",
             Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn
+            Turn = PlayerTurn.YourTurn,
         };
 
-        var response = await Client.PostAsJsonAsync("/api/abilities", createAbilityDto, JsonOptions);
+        var response = await Client.PostAsJsonAsync(
+            "/api/abilities",
+            createAbilityDto,
+            JsonOptions
+        );
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<AbilityResponseDto>(JsonOptions);
@@ -53,7 +57,7 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 createAbilityDto.Effect,
                 createAbilityDto.Phase,
                 createAbilityDto.Restriction,
-                createAbilityDto.Turn
+                createAbilityDto.Turn,
             },
             body
         );
@@ -87,7 +91,7 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
             Effect = "UpdatedEffect",
             Phase = TurnPhase.Combat,
             Turn = PlayerTurn.EnemyTurn,
-            Version = created.Version
+            Version = created.Version,
         };
 
         var response = await Client.PutAsJsonAsync(
@@ -108,7 +112,7 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 changeAbilityDto.Effect,
                 changeAbilityDto.Phase,
                 changeAbilityDto.Restriction,
-                changeAbilityDto.Turn
+                changeAbilityDto.Turn,
             },
             body
         );
@@ -128,7 +132,7 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 Effect = "UpdatedEffect",
                 Phase = TurnPhase.Combat,
                 Turn = PlayerTurn.EnemyTurn,
-                Version = created.Version
+                Version = created.Version,
             },
             JsonOptions
         );

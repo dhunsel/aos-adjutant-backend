@@ -14,7 +14,8 @@ public class EndpointTestsBase(ApiFactory factory) : IAsyncLifetime
 
     protected static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNameCaseInsensitive = true, Converters = { new JsonStringEnumConverter() }
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() },
     };
 
     public async Task InitializeAsync()
@@ -22,7 +23,8 @@ public class EndpointTestsBase(ApiFactory factory) : IAsyncLifetime
         using var scope = factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var tableNames = context.Model.GetEntityTypes()
+        var tableNames = context
+            .Model.GetEntityTypes()
             .Where(e => e.GetTableName() != "weapon_effect") // Weapon effect contains seed data
             .Select(e => e.GetTableName())
             .Distinct();

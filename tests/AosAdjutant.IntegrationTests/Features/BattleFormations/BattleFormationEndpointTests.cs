@@ -14,7 +14,9 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/battle-formations",
@@ -33,7 +35,9 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
         var response = await Client.GetAsync($"/api/battle-formations/{created.BattleFormationId}");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(
+            JsonOptions
+        );
         Assert.NotNull(body);
         Assert.Equal("TestBattleFormation", body.Name);
     }
@@ -47,11 +51,17 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
 
         var response = await Client.PutAsJsonAsync(
             $"/api/battle-formations/{created.BattleFormationId}",
-            new ChangeBattleFormationDto { Name = "UpdatedBattleFormation", Version = created.Version }
+            new ChangeBattleFormationDto
+            {
+                Name = "UpdatedBattleFormation",
+                Version = created.Version,
+            }
         );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<BattleFormationResponseDto>(
+            JsonOptions
+        );
         Assert.NotNull(body);
         Assert.Equal("UpdatedBattleFormation", body.Name);
     }
@@ -76,7 +86,9 @@ public class BattleFormationEndpointTests(ApiFactory factory) : EndpointTestsBas
     {
         var created = await CreateBattleFormationAsync();
 
-        var response = await Client.DeleteAsync($"/api/battle-formations/{created.BattleFormationId}");
+        var response = await Client.DeleteAsync(
+            $"/api/battle-formations/{created.BattleFormationId}"
+        );
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }

@@ -6,17 +6,30 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 [Route("api/battle-formations")]
 [ApiController]
 [Tags("Battle Formations")]
-public sealed class BattleFormationController(BattleFormationService battleFormationService) : ControllerBase
+public sealed class BattleFormationController(BattleFormationService battleFormationService)
+    : ControllerBase
 {
     [HttpGet("{battleFormationId}")]
     [EndpointSummary("Get a battle formation by ID")]
     [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<BattleFormationResponseDto>> GetBattleFormation([FromRoute] int battleFormationId)
+    public async Task<ActionResult<BattleFormationResponseDto>> GetBattleFormation(
+        [FromRoute] int battleFormationId
+    )
     {
-        var battleFormationResult = await battleFormationService.GetBattleFormation(battleFormationId);
+        var battleFormationResult = await battleFormationService.GetBattleFormation(
+            battleFormationId
+        );
         return battleFormationResult.Match(
-            bf => Ok(new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)),
+            bf =>
+                Ok(
+                    new BattleFormationResponseDto(
+                        bf.BattleFormationId,
+                        bf.Name,
+                        bf.FactionId,
+                        bf.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -31,10 +44,20 @@ public sealed class BattleFormationController(BattleFormationService battleForma
         [FromBody] ChangeBattleFormationDto battleFormationData
     )
     {
-        var battleFormationResult =
-            await battleFormationService.UpdateBattleFormation(battleFormationId, battleFormationData);
+        var battleFormationResult = await battleFormationService.UpdateBattleFormation(
+            battleFormationId,
+            battleFormationData
+        );
         return battleFormationResult.Match(
-            bf => Ok(new BattleFormationResponseDto(bf.BattleFormationId, bf.Name, bf.FactionId, bf.Version)),
+            bf =>
+                Ok(
+                    new BattleFormationResponseDto(
+                        bf.BattleFormationId,
+                        bf.Name,
+                        bf.FactionId,
+                        bf.Version
+                    )
+                ),
             this.ApiProblem
         );
     }

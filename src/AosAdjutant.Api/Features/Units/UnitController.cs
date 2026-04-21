@@ -16,19 +16,20 @@ public sealed class UnitController(UnitService unitService) : ControllerBase
     {
         var unitResult = await unitService.GetUnit(unitId);
         return unitResult.Match(
-            u => Ok(
-                new UnitResponseDto(
-                    u.UnitId,
-                    u.Name,
-                    u.Health,
-                    u.Move,
-                    u.Save,
-                    u.Control,
-                    u.WardSave,
-                    u.FactionId,
-                    u.Version
-                )
-            ),
+            u =>
+                Ok(
+                    new UnitResponseDto(
+                        u.UnitId,
+                        u.Name,
+                        u.Health,
+                        u.Move,
+                        u.Save,
+                        u.Control,
+                        u.WardSave,
+                        u.FactionId,
+                        u.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -45,19 +46,20 @@ public sealed class UnitController(UnitService unitService) : ControllerBase
     {
         var unitResult = await unitService.UpdateUnit(unitId, unitData);
         return unitResult.Match(
-            u => Ok(
-                new UnitResponseDto(
-                    u.UnitId,
-                    u.Name,
-                    u.Health,
-                    u.Move,
-                    u.Save,
-                    u.Control,
-                    u.WardSave,
-                    u.FactionId,
-                    u.Version
-                )
-            ),
+            u =>
+                Ok(
+                    new UnitResponseDto(
+                        u.UnitId,
+                        u.Name,
+                        u.Health,
+                        u.Move,
+                        u.Save,
+                        u.Control,
+                        u.WardSave,
+                        u.FactionId,
+                        u.Version
+                    )
+                ),
             this.ApiProblem
         );
     }

@@ -20,27 +20,37 @@ public sealed record AttackProfileResponseDto(
 
 public sealed record CreateAttackProfileDto
 {
-    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
+    [StringLength(100, MinimumLength = 1)]
+    public required string Name { get; init; }
     public required bool IsRanged { get; init; }
     public int? Range { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Attacks { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Attacks { get; init; }
     public required int ToHit { get; init; }
     public required int ToWound { get; init; }
     public int? Rend { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Damage { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Damage { get; init; }
     public required IReadOnlyList<string> WeaponEffects { get; init; }
 }
 
 public sealed record ChangeAttackProfileDto
 {
-    [StringLength(100, MinimumLength = 1)] public required string Name { get; init; }
+    [StringLength(100, MinimumLength = 1)]
+    public required string Name { get; init; }
     public required bool IsRanged { get; init; }
     public int? Range { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Attacks { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Attacks { get; init; }
     public required int ToHit { get; init; }
     public required int ToWound { get; init; }
     public int? Rend { get; init; }
-    [StringLength(100, MinimumLength = 1)] public required string Damage { get; init; }
+
+    [StringLength(100, MinimumLength = 1)]
+    public required string Damage { get; init; }
     public required IReadOnlyList<string> WeaponEffects { get; init; }
     public required uint Version { get; init; }
 }

@@ -11,7 +11,11 @@ namespace AosAdjutant.UnitTests.Features.Units;
 public class UnitServiceTests
 {
     private static ApplicationDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options
+        );
 
     public class CreateUnit
     {
@@ -29,7 +33,7 @@ public class UnitServiceTests
                 Health = 10,
                 Move = "5",
                 Save = 4,
-                Control = 2
+                Control = 2,
             };
 
             var result = await service.CreateUnit(factionId, createUnitDto);
@@ -44,7 +48,7 @@ public class UnitServiceTests
                     createUnitDto.Save,
                     createUnitDto.Control,
                     createUnitDto.WardSave,
-                    FactionId = factionId
+                    FactionId = factionId,
                 },
                 result.GetValue
             );
@@ -64,7 +68,7 @@ public class UnitServiceTests
                     Health = 10,
                     Move = "5",
                     Save = 4,
-                    Control = 2
+                    Control = 2,
                 }
             );
 
@@ -86,7 +90,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = factionId
+                FactionId = factionId,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -100,7 +104,7 @@ public class UnitServiceTests
                     Health = 10,
                     Move = "5",
                     Save = 4,
-                    Control = 2
+                    Control = 2,
                 }
             );
 
@@ -126,7 +130,7 @@ public class UnitServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = factionId
+                    FactionId = factionId,
                 },
                 new Unit
                 {
@@ -135,7 +139,7 @@ public class UnitServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = factionId
+                    FactionId = factionId,
                 }
             );
             await context.SaveChangesAsync();
@@ -173,7 +177,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -212,7 +216,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -226,7 +230,7 @@ public class UnitServiceTests
                 Save = 3,
                 Control = 1,
                 WardSave = 5,
-                Version = 0
+                Version = 0,
             };
 
             var result = await service.UpdateUnit(unitId, changeUnitDto);
@@ -261,7 +265,7 @@ public class UnitServiceTests
                     Move = "6",
                     Save = 3,
                     Control = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -282,7 +286,7 @@ public class UnitServiceTests
                     Save = 4,
                     Control = 2,
                     FactionId = 1,
-                    Version = 5
+                    Version = 5,
                 }
             );
             await context.SaveChangesAsync();
@@ -298,7 +302,7 @@ public class UnitServiceTests
                     Move = "6",
                     Save = 3,
                     Control = 1,
-                    Version = 3
+                    Version = 3,
                 }
             );
 
@@ -319,7 +323,7 @@ public class UnitServiceTests
                     Save = 4,
                     Control = 2,
                     FactionId = 1,
-                    Version = 0
+                    Version = 0,
                 },
                 new Unit
                 {
@@ -329,7 +333,7 @@ public class UnitServiceTests
                     Save = 4,
                     Control = 2,
                     FactionId = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
@@ -345,7 +349,7 @@ public class UnitServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -367,7 +371,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -395,14 +399,15 @@ public class UnitServiceTests
 
     public class CreateUnitAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new()
-        {
-            Name = "TestAbility",
-            Declaration = "TestDeclaration",
-            Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn
-        };
+        private static CreateAbilityDto ValidAbilityDto() =>
+            new()
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Turn = PlayerTurn.YourTurn,
+            };
 
         [Fact]
         public async Task ReturnsAbility_WhenUnitExistsAndDataIsValid()
@@ -415,7 +420,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -436,7 +441,7 @@ public class UnitServiceTests
                     createAbilityDto.Phase,
                     createAbilityDto.Restriction,
                     createAbilityDto.Turn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 },
                 result.GetValue
             );
@@ -465,7 +470,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -477,7 +482,7 @@ public class UnitServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Passive
+                Phase = TurnPhase.Passive,
             };
 
             var result = await service.CreateUnitAbility(unitId, invalidDto);
@@ -500,7 +505,7 @@ public class UnitServiceTests
                 Move = "5",
                 Save = 4,
                 Control = 2,
-                FactionId = 1
+                FactionId = 1,
             };
             context.Units.Add(unit);
             await context.SaveChangesAsync();
@@ -515,7 +520,7 @@ public class UnitServiceTests
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn
+                    Turn = PlayerTurn.YourTurn,
                 }
             );
 

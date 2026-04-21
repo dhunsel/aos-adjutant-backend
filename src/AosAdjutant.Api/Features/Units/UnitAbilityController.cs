@@ -21,22 +21,23 @@ public sealed class UnitAbilityController(UnitService unitService) : ControllerB
     {
         var abilityResult = await unitService.CreateUnitAbility(unitId, abilityData);
         return abilityResult.Match(
-            a => CreatedAtAction(
-                nameof(AbilityController.GetAbility),
-                "Ability",
-                new { abilityId = a.AbilityId },
-                new AbilityResponseDto(
-                    a.AbilityId,
-                    a.Name,
-                    a.Reaction,
-                    a.Declaration,
-                    a.Effect,
-                    a.Phase,
-                    a.Restriction,
-                    a.Turn,
-                    a.Version
-                )
-            ),
+            a =>
+                CreatedAtAction(
+                    nameof(AbilityController.GetAbility),
+                    "Ability",
+                    new { abilityId = a.AbilityId },
+                    new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    )
+                ),
             this.ApiProblem
         );
     }
@@ -49,8 +50,9 @@ public sealed class UnitAbilityController(UnitService unitService) : ControllerB
     {
         var abilitiesResult = await unitService.GetUnitAbilities(unitId);
         return abilitiesResult.Match(
-            abilities => Ok(
-                abilities.Select(a => new AbilityResponseDto(
+            abilities =>
+                Ok(
+                    abilities.Select(a => new AbilityResponseDto(
                         a.AbilityId,
                         a.Name,
                         a.Reaction,
@@ -60,9 +62,8 @@ public sealed class UnitAbilityController(UnitService unitService) : ControllerB
                         a.Restriction,
                         a.Turn,
                         a.Version
-                    )
-                )
-            ),
+                    ))
+                ),
             this.ApiProblem
         );
     }

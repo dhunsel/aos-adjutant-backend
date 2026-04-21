@@ -2,7 +2,7 @@ name: pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -30,6 +30,12 @@ jobs:
 
       - name: Restore
         run: dotnet restore AosAdjutant.slnx
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Check formatting
+        run: dotnet csharpier check .
 
       - name: Build
         run: dotnet build AosAdjutant.slnx --no-restore --configuration Release

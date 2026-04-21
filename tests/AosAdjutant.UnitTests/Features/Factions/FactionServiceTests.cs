@@ -10,7 +10,11 @@ namespace AosAdjutant.UnitTests.Features.Factions;
 public class FactionServiceTests
 {
     private static ApplicationDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options
+        );
 
     public class CreateFaction
     {
@@ -49,7 +53,10 @@ public class FactionServiceTests
         public async Task ReturnsAllFactions()
         {
             await using var context = CreateContext();
-            context.Factions.AddRange(new Faction { Name = "TestFaction1" }, new Faction { Name = "TestFaction2" });
+            context.Factions.AddRange(
+                new Faction { Name = "TestFaction1" },
+                new Faction { Name = "TestFaction2" }
+            );
             await context.SaveChangesAsync();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
@@ -113,7 +120,10 @@ public class FactionServiceTests
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
             const string NewName = "TestFactionUpdated";
 
-            var result = await service.ChangeFaction(factionId, new ChangeFactionDto { Name = NewName, Version = 0 });
+            var result = await service.ChangeFaction(
+                factionId,
+                new ChangeFactionDto { Name = NewName, Version = 0 }
+            );
 
             Assert.True(result.IsSuccess);
             Assert.Equal(NewName, result.GetValue.Name);
@@ -206,14 +216,15 @@ public class FactionServiceTests
 
     public class CreateFactionAbility
     {
-        private static CreateAbilityDto ValidAbilityDto() => new()
-        {
-            Name = "TestAbility",
-            Declaration = "TestDeclaration",
-            Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn
-        };
+        private static CreateAbilityDto ValidAbilityDto() =>
+            new()
+            {
+                Name = "TestAbility",
+                Declaration = "TestDeclaration",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Turn = PlayerTurn.YourTurn,
+            };
 
         [Fact]
         public async Task ReturnsAbility_WhenFactionExistsAndDataIsValid()
@@ -237,7 +248,7 @@ public class FactionServiceTests
                     Phase = TurnPhase.Hero,
                     Restriction = (ActivationRestriction?)null,
                     Turn = (PlayerTurn?)PlayerTurn.YourTurn,
-                    IsGeneric = false
+                    IsGeneric = false,
                 },
                 result.GetValue
             );
@@ -270,7 +281,7 @@ public class FactionServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Passive
+                Phase = TurnPhase.Passive,
             };
 
             var result = await service.CreateFactionAbility(factionId, invalidDto);
@@ -299,7 +310,7 @@ public class FactionServiceTests
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn
+                    Turn = PlayerTurn.YourTurn,
                 }
             );
 

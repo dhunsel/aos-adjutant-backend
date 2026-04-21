@@ -15,7 +15,9 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
             "/api/factions",
             new CreateFactionDto { Name = "TestFaction" }
         );
-        var faction = (await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
+        var faction = (
+            await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
+        )!;
 
         var response = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
@@ -25,20 +27,21 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
                 Health = 10,
                 Move = "5",
                 Save = 4,
-                Control = 2
+                Control = 2,
             }
         );
         return (await response.Content.ReadFromJsonAsync<UnitResponseDto>(JsonOptions))!;
     }
 
-    private static CreateAbilityDto ValidAbilityDto() => new()
-    {
-        Name = "TestAbility",
-        Declaration = "TestDeclaration",
-        Effect = "TestEffect",
-        Phase = TurnPhase.Hero,
-        Turn = PlayerTurn.YourTurn
-    };
+    private static CreateAbilityDto ValidAbilityDto() =>
+        new()
+        {
+            Name = "TestAbility",
+            Declaration = "TestDeclaration",
+            Effect = "TestEffect",
+            Phase = TurnPhase.Hero,
+            Turn = PlayerTurn.YourTurn,
+        };
 
     // --- POST /api/units/{id}/abilities ---
 
@@ -67,7 +70,7 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
                 createAbilityDto.Effect,
                 createAbilityDto.Phase,
                 createAbilityDto.Restriction,
-                createAbilityDto.Turn
+                createAbilityDto.Turn,
             },
             body
         );
@@ -79,7 +82,11 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
     public async Task GetAbilities_Returns200()
     {
         var unit = await CreateUnitAsync();
-        await Client.PostAsJsonAsync($"/api/units/{unit.UnitId}/abilities", ValidAbilityDto(), JsonOptions);
+        await Client.PostAsJsonAsync(
+            $"/api/units/{unit.UnitId}/abilities",
+            ValidAbilityDto(),
+            JsonOptions
+        );
 
         var response = await Client.GetAsync($"/api/units/{unit.UnitId}/abilities");
 

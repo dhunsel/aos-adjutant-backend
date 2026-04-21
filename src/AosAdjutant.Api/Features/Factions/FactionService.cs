@@ -32,9 +32,13 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
 
     public async Task<Result<Faction>> GetFaction(int factionId)
     {
-        var faction = await context.Factions.AsNoTracking().FirstOrDefaultAsync(f => f.FactionId == factionId);
+        var faction = await context
+            .Factions.AsNoTracking()
+            .FirstOrDefaultAsync(f => f.FactionId == factionId);
 
-        return faction is null ? Result<Faction>.Failure(FactionErrors.NotFound) : Result<Faction>.Success(faction);
+        return faction is null
+            ? Result<Faction>.Failure(FactionErrors.NotFound)
+            : Result<Faction>.Success(faction);
     }
 
     public async Task<Result<Faction>> ChangeFaction(int factionId, ChangeFactionDto factionData)
@@ -50,7 +54,9 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
             return Result<Faction>.Failure(FactionErrors.Concurrency);
         }
 
-        var isDuplicate = await context.Factions.AnyAsync(f => f.Name == factionData.Name && f.FactionId != factionId);
+        var isDuplicate = await context.Factions.AnyAsync(f =>
+            f.Name == factionData.Name && f.FactionId != factionId
+        );
         if (isDuplicate)
             return Result<Faction>.Failure(FactionErrors.AlreadyExists);
 
@@ -77,7 +83,10 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
         return Result.Success();
     }
 
-    public async Task<Result<Ability>> CreateFactionAbility(int factionId, CreateAbilityDto abilityData)
+    public async Task<Result<Ability>> CreateFactionAbility(
+        int factionId,
+        CreateAbilityDto abilityData
+    )
     {
         var faction = await context.Factions.FindAsync(factionId);
 
@@ -98,7 +107,8 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
             }
         );
 
-        if (!newAbilityResult.IsSuccess) return Result<Ability>.Failure(newAbilityResult.GetError);
+        if (!newAbilityResult.IsSuccess)
+            return Result<Ability>.Failure(newAbilityResult.GetError);
 
         var newAbility = newAbilityResult.GetValue;
         faction.Abilities.Add(newAbility);
@@ -111,7 +121,8 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
 
     public async Task<Result<List<Ability>>> GetFactionAbilities(int factionId)
     {
-        var faction = await context.Factions.AsNoTracking()
+        var faction = await context
+            .Factions.AsNoTracking()
             .Include(f => f.Abilities)
             .FirstOrDefaultAsync(f => f.FactionId == factionId);
 

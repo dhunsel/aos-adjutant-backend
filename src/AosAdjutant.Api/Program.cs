@@ -17,7 +17,8 @@ using Serilog;
 
 // Bootstrap logger to log errors during startup
 // Replaced at a later step with a fully-featured logger
-Log.Logger = new LoggerConfiguration().WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
     .CreateBootstrapLogger();
 
 Log.Information("Starting the application");
@@ -26,37 +27,54 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddSerilog((services, lc) => lc.ReadFrom
-        .Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
+    builder.Services.AddSerilog(
+        (services, lc) =>
+            lc
+                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
     );
 
-    builder.Services.AddOpenTelemetry()
-        .ConfigureResource(resource => resource.AddService(serviceName: "AosAdjutantApi", serviceVersion: "0.0.1"))
-        .WithTracing(tracing => tracing.AddAspNetCoreInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
-            .AddOtlpExporter(opts =>
+    builder
+        .Services.AddOpenTelemetry()
+        .ConfigureResource(resource =>
+            resource.AddService(serviceName: "AosAdjutantApi", serviceVersion: "0.0.1")
+        )
+        .WithTracing(tracing =>
+            tracing
+                .AddAspNetCoreInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation()
+                .AddOtlpExporter(opts =>
                 {
                     opts.Endpoint = new Uri(builder.Configuration["OTLP:Endpoint"]!);
-                }
-            )
+                })
         )
-        .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
-            .SetExemplarFilter(ExemplarFilterType.TraceBased)
-            .AddOtlpExporter((exporterOptions, metricReaderOptions) =>
-                {
-                    exporterOptions.Endpoint = new Uri(builder.Configuration["Metrics:Endpoint"]!);
-                    exporterOptions.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    metricReaderOptions.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds =
-                        builder.Configuration.GetValue<int>("Metrics:ExportIntervalMilliseconds");
-                }
-            )
+        .WithMetrics(metrics =>
+            metrics
+                .AddAspNetCoreInstrumentation()
+                .SetExemplarFilter(ExemplarFilterType.TraceBased)
+                .AddOtlpExporter(
+                    (exporterOptions, metricReaderOptions) =>
+                    {
+                        exporterOptions.Endpoint = new Uri(
+                            builder.Configuration["Metrics:Endpoint"]!
+                        );
+                        exporterOptions.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        metricReaderOptions
+                            .PeriodicExportingMetricReaderOptions
+                            .ExportIntervalMilliseconds = builder.Configuration.GetValue<int>(
+                            "Metrics:ExportIntervalMilliseconds"
+                        );
+                    }
+                )
         );
 
-    builder.Services.AddControllers()
+    builder
+        .Services.AddControllers()
         .AddJsonOptions(opts =>
-            opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false))
+            opts.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(allowIntegerValues: false)
+            )
         );
 
     builder.Services.AddScoped<FactionService, FactionService>();
@@ -79,14 +97,13 @@ try
     app.UseMiddleware<CorrelationIdMiddleware>();
 
     app.UseSerilogRequestLogging(opts =>
+    {
+        opts.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
-            opts.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-            {
-                diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
-                diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
-            };
-        }
-    );
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+        };
+    });
 
     app.UseExceptionHandler();
 

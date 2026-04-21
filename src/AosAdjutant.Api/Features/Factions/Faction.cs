@@ -20,7 +20,10 @@ public sealed class Faction
 public static class FactionErrors
 {
     public static readonly AppError NotFound = new(ErrorCode.NotFound, "Faction not found.");
-    public static readonly AppError AlreadyExists = new(ErrorCode.UniqueKeyError, "Faction already exists.");
+    public static readonly AppError AlreadyExists = new(
+        ErrorCode.UniqueKeyError,
+        "Faction already exists."
+    );
 
     public static readonly AppError Concurrency = new(
         ErrorCode.ConcurrencyError,

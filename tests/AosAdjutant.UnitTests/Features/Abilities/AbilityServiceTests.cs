@@ -9,7 +9,11 @@ namespace AosAdjutant.UnitTests.Features.Abilities;
 public class AbilityServiceTests
 {
     private static ApplicationDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options
+        );
 
     public class CreateGenericAbility
     {
@@ -24,7 +28,7 @@ public class AbilityServiceTests
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
                 Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn
+                Turn = PlayerTurn.YourTurn,
             };
 
             var result = await service.CreateGenericAbility(createAbilityDto);
@@ -40,7 +44,7 @@ public class AbilityServiceTests
                     createAbilityDto.Phase,
                     createAbilityDto.Restriction,
                     createAbilityDto.Turn,
-                    IsGeneric = true
+                    IsGeneric = true,
                 },
                 result.GetValue
             );
@@ -58,7 +62,7 @@ public class AbilityServiceTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive
+                    Phase = TurnPhase.Passive,
                 }
             );
 
@@ -75,7 +79,10 @@ public class AbilityServiceTests
             await using var context = CreateContext();
             var ability = new Ability
             {
-                Name = "TestAbility", Effect = "TestEffect", Phase = TurnPhase.Hero, Declaration = "TestDeclaration"
+                Name = "TestAbility",
+                Effect = "TestEffect",
+                Phase = TurnPhase.Hero,
+                Declaration = "TestDeclaration",
             };
             context.Abilities.Add(ability);
             await context.SaveChangesAsync();
@@ -114,7 +121,7 @@ public class AbilityServiceTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Declaration = "TestDeclaration",
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
@@ -127,7 +134,7 @@ public class AbilityServiceTests
                 Effect = "UpdatedEffect",
                 Phase = TurnPhase.Combat,
                 Turn = PlayerTurn.EnemyTurn,
-                Version = 0
+                Version = 0,
             };
 
             var result = await service.UpdateAbility(abilityId, changeAbilityDto);
@@ -142,7 +149,7 @@ public class AbilityServiceTests
                     changeAbilityDto.Effect,
                     changeAbilityDto.Phase,
                     changeAbilityDto.Restriction,
-                    changeAbilityDto.Turn
+                    changeAbilityDto.Turn,
                 },
                 result.GetValue
             );
@@ -163,7 +170,7 @@ public class AbilityServiceTests
                     Effect = "UpdatedEffect",
                     Phase = TurnPhase.Combat,
                     Turn = PlayerTurn.EnemyTurn,
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -182,7 +189,7 @@ public class AbilityServiceTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Declaration = "TestDeclaration",
-                    Version = 5
+                    Version = 5,
                 }
             );
             await context.SaveChangesAsync();
@@ -198,7 +205,7 @@ public class AbilityServiceTests
                     Effect = "UpdatedEffect",
                     Phase = TurnPhase.Combat,
                     Turn = PlayerTurn.EnemyTurn,
-                    Version = 3
+                    Version = 3,
                 }
             );
 
@@ -217,7 +224,7 @@ public class AbilityServiceTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
                     Declaration = "TestDeclaration",
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
@@ -232,7 +239,7 @@ public class AbilityServiceTests
                     Effect = "TestEffect",
                     Phase = TurnPhase.Passive,
                     Turn = PlayerTurn.YourTurn,
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -253,7 +260,7 @@ public class AbilityServiceTests
                     Name = "TestAbility",
                     Effect = "TestEffect",
                     Phase = TurnPhase.Hero,
-                    Declaration = "TestDeclaration"
+                    Declaration = "TestDeclaration",
                 }
             );
             await context.SaveChangesAsync();

@@ -10,7 +10,11 @@ namespace AosAdjutant.UnitTests.Features.AttackProfiles;
 public class AttackProfileServiceTests
 {
     private static ApplicationDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options
+        );
 
     public class CreateAttackProfile
     {
@@ -26,12 +30,15 @@ public class AttackProfileServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = 1
+                    FactionId = 1,
                 }
             );
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
             var createDto = new CreateAttackProfileDto
             {
                 Name = "TestProfile",
@@ -40,7 +47,7 @@ public class AttackProfileServiceTests
                 ToHit = 3,
                 ToWound = 3,
                 Damage = "1",
-                WeaponEffects = []
+                WeaponEffects = [],
             };
 
             var result = await service.CreateAttackProfile(unitId, createDto);
@@ -57,7 +64,7 @@ public class AttackProfileServiceTests
                     createDto.ToWound,
                     createDto.Rend,
                     createDto.Damage,
-                    UnitId = unitId
+                    UnitId = unitId,
                 },
                 result.GetValue
             );
@@ -67,7 +74,10 @@ public class AttackProfileServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.CreateAttackProfile(
                 999,
@@ -79,7 +89,7 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    WeaponEffects = []
+                    WeaponEffects = [],
                 }
             );
 
@@ -99,7 +109,7 @@ public class AttackProfileServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = 1
+                    FactionId = 1,
                 }
             );
             await context.SaveChangesAsync();
@@ -113,11 +123,14 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = unitId
+                    UnitId = unitId,
                 }
             );
             await context.SaveChangesAsync();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.CreateAttackProfile(
                 unitId,
@@ -129,7 +142,7 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    WeaponEffects = []
+                    WeaponEffects = [],
                 }
             );
 
@@ -149,12 +162,15 @@ public class AttackProfileServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = 1
+                    FactionId = 1,
                 }
             );
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.CreateAttackProfile(
                 unitId,
@@ -166,7 +182,7 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    WeaponEffects = []
+                    WeaponEffects = [],
                 }
             );
 
@@ -186,12 +202,15 @@ public class AttackProfileServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = 1
+                    FactionId = 1,
                 }
             );
             await context.SaveChangesAsync();
             var unitId = context.Units.Single().UnitId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.CreateAttackProfile(
                 unitId,
@@ -203,7 +222,7 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    WeaponEffects = ["invalid_key"]
+                    WeaponEffects = ["invalid_key"],
                 }
             );
 
@@ -226,7 +245,7 @@ public class AttackProfileServiceTests
                     Move = "5",
                     Save = 4,
                     Control = 2,
-                    FactionId = 1
+                    FactionId = 1,
                 }
             );
             await context.SaveChangesAsync();
@@ -240,7 +259,7 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = unitId
+                    UnitId = unitId,
                 },
                 new AttackProfile
                 {
@@ -250,11 +269,14 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = unitId
+                    UnitId = unitId,
                 }
             );
             await context.SaveChangesAsync();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.GetUnitAttackProfiles(unitId);
 
@@ -266,7 +288,10 @@ public class AttackProfileServiceTests
         public async Task ReturnsNotFound_WhenUnitDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.GetUnitAttackProfiles(999);
 
@@ -289,12 +314,15 @@ public class AttackProfileServiceTests
                 ToHit = 3,
                 ToWound = 3,
                 Damage = "1",
-                UnitId = 1
+                UnitId = 1,
             };
             context.AttackProfiles.Add(attackProfile);
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.GetAttackProfile(attackProfileId);
 
@@ -306,7 +334,10 @@ public class AttackProfileServiceTests
         public async Task ReturnsNotFound_WhenAttackProfileDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.GetAttackProfile(999);
 
@@ -331,12 +362,15 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
             var changeDto = new ChangeAttackProfileDto
             {
                 Name = "UpdatedProfile",
@@ -346,7 +380,7 @@ public class AttackProfileServiceTests
                 ToWound = 4,
                 Damage = "2",
                 WeaponEffects = [],
-                Version = 0
+                Version = 0,
             };
 
             var result = await service.UpdateAttackProfile(attackProfileId, changeDto);
@@ -362,7 +396,7 @@ public class AttackProfileServiceTests
                     changeDto.ToHit,
                     changeDto.ToWound,
                     changeDto.Rend,
-                    changeDto.Damage
+                    changeDto.Damage,
                 },
                 result.GetValue
             );
@@ -372,7 +406,10 @@ public class AttackProfileServiceTests
         public async Task ReturnsNotFound_WhenAttackProfileDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.UpdateAttackProfile(
                 999,
@@ -385,7 +422,7 @@ public class AttackProfileServiceTests
                     ToWound = 4,
                     Damage = "2",
                     WeaponEffects = [],
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -407,12 +444,15 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 5
+                    Version = 5,
                 }
             );
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
@@ -425,7 +465,7 @@ public class AttackProfileServiceTests
                     ToWound = 4,
                     Damage = "2",
                     WeaponEffects = [],
-                    Version = 3
+                    Version = 3,
                 }
             );
 
@@ -447,7 +487,7 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 0
+                    Version = 0,
                 },
                 new AttackProfile
                 {
@@ -458,12 +498,17 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
-            var attackProfileId = context.AttackProfiles.First(ap => ap.Name == "TestProfile1").AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var attackProfileId = context
+                .AttackProfiles.First(ap => ap.Name == "TestProfile1")
+                .AttackProfileId;
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
@@ -476,7 +521,7 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     WeaponEffects = [],
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -498,12 +543,15 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
@@ -516,7 +564,7 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     WeaponEffects = [],
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -538,12 +586,15 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     UnitId = 1,
-                    Version = 0
+                    Version = 0,
                 }
             );
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.UpdateAttackProfile(
                 attackProfileId,
@@ -556,7 +607,7 @@ public class AttackProfileServiceTests
                     ToWound = 3,
                     Damage = "1",
                     WeaponEffects = ["invalid_key"],
-                    Version = 0
+                    Version = 0,
                 }
             );
 
@@ -580,12 +631,15 @@ public class AttackProfileServiceTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
             await context.SaveChangesAsync();
             var attackProfileId = context.AttackProfiles.Single().AttackProfileId;
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.DeleteAttackProfile(attackProfileId);
 
@@ -597,7 +651,10 @@ public class AttackProfileServiceTests
         public async Task ReturnsNotFound_WhenAttackProfileDoesNotExist()
         {
             await using var context = CreateContext();
-            var service = new AttackProfileService(context, NullLogger<AttackProfileService>.Instance);
+            var service = new AttackProfileService(
+                context,
+                NullLogger<AttackProfileService>.Instance
+            );
 
             var result = await service.DeleteAttackProfile(999);
 

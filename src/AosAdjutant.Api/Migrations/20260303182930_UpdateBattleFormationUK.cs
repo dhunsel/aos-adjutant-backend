@@ -12,17 +12,17 @@ namespace AosAdjutant.Api.Migrations
         {
             migrationBuilder.DropIndex(
                 name: "IX_battle_formation_faction_id",
-                table: "battle_formation");
+                table: "battle_formation"
+            );
 
-            migrationBuilder.DropIndex(
-                name: "IX_battle_formation_name",
-                table: "battle_formation");
+            migrationBuilder.DropIndex(name: "IX_battle_formation_name", table: "battle_formation");
 
             migrationBuilder.CreateIndex(
                 name: "IX_battle_formation_faction_id_name",
                 table: "battle_formation",
                 columns: new[] { "faction_id", "name" },
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
@@ -30,18 +30,21 @@ namespace AosAdjutant.Api.Migrations
         {
             migrationBuilder.DropIndex(
                 name: "IX_battle_formation_faction_id_name",
-                table: "battle_formation");
+                table: "battle_formation"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_battle_formation_faction_id",
                 table: "battle_formation",
-                column: "faction_id");
+                column: "faction_id"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_battle_formation_name",
                 table: "battle_formation",
                 column: "name",
-                unique: true);
+                unique: true
+            );
         }
     }
 }

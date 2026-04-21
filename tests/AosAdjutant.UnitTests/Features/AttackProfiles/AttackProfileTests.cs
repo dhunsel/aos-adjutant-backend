@@ -19,7 +19,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -35,7 +35,7 @@ public class AttackProfileTests
                     ToWound = 3,
                     Rend = (int?)null,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 },
                 result.GetValue
             );
@@ -54,7 +54,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -74,7 +74,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -95,7 +95,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -115,7 +115,7 @@ public class AttackProfileTests
                     ToHit = 1,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -135,7 +135,7 @@ public class AttackProfileTests
                     ToHit = 8,
                     ToWound = 3,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -155,7 +155,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 1,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -175,7 +175,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 8,
                     Damage = "1",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -187,7 +187,8 @@ public class AttackProfileTests
     public class Change
     {
         private static AttackProfile CreateValidMeleeProfile() =>
-            AttackProfile.Create(
+            AttackProfile
+                .Create(
                     new AttackProfileData
                     {
                         Name = "TestProfile",
@@ -196,7 +197,7 @@ public class AttackProfileTests
                         ToHit = 3,
                         ToWound = 3,
                         Damage = "1",
-                        UnitId = 1
+                        UnitId = 1,
                     }
                 )
                 .GetValue;
@@ -217,7 +218,7 @@ public class AttackProfileTests
                     ToWound = 4,
                     Rend = 1,
                     Damage = "2",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -232,7 +233,7 @@ public class AttackProfileTests
                     ToHit = 4,
                     ToWound = 4,
                     Rend = (int?)1,
-                    Damage = "2"
+                    Damage = "2",
                 },
                 attackProfile
             );
@@ -253,7 +254,7 @@ public class AttackProfileTests
                     ToWound = 4,
                     Rend = 1,
                     Damage = "2",
-                    UnitId = 1
+                    UnitId = 1,
                 }
             );
 
@@ -269,7 +270,7 @@ public class AttackProfileTests
                     ToHit = 3,
                     ToWound = 3,
                     Rend = (int?)null,
-                    Damage = "1"
+                    Damage = "1",
                 },
                 attackProfile
             );

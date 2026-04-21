@@ -9,7 +9,10 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
 {
     private async Task<FactionResponseDto> CreateFactionAsync(string name = "TestFaction")
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = name });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = name }
+        );
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
 
@@ -18,7 +21,10 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     [Fact]
     public async Task CreateFaction_Returns201()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "TestFaction" });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "TestFaction" }
+        );
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions);
@@ -30,7 +36,10 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     [Fact]
     public async Task CreateFaction_Returns400_WhenNameIsEmpty()
     {
-        var response = await Client.PostAsJsonAsync("/api/factions", new CreateFactionDto { Name = "" });
+        var response = await Client.PostAsJsonAsync(
+            "/api/factions",
+            new CreateFactionDto { Name = "" }
+        );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

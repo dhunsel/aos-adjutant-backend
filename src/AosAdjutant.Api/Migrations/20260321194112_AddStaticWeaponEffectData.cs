@@ -12,9 +12,7 @@ namespace AosAdjutant.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "xmin",
-                table: "weapon_effect");
+            migrationBuilder.DropColumn(name: "xmin", table: "weapon_effect");
 
             migrationBuilder.InsertData(
                 table: "weapon_effect",
@@ -33,8 +31,9 @@ namespace AosAdjutant.Api.Migrations
                     { 10, "anti_cavalry", "Anti-Cavalry (+1 Rend)" },
                     { 11, "anti_wizard", "Anti-Wizard (+1 Rend)" },
                     { 12, "anti_manifestation", "Anti-Manifestation (+1 Rend)" },
-                    { 13, "anti_charge", "Anti-Charge (+1 Rend)" }
-                });
+                    { 13, "anti_charge", "Anti-Charge (+1 Rend)" },
+                }
+            );
         }
 
         /// <inheritdoc />
@@ -43,67 +42,80 @@ namespace AosAdjutant.Api.Migrations
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 1);
+                keyValue: 1
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 2);
+                keyValue: 2
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 3);
+                keyValue: 3
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 4);
+                keyValue: 4
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 5);
+                keyValue: 5
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 6);
+                keyValue: 6
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 7);
+                keyValue: 7
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 8);
+                keyValue: 8
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 9);
+                keyValue: 9
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 10);
+                keyValue: 10
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 11);
+                keyValue: 11
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 12);
+                keyValue: 12
+            );
 
             migrationBuilder.DeleteData(
                 table: "weapon_effect",
                 keyColumn: "weapon_effect_id",
-                keyValue: 13);
+                keyValue: 13
+            );
 
             migrationBuilder.AddColumn<uint>(
                 name: "xmin",
@@ -111,7 +123,8 @@ namespace AosAdjutant.Api.Migrations
                 type: "xid",
                 rowVersion: true,
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
         }
     }
 }

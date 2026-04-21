@@ -21,36 +21,12 @@ public sealed class FactionAbilityController(FactionService factionService) : Co
     {
         var abilityResult = await factionService.CreateFactionAbility(factionId, abilityData);
         return abilityResult.Match(
-            a => CreatedAtAction(
-                nameof(AbilityController.GetAbility),
-                "Ability",
-                new { abilityId = a.AbilityId },
-                new AbilityResponseDto(
-                    a.AbilityId,
-                    a.Name,
-                    a.Reaction,
-                    a.Declaration,
-                    a.Effect,
-                    a.Phase,
-                    a.Restriction,
-                    a.Turn,
-                    a.Version
-                )
-            ),
-            this.ApiProblem
-        );
-    }
-
-    [HttpGet]
-    [EndpointSummary("Get all abilities for a faction")]
-    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities([FromRoute] int factionId)
-    {
-        var abilitiesResult = await factionService.GetFactionAbilities(factionId);
-        return abilitiesResult.Match(
-            abilities => Ok(
-                abilities.Select(a => new AbilityResponseDto(
+            a =>
+                CreatedAtAction(
+                    nameof(AbilityController.GetAbility),
+                    "Ability",
+                    new { abilityId = a.AbilityId },
+                    new AbilityResponseDto(
                         a.AbilityId,
                         a.Name,
                         a.Reaction,
@@ -61,8 +37,35 @@ public sealed class FactionAbilityController(FactionService factionService) : Co
                         a.Turn,
                         a.Version
                     )
-                )
-            ),
+                ),
+            this.ApiProblem
+        );
+    }
+
+    [HttpGet]
+    [EndpointSummary("Get all abilities for a faction")]
+    [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities(
+        [FromRoute] int factionId
+    )
+    {
+        var abilitiesResult = await factionService.GetFactionAbilities(factionId);
+        return abilitiesResult.Match(
+            abilities =>
+                Ok(
+                    abilities.Select(a => new AbilityResponseDto(
+                        a.AbilityId,
+                        a.Name,
+                        a.Reaction,
+                        a.Declaration,
+                        a.Effect,
+                        a.Phase,
+                        a.Restriction,
+                        a.Turn,
+                        a.Version
+                    ))
+                ),
             this.ApiProblem
         );
     }
