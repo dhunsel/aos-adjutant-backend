@@ -1,7 +1,7 @@
 # AoS Adjutant — Backend API
 
-[![pipeline](https://github.com/dhunsel/aos-adjutant-backend/actions/workflows/pipeline.yml/badge.svg)](https://github.com/dhunsel/aos-adjutant-backend/actions/workflows/pipeline.yml)
-[![codecov](https://codecov.io/github/dhunsel/aos-adjutant-backend/graph/badge.svg?token=Y9Y5NO8O1Z)](https://codecov.io/github/dhunsel/aos-adjutant-backend)
+[![backend](https://github.com/dhunsel/aos-adjutant/actions/workflows/backend.yml/badge.svg)](https://github.com/dhunsel/aos-adjutant/actions/workflows/backend.yml)
+[![codecov](https://codecov.io/github/dhunsel/aos-adjutant/graph/badge.svg?token=Y9Y5NO8O1Z&flag=backend)](https://codecov.io/github/dhunsel/aos-adjutant?flags[0]=backend)
 
 A REST API for managing Age of Sigmar army data. Allows clients to browse and manage factions, units, attack profiles,
 weapon effects, abilities, and battle formations.
