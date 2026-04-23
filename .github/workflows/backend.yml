@@ -1,9 +1,15 @@
-name: pipeline
+name: backend
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
   pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
 
 jobs:
   build:
@@ -11,6 +17,10 @@ jobs:
 
     permissions:
       contents: read
+
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - uses: actions/checkout@v6
@@ -24,7 +34,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.slnx') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('backend/**/*.csproj', 'backend/**/*.slnx') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
 
@@ -53,7 +63,8 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/**/coverage.cobertura.xml
+          files: backend/coverage/**/coverage.cobertura.xml
+          flags: backend
           fail_ci_if_error: true
 
   docker:
@@ -89,7 +100,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./backend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

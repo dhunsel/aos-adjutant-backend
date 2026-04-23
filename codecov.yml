@@ -10,8 +10,13 @@ coverage:
         # New code introduced in a PR should be at least 80% covered
         target: 80%
 
+flags:
+  backend:
+    paths:
+      - backend/
+
 ignore:
-  - "src/AosAdjutant.Api/Migrations/**"
+  - "backend/src/AosAdjutant.Api/Migrations/**"
 
 comment:
   layout: "condensed_header,condensed_files,condensed_footer"
