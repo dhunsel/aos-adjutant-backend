@@ -1,5 +1,5 @@
 import { Button } from "./components/ui/button";
-import { useFactions } from "./features/dashboard/factions/faction.api";
+import { useFactions } from "./features/factions/faction.queries";
 
 function App() {
   const factionsQuery = useFactions();
