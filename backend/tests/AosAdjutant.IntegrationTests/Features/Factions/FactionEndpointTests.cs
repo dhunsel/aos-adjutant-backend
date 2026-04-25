@@ -7,11 +7,15 @@ namespace AosAdjutant.IntegrationTests.Features.Factions;
 
 public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
 {
-    private async Task<FactionResponseDto> CreateFactionAsync(string name = "TestFaction")
+    private async Task<FactionResponseDto> CreateFactionAsync(
+        string name = "TestFaction",
+        GrandAlliance grandAlliance = GrandAlliance.Order
+    )
     {
         var response = await Client.PostAsJsonAsync(
             "/api/factions",
-            new CreateFactionDto { Name = name }
+            new CreateFactionDto { Name = name, GrandAlliance = grandAlliance },
+            JsonOptions
         );
         return (await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions))!;
     }
@@ -21,16 +25,19 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     [Fact]
     public async Task CreateFaction_Returns201()
     {
-        var response = await Client.PostAsJsonAsync(
-            "/api/factions",
-            new CreateFactionDto { Name = "TestFaction" }
-        );
+        var createFactionDto = new CreateFactionDto
+        {
+            Name = "TestFaction",
+            GrandAlliance = GrandAlliance.Order,
+        };
+
+        var response = await Client.PostAsJsonAsync("/api/factions", createFactionDto, JsonOptions);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions);
         Assert.NotNull(body);
-        Assert.Equal("TestFaction", body.Name);
         Assert.True(body.FactionId > 0);
+        Assert.Equivalent(createFactionDto, body);
     }
 
     [Fact]
@@ -38,7 +45,8 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     {
         var response = await Client.PostAsJsonAsync(
             "/api/factions",
-            new CreateFactionDto { Name = "" }
+            new CreateFactionDto { Name = "", GrandAlliance = GrandAlliance.Order },
+            JsonOptions
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -72,7 +80,7 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions);
         Assert.NotNull(body);
-        Assert.Equal("TestFaction", body.Name);
+        Assert.Equivalent(created, body);
     }
 
     // --- PUT /api/factions/{id} ---
@@ -81,16 +89,23 @@ public class FactionEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
     public async Task UpdateFaction_Returns200()
     {
         var created = await CreateFactionAsync();
+        var changeFactionDto = new ChangeFactionDto
+        {
+            Name = "TestFactionUpdated",
+            GrandAlliance = GrandAlliance.Order,
+            Version = created.Version,
+        };
 
         var response = await Client.PutAsJsonAsync(
             $"/api/factions/{created.FactionId}",
-            new ChangeFactionDto { Name = "TestFactionUpdated", Version = created.Version }
+            changeFactionDto,
+            JsonOptions
         );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions);
         Assert.NotNull(body);
-        Assert.Equal("TestFactionUpdated", body.Name);
+        Assert.Equivalent(new { changeFactionDto.Name, changeFactionDto.GrandAlliance }, body);
     }
 
     // --- DELETE /api/factions/{id} ---

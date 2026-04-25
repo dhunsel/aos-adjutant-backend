@@ -18,7 +18,7 @@ public sealed class Faction
 {
     public int FactionId { get; set; }
     public required string Name { get; set; }
-    public GrandAlliance GrandAlliance { get; set; }
+    public required GrandAlliance GrandAlliance { get; set; }
     public uint Version { get; set; }
 
     public ICollection<BattleFormation> BattleFormations { get; } = [];

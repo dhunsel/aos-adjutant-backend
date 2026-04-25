@@ -13,7 +13,8 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
     {
         var factionResponse = await Client.PostAsJsonAsync(
             "/api/factions",
-            new CreateFactionDto { Name = "TestFaction" }
+            new CreateFactionDto { Name = "TestFaction", GrandAlliance = GrandAlliance.Order },
+            JsonOptions
         );
         var faction = (
             await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)

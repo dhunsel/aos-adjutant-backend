@@ -13,11 +13,14 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
     {
         var factionResponse = await Client.PostAsJsonAsync(
             "/api/factions",
-            new CreateFactionDto { Name = "TestFaction" }
+            new CreateFactionDto { Name = "TestFaction", GrandAlliance = GrandAlliance.Order },
+            JsonOptions
         );
         var faction = (
             await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
         )!;
+
+        Console.WriteLine(faction.GrandAlliance);
 
         var unitResponse = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",

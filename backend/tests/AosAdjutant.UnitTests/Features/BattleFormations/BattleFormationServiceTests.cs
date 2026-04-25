@@ -23,7 +23,9 @@ public class BattleFormationServiceTests
         public async Task ReturnsCreatedBattleFormation_WhenFactionExistsAndNameIsUnique()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new BattleFormationService(
@@ -63,7 +65,9 @@ public class BattleFormationServiceTests
         public async Task ReturnsUniqueKeyError_WhenNameAlreadyExistsInFaction()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             context.BattleFormations.Add(
@@ -91,7 +95,9 @@ public class BattleFormationServiceTests
         public async Task ReturnsBattleFormations_WhenFactionExists()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             context.BattleFormations.AddRange(
