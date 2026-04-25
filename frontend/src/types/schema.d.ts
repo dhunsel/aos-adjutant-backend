@@ -1152,7 +1152,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    attackProfileId: number | string;
+                    attackProfileId: number;
                 };
                 cookie?: never;
             };
@@ -1490,7 +1490,7 @@ export interface components {
     schemas: {
         AbilityResponseDto: {
             /** Format: int32 */
-            abilityId: number | string;
+            abilityId: number;
             name: string;
             reaction: null | string;
             declaration: null | string;
@@ -1499,39 +1499,39 @@ export interface components {
             restriction: null | components["schemas"]["ActivationRestriction"];
             turn: null | components["schemas"]["PlayerTurn"];
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         /** @enum {unknown} */
         ActivationRestriction: "OnceTurnArmy" | "OnceRoundArmy" | "OnceBattleArmy" | "OnceRound" | "OnceBattle" | null;
         AttackProfileResponseDto: {
             /** Format: int32 */
-            attackProfileId: number | string;
+            attackProfileId: number;
             name: string;
             isRanged: boolean;
             /** Format: int32 */
-            range: null | number | string;
+            range: null | number;
             attacks: string;
             /** Format: int32 */
-            toHit: number | string;
+            toHit: number;
             /** Format: int32 */
-            toWound: number | string;
+            toWound: number;
             /** Format: int32 */
-            rend: null | number | string;
+            rend: null | number;
             damage: string;
             /** Format: int32 */
-            unitId: number | string;
+            unitId: number;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
             weaponEffects: components["schemas"]["WeaponEffectResponseDto"][];
         };
         BattleFormationResponseDto: {
             /** Format: int32 */
-            battleFormationId: number | string;
+            battleFormationId: number;
             name: string;
             /** Format: int32 */
-            factionId: number | string;
+            factionId: number;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         ChangeAbilityDto: {
             name: string;
@@ -1542,48 +1542,48 @@ export interface components {
             restriction?: null | components["schemas"]["ActivationRestriction"];
             turn?: null | components["schemas"]["PlayerTurn"];
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         ChangeAttackProfileDto: {
             name: string;
             isRanged: boolean;
             /** Format: int32 */
-            range?: null | number | string;
+            range?: null | number;
             attacks: string;
             /** Format: int32 */
-            toHit: number | string;
+            toHit: number;
             /** Format: int32 */
-            toWound: number | string;
+            toWound: number;
             /** Format: int32 */
-            rend?: null | number | string;
+            rend?: null | number;
             damage: string;
             weaponEffects: string[];
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         ChangeBattleFormationDto: {
             name: string;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         ChangeFactionDto: {
             name: string;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         ChangeUnitDto: {
             name: string;
             /** Format: int32 */
-            health: number | string;
+            health: number;
             move: string;
             /** Format: int32 */
-            save: number | string;
+            save: number;
             /** Format: int32 */
-            control: number | string;
+            control: number;
             /** Format: int32 */
-            wardSave?: null | number | string;
+            wardSave?: null | number;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         CreateAbilityDto: {
             name: string;
@@ -1598,14 +1598,14 @@ export interface components {
             name: string;
             isRanged: boolean;
             /** Format: int32 */
-            range?: null | number | string;
+            range?: null | number;
             attacks: string;
             /** Format: int32 */
-            toHit: number | string;
+            toHit: number;
             /** Format: int32 */
-            toWound: number | string;
+            toWound: number;
             /** Format: int32 */
-            rend?: null | number | string;
+            rend?: null | number;
             damage: string;
             weaponEffects: string[];
         };
@@ -1618,21 +1618,21 @@ export interface components {
         CreateUnitDto: {
             name: string;
             /** Format: int32 */
-            health: number | string;
+            health: number;
             move: string;
             /** Format: int32 */
-            save: number | string;
+            save: number;
             /** Format: int32 */
-            control: number | string;
+            control: number;
             /** Format: int32 */
-            wardSave?: null | number | string;
+            wardSave?: null | number;
         };
         FactionResponseDto: {
             /** Format: int32 */
-            factionId: number | string;
+            factionId: number;
             name: string;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         /** @enum {unknown} */
         PlayerTurn: "YourTurn" | "EnemyTurn" | "AnyTurn" | null;
@@ -1640,7 +1640,7 @@ export interface components {
             type?: null | string;
             title?: null | string;
             /** Format: int32 */
-            status?: null | number | string;
+            status?: null | number;
             detail?: null | string;
             instance?: null | string;
         };
@@ -1648,21 +1648,21 @@ export interface components {
         TurnPhase: "Deployment" | "Start" | "Hero" | "Movement" | "Shooting" | "Charge" | "Combat" | "End" | "Passive";
         UnitResponseDto: {
             /** Format: int32 */
-            unitId: number | string;
+            unitId: number;
             name: string;
             /** Format: int32 */
-            health: number | string;
+            health: number;
             move: string;
             /** Format: int32 */
-            save: number | string;
+            save: number;
             /** Format: int32 */
-            control: number | string;
+            control: number;
             /** Format: int32 */
-            wardSave: null | number | string;
+            wardSave: null | number;
             /** Format: int32 */
-            factionId: number | string;
+            factionId: number;
             /** Format: uint32 */
-            version: number | string;
+            version: number;
         };
         WeaponEffectResponseDto: {
             key: string;

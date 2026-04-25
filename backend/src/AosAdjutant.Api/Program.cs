@@ -72,10 +72,20 @@ try
     builder
         .Services.AddControllers()
         .AddJsonOptions(opts =>
+        {
+            opts.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
             opts.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter(allowIntegerValues: false)
-            )
+            );
+        });
+
+    builder.Services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+        options.SerializerOptions.Converters.Add(
+            new JsonStringEnumConverter(allowIntegerValues: false)
         );
+    });
 
     builder.Services.AddScoped<FactionService, FactionService>();
     builder.Services.AddScoped<BattleFormationService, BattleFormationService>();

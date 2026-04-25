@@ -1,4 +1,4 @@
-import type { components } from "./schema.d.ts";
+import type { components } from "./schema.d";
 
 type Schemas = components["schemas"];
 
