@@ -23,12 +23,16 @@ public class FactionServiceTests
         {
             await using var context = CreateContext();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
-            const string Name = "TestFaction";
+            var createFactionDto = new CreateFactionDto
+            {
+                Name = "TestFaction",
+                GrandAlliance = GrandAlliance.Order,
+            };
 
-            var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
+            var result = await service.CreateFaction(createFactionDto);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(Name, result.GetValue.Name);
+            Assert.Equivalent(createFactionDto, result.GetValue);
         }
 
         [Fact]
@@ -36,11 +40,13 @@ public class FactionServiceTests
         {
             await using var context = CreateContext();
             const string Name = "TestFaction";
-            context.Factions.Add(new Faction { Name = Name });
+            context.Factions.Add(new Faction { Name = Name, GrandAlliance = GrandAlliance.Order });
             await context.SaveChangesAsync();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.CreateFaction(new CreateFactionDto { Name = Name });
+            var result = await service.CreateFaction(
+                new CreateFactionDto { Name = Name, GrandAlliance = GrandAlliance.Order }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.UniqueKeyError, result.GetError.Code);
@@ -54,13 +60,13 @@ public class FactionServiceTests
         {
             await using var context = CreateContext();
             context.Factions.AddRange(
-                new Faction { Name = "TestFaction1" },
-                new Faction { Name = "TestFaction2" }
+                new Faction { Name = "TestFaction1", GrandAlliance = GrandAlliance.Order },
+                new Faction { Name = "TestFaction2", GrandAlliance = GrandAlliance.Order }
             );
             await context.SaveChangesAsync();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions();
+            var result = await service.GetFactions(new FactionQueryFilter { });
 
             Assert.Equal(2, result.Count);
         }
@@ -71,9 +77,28 @@ public class FactionServiceTests
             await using var context = CreateContext();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions();
+            var result = await service.GetFactions(new FactionQueryFilter { });
 
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task WithGrandAllianceFilter_ReturnsFilteredFactions()
+        {
+            await using var context = CreateContext();
+            context.Factions.AddRange(
+                new Faction { Name = "Order Faction", GrandAlliance = GrandAlliance.Order },
+                new Faction { Name = "Chaos Faction", GrandAlliance = GrandAlliance.Chaos }
+            );
+            await context.SaveChangesAsync();
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
+
+            var result = await service.GetFactions(
+                new FactionQueryFilter { GrandAlliance = GrandAlliance.Order }
+            );
+
+            Assert.Single(result);
+            Assert.Equal("Order Faction", result[0].Name);
         }
     }
 
@@ -84,7 +109,7 @@ public class FactionServiceTests
         {
             await using var context = CreateContext();
             const string Name = "TestFaction";
-            context.Factions.Add(new Faction { Name = Name });
+            context.Factions.Add(new Faction { Name = Name, GrandAlliance = GrandAlliance.Order });
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
@@ -114,19 +139,31 @@ public class FactionServiceTests
         public async Task ReturnsFaction_WhenUpdateSucceeds()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction", Version = 0 });
+            context.Factions.Add(
+                new Faction
+                {
+                    Name = "TestFaction",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 0,
+                }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
-            const string NewName = "TestFactionUpdated";
+            var changeFactionDto = new ChangeFactionDto
+            {
+                Name = "TestFactionUpdated",
+                GrandAlliance = GrandAlliance.Order,
+                Version = 0,
+            };
 
-            var result = await service.ChangeFaction(
-                factionId,
-                new ChangeFactionDto { Name = NewName, Version = 0 }
-            );
+            var result = await service.ChangeFaction(factionId, changeFactionDto);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(NewName, result.GetValue.Name);
+            Assert.Equivalent(
+                new { changeFactionDto.Name, changeFactionDto.GrandAlliance },
+                result.GetValue
+            );
         }
 
         [Fact]
@@ -137,7 +174,12 @@ public class FactionServiceTests
 
             var result = await service.ChangeFaction(
                 999,
-                new ChangeFactionDto { Name = "TestFactionUpdated", Version = 0 }
+                new ChangeFactionDto
+                {
+                    Name = "TestFactionUpdated",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 0,
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -148,14 +190,26 @@ public class FactionServiceTests
         public async Task ReturnsConcurrencyError_WhenVersionMismatch()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction", Version = 5 });
+            context.Factions.Add(
+                new Faction
+                {
+                    Name = "TestFaction",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 5,
+                }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.ChangeFaction(
                 factionId,
-                new ChangeFactionDto { Name = "TestFactionUpdated", Version = 3 }
+                new ChangeFactionDto
+                {
+                    Name = "TestFactionUpdated",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 3,
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -167,8 +221,18 @@ public class FactionServiceTests
         {
             await using var context = CreateContext();
             context.Factions.AddRange(
-                new Faction { Name = "TestFaction1", Version = 0 },
-                new Faction { Name = "TestFaction2", Version = 0 }
+                new Faction
+                {
+                    Name = "TestFaction1",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 0,
+                },
+                new Faction
+                {
+                    Name = "TestFaction2",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 0,
+                }
             );
             await context.SaveChangesAsync();
             var factionId = context.Factions.First(f => f.Name == "TestFaction1").FactionId;
@@ -176,7 +240,12 @@ public class FactionServiceTests
 
             var result = await service.ChangeFaction(
                 factionId,
-                new ChangeFactionDto { Name = "TestFaction2", Version = 0 }
+                new ChangeFactionDto
+                {
+                    Name = "TestFaction2",
+                    GrandAlliance = GrandAlliance.Order,
+                    Version = 0,
+                }
             );
 
             Assert.False(result.IsSuccess);
@@ -190,7 +259,9 @@ public class FactionServiceTests
         public async Task ReturnsSuccess_WhenFactionExists()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
@@ -230,7 +301,9 @@ public class FactionServiceTests
         public async Task ReturnsAbility_WhenFactionExistsAndDataIsValid()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
@@ -270,7 +343,9 @@ public class FactionServiceTests
         public async Task ReturnsValidationError_WhenAbilityDataIsInvalid()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
@@ -297,7 +372,9 @@ public class FactionServiceTests
         public async Task ReturnsAbilities_WhenFactionExists()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new FactionService(context, NullLogger<FactionService>.Instance);

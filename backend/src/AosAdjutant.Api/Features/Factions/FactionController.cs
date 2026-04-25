@@ -22,7 +22,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
                 CreatedAtAction(
                     nameof(GetFaction),
                     new { factionId = f.FactionId },
-                    new FactionResponseDto(f.FactionId, f.Name, f.Version)
+                    new FactionResponseDto(f.FactionId, f.Name, f.GrandAlliance, f.Version)
                 ),
             this.ApiProblem
         );
@@ -31,10 +31,19 @@ public sealed class FactionController(FactionService factionService) : Controlle
     [HttpGet]
     [EndpointSummary("Get all factions")]
     [ProducesResponseType<List<FactionResponseDto>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<FactionResponseDto>>> GetFactions()
+    public async Task<ActionResult<List<FactionResponseDto>>> GetFactions(
+        [FromQuery] FactionQueryFilter factionQueryFilter
+    )
     {
-        var factions = await factionService.GetFactions();
-        return Ok(factions.Select(f => new FactionResponseDto(f.FactionId, f.Name, f.Version)));
+        var factions = await factionService.GetFactions(factionQueryFilter);
+        return Ok(
+            factions.Select(f => new FactionResponseDto(
+                f.FactionId,
+                f.Name,
+                f.GrandAlliance,
+                f.Version
+            ))
+        );
     }
 
     [HttpGet("{factionId:int}")]
@@ -45,7 +54,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
     {
         var factionResult = await factionService.GetFaction(factionId);
         return factionResult.Match(
-            f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.Version)),
+            f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.GrandAlliance, f.Version)),
             this.ApiProblem
         );
     }
@@ -62,7 +71,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
     {
         var factionResult = await factionService.ChangeFaction(factionId, factionData);
         return factionResult.Match(
-            f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.Version)),
+            f => Ok(new FactionResponseDto(f.FactionId, f.Name, f.GrandAlliance, f.Version)),
             this.ApiProblem
         );
     }

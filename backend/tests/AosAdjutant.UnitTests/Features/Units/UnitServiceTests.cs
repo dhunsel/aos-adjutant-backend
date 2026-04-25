@@ -23,7 +23,9 @@ public class UnitServiceTests
         public async Task ReturnsCreatedUnit_WhenFactionExistsAndNameIsUnique()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var service = new UnitService(context, NullLogger<UnitService>.Instance);
@@ -80,7 +82,9 @@ public class UnitServiceTests
         public async Task ReturnsUniqueKeyError_WhenNameAlreadyExistsInFaction()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             var unit = new Unit
@@ -119,7 +123,9 @@ public class UnitServiceTests
         public async Task ReturnsUnits_WhenFactionExists()
         {
             await using var context = CreateContext();
-            context.Factions.Add(new Faction { Name = "TestFaction" });
+            context.Factions.Add(
+                new Faction { Name = "TestFaction", GrandAlliance = GrandAlliance.Order }
+            );
             await context.SaveChangesAsync();
             var factionId = context.Factions.Single().FactionId;
             context.Units.AddRange(

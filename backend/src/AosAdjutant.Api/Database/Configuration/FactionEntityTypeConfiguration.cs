@@ -11,6 +11,11 @@ public sealed class FactionEntityTypeConfiguration : IEntityTypeConfiguration<Fa
         builder.ToTable("faction");
         builder.Property(f => f.FactionId).HasColumnName("faction_id");
         builder.Property(f => f.Name).HasColumnName("name").HasMaxLength(250);
+        builder
+            .Property(f => f.GrandAlliance)
+            .HasColumnName("grand_alliance")
+            .HasConversion<string>()
+            .HasMaxLength(250);
 
         builder.HasKey(f => f.FactionId);
 

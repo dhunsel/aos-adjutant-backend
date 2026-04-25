@@ -28,3 +28,4 @@ export type WeaponEffect = Schemas["WeaponEffectResponseDto"];
 export type TurnPhase = Schemas["TurnPhase"];
 export type ActivationRestriction = Schemas["ActivationRestriction"];
 export type PlayerTurn = Schemas["PlayerTurn"];
+export type GrandAlliance = Schemas["GrandAlliance"];

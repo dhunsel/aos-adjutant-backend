@@ -598,7 +598,9 @@ export interface paths {
         /** Get all factions */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    GrandAlliance?: components["schemas"]["GrandAlliance"];
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -1568,6 +1570,7 @@ export interface components {
         };
         ChangeFactionDto: {
             name: string;
+            grandAlliance: components["schemas"]["GrandAlliance"];
             /** Format: uint32 */
             version: number;
         };
@@ -1614,6 +1617,7 @@ export interface components {
         };
         CreateFactionDto: {
             name: string;
+            grandAlliance: components["schemas"]["GrandAlliance"];
         };
         CreateUnitDto: {
             name: string;
@@ -1631,9 +1635,12 @@ export interface components {
             /** Format: int32 */
             factionId: number;
             name: string;
+            grandAlliance: components["schemas"]["GrandAlliance"];
             /** Format: uint32 */
             version: number;
         };
+        /** @enum {unknown} */
+        GrandAlliance: "Order" | "Death" | "Chaos" | "Destruction";
         /** @enum {unknown} */
         PlayerTurn: "YourTurn" | "EnemyTurn" | "AnyTurn" | null;
         ProblemDetails: {

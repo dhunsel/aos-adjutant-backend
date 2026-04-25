@@ -996,6 +996,15 @@
           "Factions"
         ],
         "summary": "Get all factions",
+        "parameters": [
+          {
+            "name": "GrandAlliance",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/GrandAlliance"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2607,6 +2616,7 @@
       "ChangeFactionDto": {
         "required": [
           "name",
+          "grandAlliance",
           "version"
         ],
         "type": "object",
@@ -2615,6 +2625,9 @@
             "maxLength": 100,
             "minLength": 1,
             "type": "string"
+          },
+          "grandAlliance": {
+            "$ref": "#/components/schemas/GrandAlliance"
           },
           "version": {
             "type": "integer",
@@ -2802,7 +2815,8 @@
       },
       "CreateFactionDto": {
         "required": [
-          "name"
+          "name",
+          "grandAlliance"
         ],
         "type": "object",
         "properties": {
@@ -2810,6 +2824,9 @@
             "maxLength": 100,
             "minLength": 1,
             "type": "string"
+          },
+          "grandAlliance": {
+            "$ref": "#/components/schemas/GrandAlliance"
           }
         }
       },
@@ -2858,6 +2875,7 @@
         "required": [
           "factionId",
           "name",
+          "grandAlliance",
           "version"
         ],
         "type": "object",
@@ -2869,11 +2887,22 @@
           "name": {
             "type": "string"
           },
+          "grandAlliance": {
+            "$ref": "#/components/schemas/GrandAlliance"
+          },
           "version": {
             "type": "integer",
             "format": "uint32"
           }
         }
+      },
+      "GrandAlliance": {
+        "enum": [
+          "Order",
+          "Death",
+          "Chaos",
+          "Destruction"
+        ]
       },
       "PlayerTurn": {
         "enum": [

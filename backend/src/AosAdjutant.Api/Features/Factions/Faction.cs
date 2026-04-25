@@ -6,15 +6,24 @@ using AosAdjutant.Api.Features.Units;
 
 namespace AosAdjutant.Api.Features.Factions;
 
+public enum GrandAlliance
+{
+    Order,
+    Death,
+    Chaos,
+    Destruction,
+}
+
 public sealed class Faction
 {
     public int FactionId { get; set; }
     public required string Name { get; set; }
+    public required GrandAlliance GrandAlliance { get; set; }
     public uint Version { get; set; }
 
-    public ICollection<BattleFormation> BattleFormations { get; } = new List<BattleFormation>();
-    public ICollection<Unit> Units { get; } = new List<Unit>();
-    public ICollection<Ability> Abilities { get; } = new List<Ability>();
+    public ICollection<BattleFormation> BattleFormations { get; } = [];
+    public ICollection<Unit> Units { get; } = [];
+    public ICollection<Ability> Abilities { get; } = [];
 }
 
 public static class FactionErrors
