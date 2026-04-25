@@ -48,7 +48,7 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
 #pragma warning restore MA0025
     }
 
-    [HttpGet("{abilityId}")]
+    [HttpGet("{abilityId:int}")]
     [EndpointSummary("Get an ability by ID")]
     [ProducesResponseType<AbilityResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -74,7 +74,7 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
         );
     }
 
-    [HttpPut("{abilityId}")]
+    [HttpPut("{abilityId:int}")]
     [EndpointSummary("Update an ability")]
     [ProducesResponseType<AbilityResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -104,7 +104,7 @@ public sealed class AbilityController(AbilityService abilityService) : Controlle
         );
     }
 
-    [HttpDelete("{abilityId}")]
+    [HttpDelete("{abilityId:int}")]
     [EndpointSummary("Delete an ability")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

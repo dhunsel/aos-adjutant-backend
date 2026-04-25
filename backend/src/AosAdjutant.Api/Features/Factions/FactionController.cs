@@ -37,7 +37,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
         return Ok(factions.Select(f => new FactionResponseDto(f.FactionId, f.Name, f.Version)));
     }
 
-    [HttpGet("{factionId}")]
+    [HttpGet("{factionId:int}")]
     [EndpointSummary("Get a faction by ID")]
     [ProducesResponseType<FactionResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -50,7 +50,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
         );
     }
 
-    [HttpPut("{factionId}")]
+    [HttpPut("{factionId:int}")]
     [EndpointSummary("Update a faction")]
     [ProducesResponseType<FactionResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -67,7 +67,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
         );
     }
 
-    [HttpDelete("{factionId}")]
+    [HttpDelete("{factionId:int}")]
     [EndpointSummary("Delete a faction")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

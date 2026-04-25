@@ -9,7 +9,7 @@ namespace AosAdjutant.Api.Features.BattleFormations;
 public sealed class BattleFormationController(BattleFormationService battleFormationService)
     : ControllerBase
 {
-    [HttpGet("{battleFormationId}")]
+    [HttpGet("{battleFormationId:int}")]
     [EndpointSummary("Get a battle formation by ID")]
     [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -34,7 +34,7 @@ public sealed class BattleFormationController(BattleFormationService battleForma
         );
     }
 
-    [HttpPut("{battleFormationId}")]
+    [HttpPut("{battleFormationId:int}")]
     [EndpointSummary("Update a battle formation")]
     [ProducesResponseType<BattleFormationResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -62,7 +62,7 @@ public sealed class BattleFormationController(BattleFormationService battleForma
         );
     }
 
-    [HttpDelete("{battleFormationId}")]
+    [HttpDelete("{battleFormationId:int}")]
     [EndpointSummary("Delete a battle formation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
