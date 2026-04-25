@@ -20,8 +20,6 @@ public class AttackProfileEndpointTests(ApiFactory factory) : EndpointTestsBase(
             await factionResponse.Content.ReadFromJsonAsync<FactionResponseDto>(JsonOptions)
         )!;
 
-        Console.WriteLine(faction.GrandAlliance);
-
         var unitResponse = await Client.PostAsJsonAsync(
             $"/api/factions/{faction.FactionId}/units",
             new CreateUnitDto
