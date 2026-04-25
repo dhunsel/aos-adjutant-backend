@@ -9,7 +9,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 
 export default defineConfig([
-  globalIgnores(["dist"]),
+  globalIgnores(["dist", "src/types/schema.d.ts"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [

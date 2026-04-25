@@ -88,6 +88,20 @@ try
 
     builder.Services.AddOpenApi();
 
+    builder.Services.AddCors(options =>
+        options.AddPolicy(
+            "Frontend",
+            policy =>
+                policy
+                    .WithOrigins(
+                        builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                            ?? []
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+        )
+    );
+
     builder.Services.AddDbContext<ApplicationDbContext>(opt =>
         opt.UseNpgsql(builder.Configuration["AosAdjutant:DbContextConnectionString"])
     );
@@ -106,6 +120,8 @@ try
     });
 
     app.UseExceptionHandler();
+
+    app.UseCors("Frontend");
 
     if (app.Environment.IsDevelopment())
     {

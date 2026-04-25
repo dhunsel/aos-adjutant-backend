@@ -1,9 +1,11 @@
 #pragma warning disable MA0048
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using AosAdjutant.Api.Common;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
+[JsonConverter(typeof(JsonStringEnumConverter<TurnPhase>))]
 public enum TurnPhase
 {
     [Display(Name = "Deployment Phase")]
@@ -34,6 +36,7 @@ public enum TurnPhase
     Passive,
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter<ActivationRestriction>))]
 public enum ActivationRestriction
 {
     [Display(Name = "Once per turn (army)")]
@@ -52,6 +55,7 @@ public enum ActivationRestriction
     OnceBattle,
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter<PlayerTurn>))]
 public enum PlayerTurn
 {
     [Display(Name = "Your")]

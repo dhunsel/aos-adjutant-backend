@@ -42,7 +42,7 @@ public sealed class AttackProfileController(AttackProfileService attackProfileSe
         );
     }
 
-    [HttpPut("{attackProfileId}")]
+    [HttpPut("{attackProfileId:int}")]
     [EndpointSummary("Update an attack profile")]
     [ProducesResponseType<AttackProfileResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -79,7 +79,7 @@ public sealed class AttackProfileController(AttackProfileService attackProfileSe
         );
     }
 
-    [HttpDelete("{attackProfileId}")]
+    [HttpDelete("{attackProfileId:int}")]
     [EndpointSummary("Delete an attack profile")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

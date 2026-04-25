@@ -10,9 +10,7 @@ namespace AosAdjutant.IntegrationTests.Fixture;
 
 public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder()
-        .WithImage("postgres:18.1")
-        .Build();
+    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder("postgres:18.1").Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Units;
 
-[Route("api/units/{unitId}/abilities")]
+[Route("api/units/{unitId:int}/abilities")]
 [ApiController]
 [Tags("Units")]
 public sealed class UnitAbilityController(UnitService unitService) : ControllerBase
