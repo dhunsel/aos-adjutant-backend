@@ -29,9 +29,9 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
         return Result<Faction>.Success(newFaction);
     }
 
-    public async Task<List<Faction>> GetFactions()
+    public async Task<List<Faction>> GetFactions(FactionQueryFilter factionQueryFilter)
     {
-        return await context.Factions.AsNoTracking().ToListAsync();
+        return await context.Factions.AsNoTracking().ApplyFilters(factionQueryFilter).ToListAsync();
     }
 
     public async Task<Result<Faction>> GetFaction(int factionId)

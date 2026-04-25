@@ -66,7 +66,7 @@ public class FactionServiceTests
             await context.SaveChangesAsync();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions();
+            var result = await service.GetFactions(new FactionQueryFilter { });
 
             Assert.Equal(2, result.Count);
         }
@@ -77,9 +77,28 @@ public class FactionServiceTests
             await using var context = CreateContext();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions();
+            var result = await service.GetFactions(new FactionQueryFilter { });
 
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task WithGrandAllianceFilter_ReturnsFilteredFactions()
+        {
+            await using var context = CreateContext();
+            context.Factions.AddRange(
+                new Faction { Name = "Order Faction", GrandAlliance = GrandAlliance.Order },
+                new Faction { Name = "Chaos Faction", GrandAlliance = GrandAlliance.Chaos }
+            );
+            await context.SaveChangesAsync();
+            var service = new FactionService(context, NullLogger<FactionService>.Instance);
+
+            var result = await service.GetFactions(
+                new FactionQueryFilter { GrandAlliance = GrandAlliance.Order }
+            );
+
+            Assert.Single(result);
+            Assert.Equal("Order Faction", result[0].Name);
         }
     }
 

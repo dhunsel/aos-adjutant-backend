@@ -23,3 +23,8 @@ public sealed record ChangeFactionDto
     public required GrandAlliance GrandAlliance { get; init; }
     public required uint Version { get; init; }
 }
+
+public sealed record FactionQueryFilter
+{
+    public GrandAlliance? GrandAlliance { get; init; }
+}
