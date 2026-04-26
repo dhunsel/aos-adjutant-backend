@@ -66,7 +66,7 @@ public class FactionServiceTests
             await context.SaveChangesAsync();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions(new FactionQueryFilter { });
+            var result = await service.GetFactions(new FactionQuery { });
 
             Assert.Equal(2, result.Count);
         }
@@ -77,7 +77,7 @@ public class FactionServiceTests
             await using var context = CreateContext();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactions(new FactionQueryFilter { });
+            var result = await service.GetFactions(new FactionQuery { });
 
             Assert.Empty(result);
         }
@@ -94,7 +94,7 @@ public class FactionServiceTests
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
             var result = await service.GetFactions(
-                new FactionQueryFilter { GrandAlliance = GrandAlliance.Order }
+                new FactionQuery { GrandAlliance = GrandAlliance.Order }
             );
 
             Assert.Single(result);
@@ -391,7 +391,7 @@ public class FactionServiceTests
                 }
             );
 
-            var result = await service.GetFactionAbilities(factionId);
+            var result = await service.GetFactionAbilities(factionId, new AbilityQuery { });
 
             Assert.True(result.IsSuccess);
             Assert.Single(result.GetValue);
@@ -403,7 +403,7 @@ public class FactionServiceTests
             await using var context = CreateContext();
             var service = new FactionService(context, NullLogger<FactionService>.Instance);
 
-            var result = await service.GetFactionAbilities(999);
+            var result = await service.GetFactionAbilities(999, new AbilityQuery { });
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);

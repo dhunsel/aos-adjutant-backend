@@ -110,7 +110,10 @@ public class BattleFormationServiceTests
                 NullLogger<BattleFormationService>.Instance
             );
 
-            var result = await service.GetFactionBattleFormations(factionId);
+            var result = await service.GetFactionBattleFormations(
+                factionId,
+                new BattleFormationQuery { }
+            );
 
             Assert.True(result.IsSuccess);
             Assert.Equal(2, result.GetValue.Count);
@@ -125,7 +128,10 @@ public class BattleFormationServiceTests
                 NullLogger<BattleFormationService>.Instance
             );
 
-            var result = await service.GetFactionBattleFormations(999);
+            var result = await service.GetFactionBattleFormations(
+                999,
+                new BattleFormationQuery { }
+            );
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
@@ -442,7 +448,10 @@ public class BattleFormationServiceTests
                 }
             );
 
-            var result = await service.GetBattleFormationAbilities(battleFormationId);
+            var result = await service.GetBattleFormationAbilities(
+                battleFormationId,
+                new AbilityQuery { }
+            );
 
             Assert.True(result.IsSuccess);
             Assert.Single(result.GetValue);
@@ -457,7 +466,7 @@ public class BattleFormationServiceTests
                 NullLogger<BattleFormationService>.Instance
             );
 
-            var result = await service.GetBattleFormationAbilities(999);
+            var result = await service.GetBattleFormationAbilities(999, new AbilityQuery { });
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);

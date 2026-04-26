@@ -278,7 +278,7 @@ public class AttackProfileServiceTests
                 NullLogger<AttackProfileService>.Instance
             );
 
-            var result = await service.GetUnitAttackProfiles(unitId);
+            var result = await service.GetUnitAttackProfiles(unitId, new AttackProfileQuery { });
 
             Assert.True(result.IsSuccess);
             Assert.Equal(2, result.GetValue.Count);
@@ -293,7 +293,7 @@ public class AttackProfileServiceTests
                 NullLogger<AttackProfileService>.Instance
             );
 
-            var result = await service.GetUnitAttackProfiles(999);
+            var result = await service.GetUnitAttackProfiles(999, new AttackProfileQuery { });
 
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NotFound, result.GetError.Code);
