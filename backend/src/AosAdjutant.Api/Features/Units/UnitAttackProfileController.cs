@@ -56,10 +56,14 @@ public sealed class UnitAttackProfileController(AttackProfileService attackProfi
     [ProducesResponseType<List<AttackProfileResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<AttackProfileResponseDto>>> GetAttackProfiles(
-        [FromRoute] int unitId
+        [FromRoute] int unitId,
+        [FromQuery] AttackProfileQuery attackProfileQuery
     )
     {
-        var attackProfilesResult = await attackProfileService.GetUnitAttackProfiles(unitId);
+        var attackProfilesResult = await attackProfileService.GetUnitAttackProfiles(
+            unitId,
+            attackProfileQuery
+        );
         return attackProfilesResult.Match(
             attackProfiles =>
                 Ok(

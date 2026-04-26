@@ -51,11 +51,13 @@ public sealed class BattleFormationAbilityController(BattleFormationService batt
     [ProducesResponseType<List<AbilityResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<AbilityResponseDto>>> GetAbilities(
-        [FromRoute] int battleFormationId
+        [FromRoute] int battleFormationId,
+        [FromQuery] AbilityQuery abilityQuery
     )
     {
         var abilitiesResult = await battleFormationService.GetBattleFormationAbilities(
-            battleFormationId
+            battleFormationId,
+            abilityQuery
         );
         return abilitiesResult.Match(
             abilities =>

@@ -329,8 +329,8 @@ public class BattleFormationServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn,
+                Phase = Phase.Hero,
+                Turn = Turn.YourTurn,
             };
 
         [Fact]
@@ -404,7 +404,7 @@ public class BattleFormationServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Passive,
+                Phase = Phase.Passive,
             };
 
             var result = await service.CreateBattleFormationAbility(battleFormationId, invalidDto);
@@ -437,8 +437,8 @@ public class BattleFormationServiceTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Turn = Turn.YourTurn,
                 }
             );
 

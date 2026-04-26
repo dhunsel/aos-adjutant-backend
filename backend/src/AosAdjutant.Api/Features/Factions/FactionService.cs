@@ -128,15 +128,24 @@ public sealed class FactionService(ApplicationDbContext context, ILogger<Faction
         return Result<Ability>.Success(newAbility);
     }
 
-    public async Task<Result<List<Ability>>> GetFactionAbilities(int factionId)
+    public async Task<Result<List<Ability>>> GetFactionAbilities(
+        int factionId,
+        AbilityQuery abilityQuery
+    )
     {
-        var faction = await context
-            .Factions.AsNoTracking()
-            .Include(f => f.Abilities)
-            .FirstOrDefaultAsync(f => f.FactionId == factionId);
+        var exists = await context.Factions.AnyAsync(f => f.FactionId == factionId);
 
-        return faction is null
-            ? Result<List<Ability>>.Failure(FactionErrors.NotFound)
-            : Result<List<Ability>>.Success(faction.Abilities.ToList());
+        if (!exists)
+            return Result<List<Ability>>.Failure(FactionErrors.NotFound);
+
+        var abilities = await context
+            .Factions.Where(f => f.FactionId == factionId)
+            .SelectMany(f => f.Abilities)
+            .AsNoTracking()
+            .ApplyFilters(abilityQuery)
+            .ApplySorting(abilityQuery)
+            .ToListAsync();
+
+        return Result<List<Ability>>.Success(abilities);
     }
 }

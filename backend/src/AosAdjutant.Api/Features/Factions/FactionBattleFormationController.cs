@@ -46,11 +46,13 @@ public sealed class FactionBattleFormationController(BattleFormationService batt
     [ProducesResponseType<List<BattleFormationResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<BattleFormationResponseDto>>> GetBattleFormations(
-        [FromRoute] int factionId
+        [FromRoute] int factionId,
+        [FromQuery] BattleFormationQuery battleFormationQuery
     )
     {
         var battleFormationsResult = await battleFormationService.GetFactionBattleFormations(
-            factionId
+            factionId,
+            battleFormationQuery
         );
         return battleFormationsResult.Match(
             battleFormations =>

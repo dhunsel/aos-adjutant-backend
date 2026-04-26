@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AosAdjutant.Api.Common;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
@@ -8,9 +9,9 @@ public sealed record AbilityResponseDto(
     string? Reaction,
     string? Declaration,
     string Effect,
-    TurnPhase Phase,
-    ActivationRestriction? Restriction,
-    PlayerTurn? Turn,
+    Phase Phase,
+    Restriction? Restriction,
+    Turn? Turn,
     uint Version
 );
 
@@ -27,9 +28,9 @@ public sealed record CreateAbilityDto
 
     [StringLength(100, MinimumLength = 1)]
     public required string Effect { get; init; }
-    public required TurnPhase Phase { get; init; }
-    public ActivationRestriction? Restriction { get; init; }
-    public PlayerTurn? Turn { get; init; }
+    public required Phase Phase { get; init; }
+    public Restriction? Restriction { get; init; }
+    public Turn? Turn { get; init; }
 }
 
 public sealed record ChangeAbilityDto
@@ -45,8 +46,13 @@ public sealed record ChangeAbilityDto
 
     [StringLength(100, MinimumLength = 1)]
     public required string Effect { get; init; }
-    public required TurnPhase Phase { get; init; }
-    public ActivationRestriction? Restriction { get; init; }
-    public PlayerTurn? Turn { get; init; }
+    public required Phase Phase { get; init; }
+    public Restriction? Restriction { get; init; }
+    public Turn? Turn { get; init; }
     public required uint Version { get; init; }
+}
+
+public sealed record AbilityQuery : PagedQuery
+{
+    public Phase? Phase { init; get; }
 }

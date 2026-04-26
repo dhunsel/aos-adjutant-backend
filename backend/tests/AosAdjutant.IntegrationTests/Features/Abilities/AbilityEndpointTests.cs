@@ -16,8 +16,8 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn,
+                Phase = Phase.Hero,
+                Turn = Turn.YourTurn,
             },
             JsonOptions
         );
@@ -34,8 +34,8 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
             Name = "TestAbility",
             Declaration = "TestDeclaration",
             Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn,
+            Phase = Phase.Hero,
+            Turn = Turn.YourTurn,
         };
 
         var response = await Client.PostAsJsonAsync(
@@ -89,8 +89,8 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
             Name = "UpdatedAbility",
             Declaration = "UpdatedDeclaration",
             Effect = "UpdatedEffect",
-            Phase = TurnPhase.Combat,
-            Turn = PlayerTurn.EnemyTurn,
+            Phase = Phase.Combat,
+            Turn = Turn.EnemyTurn,
             Version = created.Version,
         };
 
@@ -130,8 +130,8 @@ public class AbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(factor
                 Name = "",
                 Declaration = "UpdatedDeclaration",
                 Effect = "UpdatedEffect",
-                Phase = TurnPhase.Combat,
-                Turn = PlayerTurn.EnemyTurn,
+                Phase = Phase.Combat,
+                Turn = Turn.EnemyTurn,
                 Version = created.Version,
             },
             JsonOptions

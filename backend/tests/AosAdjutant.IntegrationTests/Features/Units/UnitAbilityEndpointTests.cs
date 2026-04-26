@@ -40,8 +40,8 @@ public class UnitAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase(fa
             Name = "TestAbility",
             Declaration = "TestDeclaration",
             Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn,
+            Phase = Phase.Hero,
+            Turn = Turn.YourTurn,
         };
 
     // --- POST /api/units/{id}/abilities ---

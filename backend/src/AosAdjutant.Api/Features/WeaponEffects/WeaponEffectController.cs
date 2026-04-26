@@ -12,10 +12,14 @@ public sealed class WeaponEffectController(ApplicationDbContext context) : Contr
     [HttpGet]
     [EndpointSummary("Get all weapon effects")]
     [ProducesResponseType<List<WeaponEffectResponseDto>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<WeaponEffectResponseDto>>> GetWeaponEffects()
+    public async Task<ActionResult<List<WeaponEffectResponseDto>>> GetWeaponEffects(
+        [FromQuery] WeaponEffectQuery weaponEffectQuery
+    )
     {
         var weaponEffects = await context
             .WeaponEffects.AsNoTracking()
+            .ApplyFilters(weaponEffectQuery)
+            .ApplySorting(weaponEffectQuery)
             .Select(we => new WeaponEffectResponseDto(we.Key, we.Name))
             .ToListAsync();
         return Ok(weaponEffects);

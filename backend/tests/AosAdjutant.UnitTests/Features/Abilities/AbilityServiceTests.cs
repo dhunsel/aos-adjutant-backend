@@ -27,8 +27,8 @@ public class AbilityServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn,
+                Phase = Phase.Hero,
+                Turn = Turn.YourTurn,
             };
 
             var result = await service.CreateGenericAbility(createAbilityDto);
@@ -62,7 +62,7 @@ public class AbilityServiceTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
+                    Phase = Phase.Passive,
                 }
             );
 
@@ -81,7 +81,7 @@ public class AbilityServiceTests
             {
                 Name = "TestAbility",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Hero,
+                Phase = Phase.Hero,
                 Declaration = "TestDeclaration",
             };
             context.Abilities.Add(ability);
@@ -119,7 +119,7 @@ public class AbilityServiceTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
+                    Phase = Phase.Hero,
                     Declaration = "TestDeclaration",
                     Version = 0,
                 }
@@ -132,8 +132,8 @@ public class AbilityServiceTests
                 Name = "UpdatedAbility",
                 Declaration = "UpdatedDeclaration",
                 Effect = "UpdatedEffect",
-                Phase = TurnPhase.Combat,
-                Turn = PlayerTurn.EnemyTurn,
+                Phase = Phase.Combat,
+                Turn = Turn.EnemyTurn,
                 Version = 0,
             };
 
@@ -168,8 +168,8 @@ public class AbilityServiceTests
                     Name = "UpdatedAbility",
                     Declaration = "UpdatedDeclaration",
                     Effect = "UpdatedEffect",
-                    Phase = TurnPhase.Combat,
-                    Turn = PlayerTurn.EnemyTurn,
+                    Phase = Phase.Combat,
+                    Turn = Turn.EnemyTurn,
                     Version = 0,
                 }
             );
@@ -187,7 +187,7 @@ public class AbilityServiceTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
+                    Phase = Phase.Hero,
                     Declaration = "TestDeclaration",
                     Version = 5,
                 }
@@ -203,8 +203,8 @@ public class AbilityServiceTests
                     Name = "UpdatedAbility",
                     Declaration = "UpdatedDeclaration",
                     Effect = "UpdatedEffect",
-                    Phase = TurnPhase.Combat,
-                    Turn = PlayerTurn.EnemyTurn,
+                    Phase = Phase.Combat,
+                    Turn = Turn.EnemyTurn,
                     Version = 3,
                 }
             );
@@ -222,7 +222,7 @@ public class AbilityServiceTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
+                    Phase = Phase.Hero,
                     Declaration = "TestDeclaration",
                     Version = 0,
                 }
@@ -237,8 +237,8 @@ public class AbilityServiceTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Passive,
+                    Turn = Turn.YourTurn,
                     Version = 0,
                 }
             );
@@ -259,7 +259,7 @@ public class AbilityServiceTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
+                    Phase = Phase.Hero,
                     Declaration = "TestDeclaration",
                 }
             );

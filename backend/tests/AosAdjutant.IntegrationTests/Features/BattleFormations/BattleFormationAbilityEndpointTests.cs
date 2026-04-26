@@ -33,8 +33,8 @@ public class BattleFormationAbilityEndpointTests(ApiFactory factory) : EndpointT
             Name = "TestAbility",
             Declaration = "TestDeclaration",
             Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn,
+            Phase = Phase.Hero,
+            Turn = Turn.YourTurn,
         };
 
     // --- POST /api/battle-formations/{id}/abilities ---

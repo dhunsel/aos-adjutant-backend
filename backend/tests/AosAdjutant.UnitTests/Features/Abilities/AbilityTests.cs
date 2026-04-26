@@ -16,8 +16,8 @@ public class AbilityTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Turn = Turn.YourTurn,
                     IsGeneric = false,
                 }
             );
@@ -30,9 +30,9 @@ public class AbilityTests
                     Reaction = (string?)null,
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Restriction = (Restriction?)null,
+                    Turn = (Turn?)Turn.YourTurn,
                     IsGeneric = false,
                 },
                 result.GetValue
@@ -47,13 +47,13 @@ public class AbilityTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
+                    Phase = Phase.Passive,
                     IsGeneric = false,
                 }
             );
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(TurnPhase.Passive, result.GetValue.Phase);
+            Assert.Equal(Phase.Passive, result.GetValue.Phase);
         }
 
         [Fact]
@@ -64,8 +64,8 @@ public class AbilityTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Turn = Turn.YourTurn,
                     IsGeneric = false,
                 }
             );
@@ -83,7 +83,7 @@ public class AbilityTests
                     Name = "TestAbility",
                     Reaction = "TestReaction",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
+                    Phase = Phase.Passive,
                     IsGeneric = false,
                 }
             );
@@ -101,7 +101,7 @@ public class AbilityTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
+                    Phase = Phase.Passive,
                     IsGeneric = false,
                 }
             );
@@ -118,8 +118,8 @@ public class AbilityTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
-                    Restriction = ActivationRestriction.OnceBattle,
+                    Phase = Phase.Passive,
+                    Restriction = Restriction.OnceBattle,
                     IsGeneric = false,
                 }
             );
@@ -136,8 +136,8 @@ public class AbilityTests
                 {
                     Name = "TestAbility",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Passive,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Passive,
+                    Turn = Turn.YourTurn,
                     IsGeneric = false,
                 }
             );
@@ -157,8 +157,8 @@ public class AbilityTests
                         Name = "TestAbility",
                         Declaration = "TestDeclaration",
                         Effect = "TestEffect",
-                        Phase = TurnPhase.Hero,
-                        Turn = PlayerTurn.YourTurn,
+                        Phase = Phase.Hero,
+                        Turn = Turn.YourTurn,
                         IsGeneric = false,
                     }
                 )
@@ -175,8 +175,8 @@ public class AbilityTests
                     Name = "UpdatedAbility",
                     Declaration = "UpdatedDeclaration",
                     Effect = "UpdatedEffect",
-                    Phase = TurnPhase.Combat,
-                    Turn = PlayerTurn.EnemyTurn,
+                    Phase = Phase.Combat,
+                    Turn = Turn.EnemyTurn,
                     IsGeneric = false,
                 }
             );
@@ -189,9 +189,9 @@ public class AbilityTests
                     Reaction = (string?)null,
                     Declaration = "UpdatedDeclaration",
                     Effect = "UpdatedEffect",
-                    Phase = TurnPhase.Combat,
-                    Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.EnemyTurn,
+                    Phase = Phase.Combat,
+                    Restriction = (Restriction?)null,
+                    Turn = (Turn?)Turn.EnemyTurn,
                 },
                 ability
             );
@@ -207,8 +207,8 @@ public class AbilityTests
                 {
                     Name = "UpdatedAbility",
                     Effect = "UpdatedEffect",
-                    Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.EnemyTurn,
+                    Phase = Phase.Hero,
+                    Turn = Turn.EnemyTurn,
                     IsGeneric = false,
                 }
             );
@@ -222,9 +222,9 @@ public class AbilityTests
                     Reaction = (string?)null,
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Restriction = (Restriction?)null,
+                    Turn = (Turn?)Turn.YourTurn,
                 },
                 ability
             );

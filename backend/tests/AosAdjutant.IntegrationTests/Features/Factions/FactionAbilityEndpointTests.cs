@@ -24,8 +24,8 @@ public class FactionAbilityEndpointTests(ApiFactory factory) : EndpointTestsBase
             Name = "TestAbility",
             Declaration = "TestDeclaration",
             Effect = "TestEffect",
-            Phase = TurnPhase.Hero,
-            Turn = PlayerTurn.YourTurn,
+            Phase = Phase.Hero,
+            Turn = Turn.YourTurn,
         };
 
     // --- POST /api/factions/{factionId}/abilities ---

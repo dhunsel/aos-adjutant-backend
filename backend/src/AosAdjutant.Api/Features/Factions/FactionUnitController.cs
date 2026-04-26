@@ -46,9 +46,12 @@ public sealed class FactionUnitController(UnitService unitService) : ControllerB
     [EndpointSummary("Get all units for a faction")]
     [ProducesResponseType<List<UnitResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<UnitResponseDto>>> GetUnits([FromRoute] int factionId)
+    public async Task<ActionResult<List<UnitResponseDto>>> GetUnits(
+        [FromRoute] int factionId,
+        [FromQuery] UnitQuery unitQuery
+    )
     {
-        var unitsResult = await unitService.GetFactionUnits(factionId);
+        var unitsResult = await unitService.GetFactionUnits(factionId, unitQuery);
         return unitsResult.Match(
             units =>
                 Ok(

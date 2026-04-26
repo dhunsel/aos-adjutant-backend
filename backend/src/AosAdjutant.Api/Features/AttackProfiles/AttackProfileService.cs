@@ -67,7 +67,10 @@ public sealed class AttackProfileService(
         return Result<AttackProfile>.Success(newAttackProfile);
     }
 
-    public async Task<Result<List<AttackProfile>>> GetUnitAttackProfiles(int unitId)
+    public async Task<Result<List<AttackProfile>>> GetUnitAttackProfiles(
+        int unitId,
+        AttackProfileQuery attackProfileQuery
+    )
     {
         var unitExists = await context.Units.AnyAsync(u => u.UnitId == unitId);
         if (!unitExists)
@@ -76,6 +79,8 @@ public sealed class AttackProfileService(
         var attackProfiles = await context
             .AttackProfiles.AsNoTracking()
             .Where(ap => ap.UnitId == unitId)
+            .ApplyFilters(attackProfileQuery)
+            .ApplySorting(attackProfileQuery)
             .ToListAsync();
         return Result<List<AttackProfile>>.Success(attackProfiles);
     }

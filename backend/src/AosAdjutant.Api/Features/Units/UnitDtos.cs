@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AosAdjutant.Api.Common;
 
 namespace AosAdjutant.Api.Features.Units;
 
@@ -40,3 +41,5 @@ public sealed record ChangeUnitDto
     public int? WardSave { get; init; }
     public required uint Version { get; init; }
 }
+
+public sealed record UnitQuery : PagedQuery { }

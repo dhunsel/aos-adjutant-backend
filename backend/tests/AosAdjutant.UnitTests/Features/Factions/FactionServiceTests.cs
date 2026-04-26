@@ -293,8 +293,8 @@ public class FactionServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Hero,
-                Turn = PlayerTurn.YourTurn,
+                Phase = Phase.Hero,
+                Turn = Turn.YourTurn,
             };
 
         [Fact]
@@ -318,9 +318,9 @@ public class FactionServiceTests
                     Reaction = (string?)null,
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Restriction = (ActivationRestriction?)null,
-                    Turn = (PlayerTurn?)PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Restriction = (Restriction?)null,
+                    Turn = (Turn?)Turn.YourTurn,
                     IsGeneric = false,
                 },
                 result.GetValue
@@ -356,7 +356,7 @@ public class FactionServiceTests
                 Name = "TestAbility",
                 Declaration = "TestDeclaration",
                 Effect = "TestEffect",
-                Phase = TurnPhase.Passive,
+                Phase = Phase.Passive,
             };
 
             var result = await service.CreateFactionAbility(factionId, invalidDto);
@@ -386,8 +386,8 @@ public class FactionServiceTests
                     Name = "TestAbility",
                     Declaration = "TestDeclaration",
                     Effect = "TestEffect",
-                    Phase = TurnPhase.Hero,
-                    Turn = PlayerTurn.YourTurn,
+                    Phase = Phase.Hero,
+                    Turn = Turn.YourTurn,
                 }
             );
 

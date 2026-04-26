@@ -4,7 +4,7 @@ using AosAdjutant.Api.Common;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
-public enum TurnPhase
+public enum Phase
 {
     [Display(Name = "Deployment Phase")]
     Deployment,
@@ -34,7 +34,7 @@ public enum TurnPhase
     Passive,
 }
 
-public enum ActivationRestriction
+public enum Restriction
 {
     [Display(Name = "Once per turn (army)")]
     OnceTurnArmy,
@@ -52,7 +52,7 @@ public enum ActivationRestriction
     OnceBattle,
 }
 
-public enum PlayerTurn
+public enum Turn
 {
     [Display(Name = "Your")]
     YourTurn,
@@ -70,9 +70,9 @@ public sealed record AbilityData
     public string? Reaction { get; init; }
     public string? Declaration { get; init; }
     public required string Effect { get; init; }
-    public required TurnPhase Phase { get; init; }
-    public ActivationRestriction? Restriction { get; init; }
-    public PlayerTurn? Turn { get; init; }
+    public required Phase Phase { get; init; }
+    public Restriction? Restriction { get; init; }
+    public Turn? Turn { get; init; }
     public required bool IsGeneric { get; init; }
 }
 
@@ -83,9 +83,9 @@ public sealed class Ability
     public string? Reaction { get; set; }
     public string? Declaration { get; set; }
     public required string Effect { get; set; }
-    public TurnPhase Phase { get; set; }
-    public ActivationRestriction? Restriction { get; set; }
-    public PlayerTurn? Turn { get; set; }
+    public Phase Phase { get; set; }
+    public Restriction? Restriction { get; set; }
+    public Turn? Turn { get; set; }
     public bool IsGeneric { get; set; }
     public uint Version { get; set; }
 
@@ -132,7 +132,7 @@ public sealed class Ability
     private static Result ValidateAbility(AbilityData data)
     {
         if (
-            data.Phase == TurnPhase.Passive
+            data.Phase == Phase.Passive
             && !(
                 data.Reaction is null
                 && data.Declaration is null
@@ -147,7 +147,7 @@ public sealed class Ability
                 )
             );
 
-        if (data.Phase != TurnPhase.Passive && data.Declaration is null)
+        if (data.Phase != Phase.Passive && data.Declaration is null)
             return Result.Failure(
                 new AppError(
                     ErrorCode.ValidationError,

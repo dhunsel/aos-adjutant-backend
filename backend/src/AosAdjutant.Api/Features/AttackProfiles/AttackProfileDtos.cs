@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Features.WeaponEffects;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
@@ -53,4 +54,9 @@ public sealed record ChangeAttackProfileDto
     public required string Damage { get; init; }
     public required IReadOnlyList<string> WeaponEffects { get; init; }
     public required uint Version { get; init; }
+}
+
+public sealed record AttackProfileQuery : PagedQuery
+{
+    public bool? IsRanged { get; init; }
 }
