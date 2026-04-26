@@ -2,7 +2,12 @@ import { Button } from "./components/ui/button";
 import { useFactions } from "./features/factions/faction.queries";
 
 function App() {
-  const factionsQuery = useFactions();
+  const factionsQuery = useFactions({
+    page: 1,
+    pageSize: 1,
+    sortBy: "Name",
+    sortDirection: "Desc",
+  });
 
   if (factionsQuery.isLoading) {
     return (

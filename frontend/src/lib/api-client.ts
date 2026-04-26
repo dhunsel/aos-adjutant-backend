@@ -14,7 +14,28 @@ export class ApiError extends Error {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+function buildUrl(path: string, params?: object): string {
+  const url = `${BASE_URL}${path}`;
+
+  if (!params) return url;
+
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) {
+      qs.set(key, String(value));
+    }
+  }
+
+  const queryString = qs.toString();
+  return queryString ? `${url}?${queryString}` : url;
+}
+
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  params?: object,
+): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -25,7 +46,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     init.body = JSON.stringify(body);
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, init);
+  const res = await fetch(buildUrl(path, params), init);
 
   if (!res.ok) {
     let message = res.statusText;
@@ -46,7 +67,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>("GET", path),
+  get: <T>(path: string, params?: object) => request<T>("GET", path, undefined, params),
   post: <T>(path: string, body: unknown) => request<T>("POST", path, body),
   put: <T>(path: string, body: unknown) => request<T>("PUT", path, body),
   delete: (path: string): Promise<void> => request("DELETE", path),

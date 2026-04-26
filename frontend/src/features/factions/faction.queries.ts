@@ -4,23 +4,25 @@ import type {
   Faction,
   ChangeFactionRequest,
   CreateFactionRequest,
+  FactionQuery,
 } from "@/types/api.types";
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const factionKeys = {
   all: ["factions"] as const,
   lists: () => [...factionKeys.all, "list"] as const,
+  list: (filters: FactionQuery) => [...factionKeys.lists(), filters] as const,
   details: () => [...factionKeys.all, "detail"] as const,
   detail: (factionId: number) => [...factionKeys.details(), factionId] as const,
 };
 
-export const factionsQueryOptions = () =>
+export const factionsQueryOptions = (params?: FactionQuery) =>
   queryOptions({
-    queryKey: factionKeys.lists(),
-    queryFn: () => api.get<PaginatedResponse<Faction>>("/factions"),
+    queryKey: factionKeys.list(params ?? {}),
+    queryFn: () => api.get<PaginatedResponse<Faction>>("/factions", params),
   });
 
-export const useFactions = () => useQuery(factionsQueryOptions());
+export const useFactions = (params?: FactionQuery) => useQuery(factionsQueryOptions(params));
 
 export const factionQueryOptions = (factionId: number) =>
   queryOptions({
