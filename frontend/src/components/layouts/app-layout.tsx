@@ -1,23 +1,31 @@
+import { cn } from "@/lib/utils";
 import { NavLink, Outlet } from "react-router";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground";
+  cn(
+    "px-2 flex items-center border-b-2 border-transparent text-lg text-muted-foreground hover:text-card-foreground",
+    isActive && "border-primary text-card-foreground",
+  );
 
 export function AppLayout() {
   return (
     <>
-      <header>
-        <nav>
-          <NavLink to="/" className={navLinkClass} end>
-            Aos Adjutant
+      <header className="bg-card">
+        <nav className="flex items-stretch border-b-2 border-border">
+          <NavLink
+            to="/"
+            className="border-r-2 border-border px-3 pt-3 pb-2 font-heading text-2xl tracking-wide text-primary uppercase"
+            end
+          >
+            AoS Adjutant
           </NavLink>
-          <ul>
-            <li>
+          <ul className="flex items-stretch gap-3 pl-5 font-semibold">
+            <li className="flex">
               <NavLink to="/factions" className={navLinkClass}>
                 Factions
               </NavLink>
             </li>
-            <li>
+            <li className="flex">
               <NavLink to="/abilities" className={navLinkClass}>
                 Abilities
               </NavLink>
