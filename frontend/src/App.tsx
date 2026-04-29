@@ -23,6 +23,11 @@ function App() {
     return <h1>No data</h1>;
   }
 
+  const rows = [];
+  for (let i = 0; i < 50; i++) {
+    rows.push(<div>Faction {i}</div>);
+  }
+
   return (
     <>
       <h1 className="bg-amber-700 text-3xl font-bold">Aos Adjutant</h1>
@@ -30,6 +35,7 @@ function App() {
       <div>Faction 1: {factions.items[0]?.name}</div>
       <div>Faction 2: {factions.items[1]?.name}</div>
       <div>Faction 3: {factions.items[2]?.name}</div>
+      {rows}
     </>
   );
 }
