@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Link, NavLink, Outlet } from "react-router";
-import { Database, Play, ListPlus, Settings, Search, ChevronDown } from "lucide-react";
+import { Link, NavLink, Outlet, useMatch } from "react-router";
+import { Anvil, Database, Play, ListPlus, Settings, Search, ChevronDown } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,6 @@ import {
   SidebarProvider,
   SidebarSeparator,
 } from "../ui/sidebar";
-import { Anvil } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import {
   Dialog,
@@ -25,30 +24,38 @@ import {
 } from "../ui/dialog";
 import GithubLogo from "@/assets/GitHub_Invertocat_White.svg?react";
 
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  cn(
-    "px-2 flex items-center border-b-2 border-transparent text-lg text-muted-foreground hover:text-card-foreground",
-    isActive && "border-primary text-card-foreground",
-  );
+type SidebarNavButtonProps = {
+  to: string;
+  disabled?: boolean;
+} & Omit<React.ComponentProps<typeof SidebarMenuButton>, "render" | "isActive">;
 
-const headerOld = (
-  <header className="bg-card">
-    <nav className="flex items-stretch border-b-2 border-border">
-      <ul className="flex items-stretch gap-3 pl-5 font-semibold">
-        <li className="flex">
-          <NavLink to="/factions" className={navLinkClass}>
-            Factions
-          </NavLink>
-        </li>
-        <li className="flex">
-          <NavLink to="/abilities" className={navLinkClass}>
-            Abilities
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
-  </header>
-);
+const SidebarNavButton = ({
+  to,
+  disabled,
+  className,
+  children,
+  ...props
+}: SidebarNavButtonProps) => {
+  const isActive = !!useMatch({ path: to, end: false });
+
+  if (disabled)
+    return (
+      <SidebarMenuButton
+        size="xl"
+        aria-disabled
+        className={cn("cursor-not-allowed aria-disabled:pointer-events-auto", className)}
+        {...props}
+      >
+        {children}
+      </SidebarMenuButton>
+    );
+
+  return (
+    <SidebarMenuButton size="xl" render={<NavLink to={to} />} isActive={isActive} {...props}>
+      {children}
+    </SidebarMenuButton>
+  );
+};
 
 export function AppLayout() {
   return (
@@ -68,29 +75,19 @@ export function AppLayout() {
             <SidebarGroup>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton isActive={true} size={"xl"} tooltip={"Dashboard"}>
+                  <SidebarNavButton tooltip="Dashboard" to="/factions">
                     <Database />
-                  </SidebarMenuButton>
+                  </SidebarNavButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton
-                    size={"xl"}
-                    aria-disabled={true}
-                    className="cursor-not-allowed aria-disabled:pointer-events-auto"
-                    tooltip={"List Builder (TBD)"}
-                  >
+                  <SidebarNavButton disabled tooltip="List Builder (TBD)" to="/list-builder">
                     <ListPlus />
-                  </SidebarMenuButton>
+                  </SidebarNavButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton
-                    size={"xl"}
-                    aria-disabled={true}
-                    className="cursor-not-allowed aria-disabled:pointer-events-auto"
-                    tooltip={"Play Mode (TBD)"}
-                  >
+                  <SidebarNavButton disabled tooltip="Play Mode (TBD)" to="/battle">
                     <Play />
-                  </SidebarMenuButton>
+                  </SidebarNavButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
@@ -106,7 +103,7 @@ export function AppLayout() {
           </SidebarFooter>
         </Sidebar>
         <div className="flex min-h-screen flex-1 flex-col">
-          <header className="flex w-full items-center justify-between border-b border-border bg-sidebar px-5 py-2">
+          <header className="flex w-full items-center justify-between gap-1 border-b border-border bg-sidebar px-5 py-2">
             <InputGroup className="max-w-xs">
               <InputGroupAddon>
                 <Search />

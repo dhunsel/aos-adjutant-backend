@@ -3,6 +3,11 @@
 ## Overview
 A project with various tools to use relating to Warhammer: Age of Sigmar 4th edition.
 
+The project will consist of three main parts:
+- Admin dashboard: For managing all the Game data like factions, units, commands, ...
+- List builder: Create and save army configurations with list validations.
+- Play mode: Start a play session with one of the lists. This will adjust the data format to be easily accessible during gameplay.
+
 ## Project Overview
 
 Project is structured as a monorepo with two top-level apps:
