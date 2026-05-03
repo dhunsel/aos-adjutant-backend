@@ -5,68 +5,71 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Flag } from "lucide-react";
+import { Book, Cloud, Component, Crown, Gem, Sparkles, Swords, Users } from "lucide-react";
 import { useParams } from "react-router";
 import { useFaction } from "../factions/faction.queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function FactionSidebarGroup() {
   const params = useParams();
-  const factionId = params["factionId"];
-  const faction = useFaction(Number(factionId));
+  const factionId = Number(params["factionId"]);
+  const faction = useFaction(factionId);
 
-  return factionId ? (
+  return (
     <SidebarGroup>
-      <SidebarGroupLabel className="font-heading">{faction.data?.name}</SidebarGroupLabel>
+      <SidebarGroupLabel className="font-heading">
+        {faction.isLoading ? <Skeleton className="h-4 w-50" /> : faction.data?.name}
+      </SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Swords />
             Battle Traits
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Component />
             Battle Formations
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Users />
             Units
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Crown />
             Heroic Traits
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Gem />
             Artefacts of Power
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Sparkles />
             Spell Lores
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Book />
             Prayer Lores
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <Flag />
+            <Cloud />
             Manifestation Lores
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  ) : null;
+  );
 }

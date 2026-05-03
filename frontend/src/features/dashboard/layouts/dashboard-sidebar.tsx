@@ -6,13 +6,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { Flag, List, Megaphone } from "lucide-react";
 import type { CSSProperties } from "react";
-import { FactionSidebarGroup } from "./faction-sidebar-group";
+import { useMatches } from "react-router";
+import { hasSidebar } from "../route-handle";
 
 export function DashboardSidebar() {
+  const matches = useMatches();
+
   return (
     <Sidebar
       collapsible="none"
@@ -43,9 +45,12 @@ export function DashboardSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
-        <FactionSidebarGroup />
+        {matches.map((m) => {
+          if (!hasSidebar(m.handle)) return null;
+          const HandleSidebarGroup = m.handle.sidebar;
+          return <HandleSidebarGroup key={m.id} />;
+        })}
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   );
 }
