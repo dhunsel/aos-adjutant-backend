@@ -1,6 +1,6 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router";
 import { DashboardSidebar } from "./dashboard-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export function DashBoardLayout() {
   return (

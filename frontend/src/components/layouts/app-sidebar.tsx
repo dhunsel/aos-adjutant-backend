@@ -10,9 +10,17 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "../ui/sidebar";
-import { SidebarNavButton } from "./sidebar-nav-button";
+import { SidebarNavButton } from "../ui/sidebar-nav-button";
+import { useMatch } from "react-router";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { DashboardSidebarGroups } from "@/features/dashboard/layouts/dashboard-sidebar-groups";
 
 export function AppSidebar() {
+  const isInDashboard = useMatch({ path: "/dashboard", end: false });
+  const isMobile = useIsMobile();
+
+  // For now render the mode specific sidebar inside the app wide sidebar when on mobile
+  // Re-evaluate later to separate the app wide sidebar and the mode specific sidebar because this file should technically not import feature specific code
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -20,7 +28,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarNavButton
               showActive={false}
-              className="bg-primary font-semibold text-primary-foreground hover:bg-primary hover:text-primary-foreground active:bg-primary active:text-primary-foreground"
+              className="bg-primary font-heading font-semibold text-primary-foreground hover:bg-primary hover:text-primary-foreground active:bg-primary active:text-primary-foreground"
               to="/"
             >
               <Anvil />
@@ -34,25 +42,41 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarNavButton tooltip="Dashboard" to="/dashboard">
+              <SidebarNavButton className="font-heading" tooltip="Dashboard" to="/dashboard">
                 <Database />
                 Dashboard
               </SidebarNavButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarNavButton disabled tooltip="List Builder (TBD)" to="/list-builder">
+              <SidebarNavButton
+                className="font-heading"
+                disabled
+                tooltip="List Builder (TBD)"
+                to="/list-builder"
+              >
                 <ListPlus />
                 List Builder
               </SidebarNavButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarNavButton disabled tooltip="Play Mode (TBD)" to="/battle">
+              <SidebarNavButton
+                className="font-heading"
+                disabled
+                tooltip="Play Mode (TBD)"
+                to="/battle"
+              >
                 <Play />
                 Battle Mode
               </SidebarNavButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
+        {isMobile && isInDashboard && (
+          <>
+            <SidebarSeparator />
+            <DashboardSidebarGroups size="xl" />
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

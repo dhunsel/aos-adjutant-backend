@@ -2,15 +2,20 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Book, Cloud, Component, Crown, Gem, Sparkles, Swords, Users } from "lucide-react";
 import { useParams } from "react-router";
 import { useFaction } from "../factions/faction.queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarNavButton } from "@/components/ui/sidebar-nav-button";
+import type { ComponentProps } from "react";
 
-export function FactionSidebarGroup() {
+export function FactionSidebarGroup({
+  size,
+}: {
+  size?: ComponentProps<typeof SidebarNavButton>["size"];
+}) {
   const params = useParams();
   const factionId = Number(params["factionId"]);
   const faction = useFaction(factionId);
@@ -21,53 +26,51 @@ export function FactionSidebarGroup() {
         {faction.isLoading ? <Skeleton className="h-4 w-50" /> : faction.data?.name}
       </SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarNavButton size={size} to={`factions/${factionId.toString()}/battle-traits`}>
+          <Swords />
+          Battle Traits
+        </SidebarNavButton>
         <SidebarMenuItem>
-          <SidebarMenuButton>
-            <Swords />
-            Battle Traits
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/battle-formations`}>
             <Component />
             Battle Formations
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/units`}>
             <Users />
             Units
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/heroic-traits`}>
             <Crown />
             Heroic Traits
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/artefacts`}>
             <Gem />
             Artefacts of Power
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/spell-lores`}>
             <Sparkles />
             Spell Lores
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/prayer-lores`}>
             <Book />
             Prayer Lores
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarNavButton size={size} to={`factions/${factionId.toString()}/manifestations`}>
             <Cloud />
             Manifestation Lores
-          </SidebarMenuButton>
+          </SidebarNavButton>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>

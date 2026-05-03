@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { SidebarMenuButton, useSidebar } from "../ui/sidebar";
+import { SidebarMenuButton, useSidebar } from "./sidebar";
 import { useMatch } from "react-router";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router";
@@ -30,7 +30,7 @@ export function SidebarNavButton({
         size="xl"
         aria-disabled={true}
         className={cn(
-          "cursor-not-allowed font-heading text-nowrap aria-disabled:pointer-events-auto",
+          "cursor-not-allowed text-nowrap aria-disabled:pointer-events-auto",
           className,
         )}
         // No onClick for disabled button
@@ -45,7 +45,7 @@ export function SidebarNavButton({
       size="xl"
       render={<Link to={to} aria-current={isActive ? "page" : undefined} />}
       isActive={showActive && isActive}
-      className={cn("font-heading text-nowrap", className)}
+      className={cn("text-nowrap", className)}
       onClick={(e) => {
         onClick?.(e);
         if (e.defaultPrevented) return;
