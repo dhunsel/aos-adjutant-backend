@@ -49,6 +49,10 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-alliance-order: oklch(0.55 0.18 250 / 50%);
+  --color-alliance-chaos: oklch(0.55 0.22 25 / 50%);
+  --color-alliance-death: oklch(0.5 0.18 300 / 50%);
+  --color-alliance-destruction: oklch(0.6 0.18 145 / 50%);
 }
 
 :root {
