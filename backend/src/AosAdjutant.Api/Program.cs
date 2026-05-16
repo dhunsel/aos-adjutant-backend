@@ -5,11 +5,11 @@ using AosAdjutant.Api.Common;
 using AosAdjutant.Api.Database;
 using AosAdjutant.Api.Features.Abilities;
 using AosAdjutant.Api.Features.AttackProfiles;
+using AosAdjutant.Api.Features.Auth;
 using AosAdjutant.Api.Features.BattleFormations;
 using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
 using AosAdjutant.Api.Features.Users;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -62,17 +62,8 @@ try
             opts.UsePkce = true;
             opts.SaveTokens = false;
 
-            opts.Events.OnTokenValidated = ctx =>
-            {
-                // Save ID token so logout redirect works
-                ctx.Properties!.StoreTokens([
-                    new() { Name = "id_token", Value = ctx.TokenEndpointResponse!.IdToken },
-                ]);
-
-                ctx.HttpContext.RequestServices.GetService<UserService>();
-
-                return Task.CompletedTask;
-            };
+            opts.Events.OnTokenValidated = AuthEvents.OnTokenValidated;
+            opts.Events.OnRemoteFailure = AuthEvents.OnRemoteFailure;
 
             opts.GetClaimsFromUserInfoEndpoint = false;
             opts.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;

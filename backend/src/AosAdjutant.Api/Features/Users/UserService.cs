@@ -1,6 +1,5 @@
 using AosAdjutant.Api.Database;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace AosAdjutant.Api.Features.Users;
 
@@ -33,10 +32,7 @@ public sealed class UserService(ApplicationDbContext context, ILogger<UserServic
 
                 return newUser.Entity;
             }
-            catch (DbUpdateException ex)
-                when (ex.InnerException
-                        is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }
-                )
+            catch (DbUpdateException ex) when (ex.IsUniqueViolation())
             {
                 context.Entry(newUser).State = EntityState.Detached;
 

@@ -19,6 +19,10 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    path: "/error",
+    Component: UnexpectedError,
+  },
+  {
     path: "*",
     Component: NotFound,
   },
