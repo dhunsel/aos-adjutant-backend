@@ -25,7 +25,7 @@ type GetQueryType<TSortBy, P extends keyof paths> = PagedQuery<TSortBy> &
 
 export type SortDirection = Schemas["SortDirection"];
 
-export type User = Schemas["UserResponseDto"];
+export type User = Schemas["CurrentUserResponseDto"];
 
 export type Faction = Schemas["FactionResponseDto"];
 export type CreateFactionRequest = Schemas["CreateFactionDto"];

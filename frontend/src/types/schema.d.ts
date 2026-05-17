@@ -1272,9 +1272,9 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "text/plain": components["schemas"]["UserResponseDto"];
-            "application/json": components["schemas"]["UserResponseDto"];
-            "text/json": components["schemas"]["UserResponseDto"];
+            "text/plain": components["schemas"]["CurrentUserResponseDto"];
+            "application/json": components["schemas"]["CurrentUserResponseDto"];
+            "text/json": components["schemas"]["CurrentUserResponseDto"];
           };
         };
       };
@@ -1781,6 +1781,10 @@ export interface components {
       /** Format: int32 */
       wardSave?: null | number;
     };
+    CurrentUserResponseDto: {
+      username: string;
+      isAdmin: boolean;
+    };
     FactionResponseDto: {
       /** Format: int32 */
       factionId: number;
@@ -1910,10 +1914,6 @@ export interface components {
     };
     /** @enum {unknown} */
     UnitSortBy: "name" | null;
-    UserResponseDto: {
-      username: string;
-      isAdmin: boolean;
-    };
     WeaponEffectResponseDto: {
       key: string;
       name: string;

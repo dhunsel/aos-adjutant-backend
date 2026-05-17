@@ -2018,17 +2018,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "$ref": "#/components/schemas/CurrentUserResponseDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "$ref": "#/components/schemas/CurrentUserResponseDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "$ref": "#/components/schemas/CurrentUserResponseDto"
                 }
               }
             }
@@ -3128,6 +3128,21 @@
           }
         }
       },
+      "CurrentUserResponseDto": {
+        "required": [
+          "username",
+          "isAdmin"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          }
+        }
+      },
       "FactionResponseDto": {
         "required": [
           "factionId",
@@ -3503,21 +3518,6 @@
           "name",
           null
         ]
-      },
-      "UserResponseDto": {
-        "required": [
-          "username",
-          "isAdmin"
-        ],
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "isAdmin": {
-            "type": "boolean"
-          }
-        }
       },
       "WeaponEffectResponseDto": {
         "required": [
