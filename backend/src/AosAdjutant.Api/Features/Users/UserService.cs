@@ -1,7 +1,15 @@
+#pragma warning disable MA0048
 using AosAdjutant.Api.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.Users;
+
+public sealed record ExternalIdentity(
+    string Provider,
+    string Subject,
+    string Username,
+    string Email
+);
 
 public sealed class UserService(ApplicationDbContext context, ILogger<UserService> logger)
 {
@@ -34,7 +42,7 @@ public sealed class UserService(ApplicationDbContext context, ILogger<UserServic
             }
             catch (DbUpdateException ex) when (ex.IsUniqueViolation())
             {
-                context.Entry(newUser).State = EntityState.Detached;
+                newUser.State = EntityState.Detached;
 
                 user = await context.Users.FirstAsync(u =>
                     u.Subject == identity.Subject && u.IdentityProvider == identity.Provider

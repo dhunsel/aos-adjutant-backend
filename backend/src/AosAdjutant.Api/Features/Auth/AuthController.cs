@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -38,9 +37,9 @@ public sealed class AuthController() : ControllerBase
 
     [HttpGet("me")]
     [Authorize]
-    [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
-    public ActionResult<UserResponseDto> Me()
+    [ProducesResponseType<CurrentUserResponseDto>(StatusCodes.Status200OK)]
+    public ActionResult<CurrentUserResponseDto> Me()
     {
-        return Ok(new UserResponseDto(User.Identity!.Name!, User.IsInRole("admins")));
+        return Ok(new CurrentUserResponseDto(User.Identity!.Name!, User.IsInRole("admins")));
     }
 }

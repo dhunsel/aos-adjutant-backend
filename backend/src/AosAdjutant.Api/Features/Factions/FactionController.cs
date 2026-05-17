@@ -38,10 +38,6 @@ public sealed class FactionController(FactionService factionService) : Controlle
         [FromQuery] FactionQuery factionQuery
     )
     {
-        foreach (var claim in HttpContext.User.Claims)
-        {
-            Console.WriteLine(claim);
-        }
         var factions = await factionService.GetFactions(factionQuery);
         return Ok(
             factions.Map(f => new FactionResponseDto(

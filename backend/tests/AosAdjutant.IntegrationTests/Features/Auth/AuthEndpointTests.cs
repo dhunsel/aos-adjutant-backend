@@ -32,7 +32,7 @@ public class AuthEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
         var response = await Client.SendAsync(Request(HttpMethod.Get, "/api/auth/me"));
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<UserResponseDto>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<CurrentUserResponseDto>(JsonOptions);
         Assert.NotNull(body);
         Assert.Equal("integration-test", body.Username);
         Assert.True(body.IsAdmin);
@@ -46,7 +46,7 @@ public class AuthEndpointTests(ApiFactory factory) : EndpointTestsBase(factory)
         );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<UserResponseDto>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<CurrentUserResponseDto>(JsonOptions);
         Assert.NotNull(body);
         Assert.Equal("integration-test", body.Username);
         Assert.False(body.IsAdmin);
