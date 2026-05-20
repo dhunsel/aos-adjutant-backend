@@ -1,5 +1,4 @@
 import { DashBoardLayout } from "./layouts/dashboard-layout";
-import App from "@/App";
 import { FactionSidebarGroup } from "./layouts/faction-sidebar-group";
 import type { DasboardRouteHandle } from "./route-handle";
 import type { RouteObject } from "react-router";
@@ -15,7 +14,7 @@ export const dashboardRouter: RouteObject = {
       children: [
         {
           path: ":factionId",
-          Component: App,
+          Component: FactionListPage,
           handle: { sidebar: FactionSidebarGroup } satisfies DasboardRouteHandle,
         },
       ],
