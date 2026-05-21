@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "generate-api:types": "openapi-typescript ../docs/openapi.json -o src/types/schema.d.ts",
     "generate-api:openapi": "bash ../scripts/generate-openapi.sh",
+    "generate-api:check": "npm run generate-api:types -- --check",
     "generate-api": "npm run generate-api:openapi && npm run generate-api:types"
   },
   "dependencies": {

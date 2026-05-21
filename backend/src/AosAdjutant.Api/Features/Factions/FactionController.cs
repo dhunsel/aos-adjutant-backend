@@ -11,7 +11,7 @@ public sealed class FactionController(FactionService factionService) : Controlle
 {
     [HttpPost]
     [Authorize(Policy = "RequireAdmin")]
-    [EndpointSummary("Create a faction")]
+    [EndpointSummary("Create a factio")]
     [ProducesResponseType<FactionResponseDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<FactionResponseDto>> CreateFaction(

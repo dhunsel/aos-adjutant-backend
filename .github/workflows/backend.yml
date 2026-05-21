@@ -63,6 +63,10 @@ jobs:
       - name: Check for vulnerable packages
         run: dotnet list AosAdjutant.slnx package --vulnerable --include-transitive
 
+      - name: Verify OpenApi doc
+        run: diff -u docs/openapi.json backen/src/AosAdjutant.Api/obj/AosAdjutant.Api.json
+        working-directory: ${{ github.workspace }}
+
       - name: Unit Tests
         run: dotnet test tests/AosAdjutant.UnitTests --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory coverage/unit
 

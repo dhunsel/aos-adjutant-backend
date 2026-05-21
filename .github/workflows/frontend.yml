@@ -1,0 +1,39 @@
+name: frontend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Linting check
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format -- --check
+
+      - name: Check OpenApi generated types
+        run: npm run generate-api:check
+
+      - name: Build
+        run: npm run build
