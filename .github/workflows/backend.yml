@@ -5,11 +5,16 @@ on:
     branches: [ main ]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
+      docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v4
@@ -20,8 +25,12 @@ jobs:
               - 'backend/**'
               - '.github/workflows/backend.yml'
               - 'docs/openapi.json'
+            docker:
+              - 'backend/Dockerfile'
+              - 'backend/.dockerignore'
+              - '.github/workflows/backend.yml'
 
-  build:
+  backend-ci:
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
@@ -61,12 +70,8 @@ jobs:
       - name: Build
         run: dotnet build AosAdjutant.slnx --no-restore --configuration Release
 
-      - name: Check for vulnerable packages
-        run: dotnet list AosAdjutant.slnx package --vulnerable --include-transitive
-
       - name: Verify OpenApi doc
-        run: diff -u docs/openapi.json backend/src/AosAdjutant.Api/obj/AosAdjutant.Api.json
-        working-directory: ${{ github.workspace }}
+        run: diff -u ../docs/openapi.json src/AosAdjutant.Api/obj/AosAdjutant.Api.json
 
       - name: Unit Tests
         run: dotnet test tests/AosAdjutant.UnitTests --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory coverage/unit
@@ -84,3 +89,15 @@ jobs:
           files: backend/coverage/**/coverage.cobertura.xml
           flags: backend
           fail_ci_if_error: true
+
+      - name: Setup Docker
+        if: needs.changes.outputs.docker == 'true'
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build image
+        if: needs.changes.outputs.docker == 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backend
+          push: false
+          cache-from: type=gha,scope=backend

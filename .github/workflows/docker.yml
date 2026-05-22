@@ -3,18 +3,27 @@ name: docker
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*' ]
+    tags: [ 'release-*' ]
 
 jobs:
+  docker-push:
     strategy:
+      fail-fast: false
       matrix:
         app: [ backend, frontend ]
+
+    concurrency:
+      group: docker-${{ matrix.app }}
+      cancel-in-progress: false
 
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
 
     steps:
       - uses: actions/checkout@v6
@@ -26,7 +35,7 @@ jobs:
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract image metadata
@@ -37,14 +46,24 @@ jobs:
           tags: |
             type=sha
             type=ref,event=branch
-            type=semver,pattern={{version}}
+            type=match,pattern=release-(.*),group=1
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: ./${{ matrix.app }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+          sbom: true
+          provenance: false
+
+      - name: Image attestation
+        uses: actions/attest@v4
+        with:
+          subject-name: ghcr.io/${{ github.repository }}/${{ matrix.app }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
