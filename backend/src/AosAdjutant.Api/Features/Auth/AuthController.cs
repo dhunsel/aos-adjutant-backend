@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Auth;
 
-[Route("auth")]
+[Route("api/auth")]
 [ApiController]
 [Tags("Auth")]
 public sealed class AuthController() : ControllerBase

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AosAdjutant.Api.Features.WeaponEffects;
 
-[Route("weapon-effects")]
+[Route("api/weapon-effects")]
 [ApiController]
 [Tags("Weapon Effects")]
 public sealed class WeaponEffectController(ApplicationDbContext context) : ControllerBase

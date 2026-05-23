@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Abilities;
 
-[Route("abilities")]
+[Route("api/abilities")]
 [ApiController]
 [Tags("Abilities")]
 public sealed class AbilityController(AbilityService abilityService) : ControllerBase

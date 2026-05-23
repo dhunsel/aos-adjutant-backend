@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.BattleFormations;
 
-[Route("battle-formations/{battleFormationId:int}/abilities")]
+[Route("api/battle-formations/{battleFormationId:int}/abilities")]
 [ApiController]
 [Tags("Battle Formations")]
 public sealed class BattleFormationAbilityController(BattleFormationService battleFormationService)

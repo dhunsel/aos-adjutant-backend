@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Units;
 
-[Route("units/{unitId:int}/attack-profiles")]
+[Route("api/units/{unitId:int}/attack-profiles")]
 [ApiController]
 [Tags("Attack Profiles")]
 public sealed class UnitAttackProfileController(AttackProfileService attackProfileService)

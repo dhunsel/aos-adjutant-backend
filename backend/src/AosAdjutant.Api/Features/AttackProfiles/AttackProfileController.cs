@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.AttackProfiles;
 
-[Route("attack-profiles")]
+[Route("api/attack-profiles")]
 [ApiController]
 [Tags("Attack Profiles")]
 public sealed class AttackProfileController(AttackProfileService attackProfileService)

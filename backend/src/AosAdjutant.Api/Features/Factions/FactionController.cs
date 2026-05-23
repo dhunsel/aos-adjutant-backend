@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AosAdjutant.Api.Features.Factions;
 
-[Route("factions")]
+[Route("api/factions")]
 [ApiController]
 [Tags("Factions")]
 public sealed class FactionController(FactionService factionService) : ControllerBase

@@ -2,15 +2,22 @@
 **/.gitignore
 **/.env*
 
-# Build output
+.dockerignore
+Dockerfile
+
+# Backend build output
 **/bin
 **/obj
 
+# Frontend build output
+**/node_modules
+**/dist
+
 # Tests
-tests/
+**/tests/
 
 # Observability stack config (runtime concern, not part of the image)
-observability/
+backend/observability/
 docker-compose.yml
 
 # IDE
@@ -18,7 +25,9 @@ docker-compose.yml
 .vscode/
 
 # Docs & repo config
-README.md
+**/README.md
 LICENSE
 codecov.yml
 .github/
+**/CLAUDE.md
+
