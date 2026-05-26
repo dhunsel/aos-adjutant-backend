@@ -1,0 +1,14 @@
+global:
+  evaluation_interval: 15s
+
+otlp:
+  translation_strategy: NoUTF8EscapingWithSuffixes
+  promote_resource_attributes:
+    - service.instance_id
+    - service.name
+    - service.version
+    - deployment.environment.name
+
+storage:
+  tsdb:
+    out_of_order_time_window: 30m

@@ -4,6 +4,7 @@ datasources:
   - name: Prometheus
     type: prometheus
     uid: prometheus
+    access: proxy
     url: http://prometheus:9090
     isDefault: true
     jsonData:
@@ -14,24 +15,29 @@ datasources:
   - name: Tempo
     type: tempo
     uid: tempo
+    access: proxy
     url: http://tempo:3200
-    editable: true
     jsonData:
-      tracesToLogs:
+      tracesToLogsV2:
         datasourceUid: loki
         filterByTraceID: true
         spanStartTimeShift: '-1m'
         spanEndTimeShift: '1m'
+        tags:
+          - key: service.name
+            value: service_name
 
   - name: Loki
     type: loki
     uid: loki
+    access: proxy
     url: http://loki:3100
     editable: true
     jsonData:
       derivedFields:
         - datasourceUid: tempo
-          matcherRegex: '"TraceId":"([a-f0-9]+)"'
           name: TraceId
+          matcherType: label
+          matcherRegex: trace_id
           url: "$${__value.raw}"
           urlDisplayLabel: 'View Trace'

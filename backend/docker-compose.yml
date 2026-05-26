@@ -11,44 +11,52 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: [ "CMD", "pg_ready", "-U", "${DATABASE_USER}" ]
+      test: [ "CMD", "pg_isready", "-U", "${DATABASE_USER}" ]
       interval: 5s
       timeout: 5s
 
-  loki:
-    image: grafana/loki:3
-    command: -config.file=/etc/loki/loki-config.yaml
-    ports:
-      - 3100:3100
+  otel-collector:
+    image: otel/opentelemetry-collector:0.152.1
+    environment:
+      DEPLOYMENT_ENV: development
     volumes:
-      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml
-      - loki-data:/loki
-
-  prometheus:
-    image: prom/prometheus:v3
-    command:
-      - --web.enable-otlp-receiver
-      - --enable-feature=exemplar-storage
-      - --config.file=/etc/prometheus/prometheus.yml
+      - ./observability/otel-collector/config.yaml:/etc/otelcol/config.yaml:ro
     ports:
-      - 9090:9090
-    volumes:
-      - ./observability/prometheus/:/etc/prometheus/
-      - prometheus-data:/prometheus
-
-  tempo:
-    image: grafana/tempo:2.4.0
-    command: "-config.file=/etc/tempo.yaml"
-    volumes:
-      - ./observability/tempo/tempo.yaml:/etc/tempo.yaml
-      - tempo-data:/var/tempo
-    ports:
-      - 3200:3200
       - 4317:4317
       - 4318:4318
 
+  loki:
+    image: grafana/loki:3.7
+    command: -config.file=/etc/loki/config.yaml
+    ports:
+      - 3100:3100
+    volumes:
+      - ./observability/loki/config.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+
+  prometheus:
+    image: prom/prometheus:v3.11.3
+    command:
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/config.yaml
+    ports:
+      - 9090:9090
+    volumes:
+      - ./observability/prometheus/config.yaml:/etc/prometheus/config.yaml:ro
+      - prometheus-data:/prometheus
+
+  tempo:
+    image: grafana/tempo:2.10.5
+    command:  -config.file=/etc/config.yaml
+    ports:
+      - 3200:3200
+    volumes:
+      - ./observability/tempo/config.yaml:/etc/config.yaml
+      - tempo-data:/var/tempo
+
   grafana:
-    image: grafana/grafana:12.4
+    image: grafana/grafana:13.0
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
@@ -59,7 +67,7 @@ services:
       - ./observability/grafana/provisioning/:/etc/grafana/provisioning/
 
   pocket-id:
-    image: ghcr.io/pocket-id/pocket-id:v2
+    image: ghcr.io/pocket-id/pocket-id:v2.7
     restart: unless-stopped
     env_file: .env
     ports:
