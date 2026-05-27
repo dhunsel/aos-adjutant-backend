@@ -3,17 +3,56 @@ services:
   postgres:
     image: postgres:18.1
     environment:
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_DB: aos_adjutant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql
     ports:
       - 5432:5432
+    logging:
+      driver: local
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "${DATABASE_USER}" ]
-      interval: 5s
+      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "aos_adjutant" ]
+      interval: 30s
       timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:v2.7
+    restart: unless-stopped
+    environment:
+      APP_URL: ${AUTH_URL}
+      ENCRYPTION_KEY: ${AUTH_ENCRYPTION_KEY}
+      TRUST_PROXY: ${AUTH_TRUST_PROXY}
+    ports:
+      - 1411:1411
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+    volumes:
+      - pocket-id-data:/app/data
+    logging:
+      driver: local
+
+  grafana:
+    image: grafana/grafana:13.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/observability/grafana/provisioning/:/etc/grafana/provisioning/
+    logging:
+      driver: local
 
   otel-collector:
     image: otel/opentelemetry-collector:0.152.1
@@ -24,6 +63,8 @@ services:
     ports:
       - 4317:4317
       - 4318:4318
+    logging:
+      driver: local
 
   loki:
     image: grafana/loki:3.7
@@ -33,6 +74,8 @@ services:
     volumes:
       - ./infra/observability/loki/config.yaml:/etc/loki/config.yaml:ro
       - loki-data:/loki
+    logging:
+      driver: local
 
   prometheus:
     image: prom/prometheus:v3.11.3
@@ -45,41 +88,19 @@ services:
     volumes:
       - ./infra/observability/prometheus/config.yaml:/etc/prometheus/config.yaml:ro
       - prometheus-data:/prometheus
+    logging:
+      driver: local
 
   tempo:
     image: grafana/tempo:2.10.5
-    command:  -config.file=/etc/config.yaml
+    command: -config.file=/etc/config.yaml
     ports:
       - 3200:3200
     volumes:
       - ./infra/observability/tempo/config.yaml:/etc/config.yaml
       - tempo-data:/var/tempo
-
-  grafana:
-    image: grafana/grafana:13.0
-    environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./infra/observability/grafana/provisioning/:/etc/grafana/provisioning/
-
-  pocket-id:
-    image: ghcr.io/pocket-id/pocket-id:v2.7
-    restart: unless-stopped
-    env_file: .env
-    ports:
-      - 1411:1411
-    healthcheck:
-      test: [ "CMD", "/app/pocket-id", "healthcheck"]
-      interval: 1m30s
-      timeout: 5s
-      retries: 2
-      start_period: 10s
-    volumes:
-      - pocket-id-data:/app/data
+    logging:
+      driver: local
 
 volumes:
   postgres-data:
