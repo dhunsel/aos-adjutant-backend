@@ -1,0 +1,35 @@
+{
+  email {$ADMIN_EMAIL}
+
+  acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+
+  servers {
+    trusted_proxies cloudflare
+    trusted_proxies_strict
+    client_ip_headers CF-Connecting-IP
+  }
+}
+
+{$ROOT_DOMAIN} {
+  redir https://{$APP_DOMAIN}{uri} permanent
+}
+
+{$APP_DOMAIN} {
+  reverse_proxy webapp:8080 {
+    header_up X-Forwarded-For {client_ip}
+  }
+}
+
+{$AUTH_DOMAIN} {
+  reverse_proxy pocket-id:1411 {
+    header_up X-Forwarded-For {client_ip}
+  }
+
+}
+
+{$GRAFANA_DOMAIN} {
+  reverse_proxy grafana:3000 {
+    header_up X-Forwarded-For {client_ip}
+  }
+
+}

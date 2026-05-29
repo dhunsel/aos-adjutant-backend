@@ -10,6 +10,7 @@ using AosAdjutant.Api.Features.Factions;
 using AosAdjutant.Api.Features.Units;
 using AosAdjutant.Api.Features.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using OpenTelemetry.Logs;
@@ -142,6 +143,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     );
 });
 
+builder.Services.Configure<ForwardedHeadersOptions>(opts =>
+{
+    opts.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    opts.ForwardLimit = 1;
+    opts.KnownProxies.Clear();
+    opts.KnownIPNetworks.Clear();
+    opts.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("172.30.0.0/24")); // Docker subnet
+});
+
 builder.Services.AddScoped<FactionService, FactionService>();
 builder.Services.AddScoped<BattleFormationService, BattleFormationService>();
 builder.Services.AddScoped<UnitService, UnitService>();
@@ -165,7 +175,7 @@ builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<ApplicationDbContext>(
     (sp, opt) =>
         opt.AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>())
-            .UseNpgsql(builder.Configuration["AosAdjutant:DbContextConnectionString"])
+            .UseNpgsql(builder.Configuration["DbContextConnectionString"])
 );
 
 var app = builder.Build();
@@ -173,6 +183,8 @@ var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseExceptionHandler();
+
+app.UseForwardedHeaders();
 
 app.UseAuthentication();
 app.UseAuthorization();

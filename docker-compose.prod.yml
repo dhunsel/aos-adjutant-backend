@@ -1,0 +1,190 @@
+name: aos-adjutant
+services:
+  caddy:
+    image: ghcr.io/caddybuilds/caddy-cloudflare:2.11
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    environment:
+      ROOT_DOMAIN: ${ROOT_DOMAIN}
+      APP_DOMAIN: ${APP_DOMAIN}
+      AUTH_DOMAIN: ${AUTH_DOMAIN}
+      GRAFANA_DOMAIN: ${GRAFANA_DOMAIN}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      EMAIL: ${ADMIN_EMAIL}
+    volumes:
+      - ./infra/caddy:/etc/caddy:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    logging:
+      driver: local
+    networks:
+      - proxy
+
+  webapp:
+    image: ghcr.io/dhunsel/aos-adjutant/webapp:${WEBAPP_VERSION}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Authentication__ClientId: ${APP_CLIENT_ID}
+      Authentication__ClientSecret: ${APP_CLIENT_SECRET}
+      Authentication__Authority: https://${AUTH_DOMAIN}
+      DbContextConnectionString: ${DB_CONNECTION_STRING}
+      AllowedHosts: ${APP_DOMAIN}
+    logging:
+      driver: local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pocket-id:
+        condition: service_healthy
+    networks:
+      - private
+      - proxy
+
+  postgres:
+    image: postgres:18.1
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aos_adjutant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MIGRATOR_PASSWORD: ${MIGRATOR_PASSWORD}
+      APP_PASSWORD: ${APP_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    logging:
+      driver: local
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "aos_adjutant" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+    shm_size: 256mb
+    networks:
+      - private
+
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:v2.7
+    restart: unless-stopped
+    environment:
+      APP_URL: https://${AUTH_DOMAIN}
+      ENCRYPTION_KEY: ${AUTH_ENCRYPTION_KEY}
+      TRUST_PROXY: true
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+    volumes:
+      - pocket-id-data:/app/data
+    logging:
+      driver: local
+    networks:
+      - proxy
+
+  grafana:
+    image: grafana/grafana:13.0
+    restart: unless-stopped
+    environment:
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}
+      GF_AUTH_DISABLE_LOGIN_FORM: true
+
+      GF_AUTH_GENERIC_OAUTH_ENABLED: true
+      GF_AUTH_GENERIC_OAUTH_NAME: Pocket ID
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: true
+      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: true
+
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: https://${AUTH_DOMAIN}/authorize
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: https://${AUTH_DOMAIN}/api/oidc/token
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ${GRAFANA_CLIENT_ID}
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${GRAFANA_CLIENT_SECRET}
+      GF_AUTH_GENERIC_OAUTH_USE_PKCE: true
+
+      GF_AUTH_GENERIC_OAUTH_SCOPES: openid email profile
+      GF_AUTH_GENERIC_OAUTH_SKIP_ORG_ROLE_SYNC: true
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/observability/grafana/provisioning/:/etc/grafana/provisioning:ro
+    logging:
+      driver: local
+    networks:
+      - private
+      - proxy
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.152.1
+    restart: unless-stopped
+    environment:
+      DEPLOYMENT_ENV: production
+    volumes:
+      - ./infra/observability/otel-collector:/etc/otelcol:ro
+    logging:
+      driver: local
+    networks:
+      - private
+
+  loki:
+    image: grafana/loki:3.7
+    restart: unless-stopped
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./infra/observability/loki:/etc/loki:ro
+      - loki-data:/loki
+    logging:
+      driver: local
+    networks:
+      - private
+
+  prometheus:
+    image: prom/prometheus:v3.11.3
+    restart: unless-stopped
+    command:
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/config.yaml
+    volumes:
+      - ./infra/observability/prometheus:/etc/prometheus:ro
+      - prometheus-data:/prometheus
+    logging:
+      driver: local
+    networks:
+      - private
+
+  tempo:
+    image: grafana/tempo:2.10.5
+    restart: unless-stopped
+    command: -config.file=/etc/tempo/config.yaml
+    volumes:
+      - ./infra/observability/tempo:/etc/tempo:ro
+      - tempo-data:/var/tempo
+    logging:
+      driver: local
+    networks:
+      - private
+
+volumes:
+  caddy-data:
+  caddy-config:
+  postgres-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:
+  tempo-data:
+  pocket-id-data:
+
+networks:
+  private:
+    internal: true
+  proxy:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+

@@ -1,0 +1,126 @@
+name: aosadjutant
+services:
+  postgres:
+    image: postgres:18.1
+    environment:
+      POSTGRES_DB: aos_adjutant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 5432:5432
+    logging:
+      driver: local
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "aos_adjutant" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:v2.7
+    restart: unless-stopped
+    environment:
+      APP_URL: http://${AUTH_DOMAIN}
+      ENCRYPTION_KEY: ${AUTH_ENCRYPTION_KEY}
+      TRUST_PROXY: false
+    ports:
+      - 1411:1411
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+    volumes:
+      - pocket-id-data:/app/data
+    logging:
+      driver: local
+
+  grafana:
+    image: grafana/grafana:13.0
+    environment:
+      GF_SERVER_ROOT_URL: http://${GRAFANA_DOMAIN}
+      GF_AUTH_DISABLE_LOGIN_FORM: true
+
+      GF_AUTH_GENERIC_OAUTH_ENABLED: true
+      GF_AUTH_GENERIC_OAUTH_NAME: Pocket ID
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: true
+      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: true
+
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: http://${AUTH_DOMAIN}/authorize
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: http://pocket-id:1411/api/oidc/token
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ${GRAFANA_CLIENT_ID}
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${GRAFANA_CLIENT_SECRET}
+      GF_AUTH_GENERIC_OAUTH_USE_PKCE: true
+
+      GF_AUTH_GENERIC_OAUTH_SCOPES: openid email profile
+      GF_AUTH_GENERIC_OAUTH_SKIP_ORG_ROLE_SYNC: true
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/observability/grafana/provisioning/:/etc/grafana/provisioning/
+    logging:
+      driver: local
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.152.1
+    environment:
+      DEPLOYMENT_ENV: development
+    volumes:
+      - ./infra/observability/otel-collector:/etc/otelcol:ro
+    ports:
+      - 4317:4317
+      - 4318:4318
+    logging:
+      driver: local
+
+  loki:
+    image: grafana/loki:3.7
+    command: -config.file=/etc/loki/config.yaml
+    ports:
+      - 3100:3100
+    volumes:
+      - ./infra/observability/loki:/etc/loki:ro
+      - loki-data:/loki
+    logging:
+      driver: local
+
+  prometheus:
+    image: prom/prometheus:v3.11.3
+    command:
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/config.yaml
+    ports:
+      - 9090:9090
+    volumes:
+      - ./infra/observability/prometheus:/etc/prometheus:ro
+      - prometheus-data:/prometheus
+    logging:
+      driver: local
+
+  tempo:
+    image: grafana/tempo:2.10.5
+    command: -config.file=/etc/tempo/config.yaml
+    ports:
+      - 3200:3200
+    volumes:
+      - ./infra/observability/tempo:/etc/tempo:ro
+      - tempo-data:/var/tempo
+    logging:
+      driver: local
+
+volumes:
+  postgres-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:
+  tempo-data:
+  pocket-id-data:

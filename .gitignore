@@ -10,3 +10,6 @@
 .agents/
 .claude/
 skills-lock.json
+
+**/.env*
+!**/.env.example

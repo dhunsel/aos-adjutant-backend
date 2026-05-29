@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+psql -v ON_ERROR_STOP=1 \
+     --username "$POSTGRES_USER" \
+     --dbname "$POSTGRES_DB" <<- EOSQL
+
+    CREATE ROLE migrator WITH LOGIN PASSWORD '${MIGRATOR_PASSWORD}';
+    CREATE ROLE app WITH LOGIN PASSWORD '${APP_PASSWORD}';
+
+    ALTER SCHEMA public OWNER TO migrator;
+
+    GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO app;
+    GRANT USAGE ON SCHEMA public to app;
+
+    ALTER DEFAULT PRIVILEGES FOR ROLE migrator IN SCHEMA public
+      GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app;
+    ALTER DEFAULT PRIVILEGES FOR ROLE migrator IN SCHEMA public
+      GRANT USAGE, SELECT ON SEQUENCES TO app;
+EOSQL
