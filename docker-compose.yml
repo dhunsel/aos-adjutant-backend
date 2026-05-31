@@ -42,6 +42,29 @@ services:
     logging:
       driver: local
 
+  pocket-id-init:
+    image: alpine:3.22
+    profiles: [ init ]
+    restart: no
+    # Same network as Pocket ID so localhost can be used for curl requests
+    # If not over loopback, curl would not store the secure cookies in the cookie jar for http requests
+    network_mode: service:pocket-id
+    depends_on:
+      pocket-id:
+        condition: service_healthy
+    environment:
+      POCKET_ID_BASE_URL: http://localhost:1411 # Localhost, not the docker service name
+      APP_CALLBACK: http://${APP_DOMAIN}/api/signin-oidc
+      APP_LOGOUT_CALLBACK: http://${APP_DOMAIN}/api/signout-callback-oidc
+      GRAFANA_CALLBACK: http://${GRAFANA_DOMAIN}/login/generic_oauth
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+    volumes:
+      - ./infra/pocket-id:/pocket-id:ro
+      - ./.secrets:/secrets
+    command: ["/bin/sh", "-c", "apk add --no-cache curl jq >/dev/null && sh /pocket-id/init.sh" ]
+    logging:
+      driver: local
+
   grafana:
     image: grafana/grafana:13.0
     environment:
